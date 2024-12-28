@@ -20,6 +20,7 @@ class ReservationController extends Controller
      *     path="/api/reservations",
      *     summary="Display a listing of reservations",
      *     security={ {"bearerAuth": {} }},
+     *     tags={"Reservation"},
      *     @OA\Parameter(
      *         name="start",
      *         in="query",
@@ -48,12 +49,16 @@ class ReservationController extends Controller
             'end' => ['nullable' , 'string' , 'date']
         ]);
 
+        Reservation::query()->where('status' , ReservationStatuses::INCOME)
+            ->whereDate('end' , '<' , now())
+            ->update(['status' => ReservationStatuses::DISMISS]);
+
         $reservationQuery = Reservation::with('patient')
-             ->whereDate('start' ,'>=' , $request->input('start' , now()->startOfWeek()))
-             ->whereDate('end' ,'<=', $request->input('end' , now()->endOfWeek()))
+             ->whereDate('start' ,'>=' , $request->input('start' , now()->startOfDay()))
+             ->whereDate('end' ,'<=', $request->input('end' , now()->addDays(7)->startOfDay()))
              ->when(Auth::user()->hasExactRoles('doctor') , function (Builder $query){
                  $query->where('doctor_id' , Auth::id());
-             });
+             })->orderBy('start');
 
         return ReservationResource::collection($reservationQuery->get());
     }
@@ -63,6 +68,7 @@ class ReservationController extends Controller
      *     path="/api/reservations",
      *     summary="Store a newly created reservation",
      *     security={ {"bearerAuth": {} }},
+     *     tags={"Reservation"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/ReservationRequest")
@@ -76,9 +82,7 @@ class ReservationController extends Controller
      */
     public function store(ReservationRequest $request): ReservationResource
     {
-        $reservation = Reservation::query()->create(array_merge($request->validated(),[
-            'clinic_id' => Auth::user()->clinic_id
-        ]));
+        $reservation = Reservation::query()->create($request->validated());
 
         return ReservationResource::make($reservation->load('patient'));
     }
@@ -89,8 +93,9 @@ class ReservationController extends Controller
      *     path="/api/reservations/{reservation}",
      *     summary="Display the specified reservation",
      *     security={ {"bearerAuth": {} }},
+     *     tags={"Reservation"},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="reservation",
      *         in="path",
      *         description="Reservation ID",
      *         required=true,
@@ -113,8 +118,9 @@ class ReservationController extends Controller
      *     path="/api/reservations/{reservation}",
      *     summary="Update the specified reservation",
      *     security={ {"bearerAuth": {} }},
+     *     tags={"Reservation"},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="reservation",
      *         in="path",
      *         description="Reservation ID",
      *         required=true,
@@ -133,20 +139,19 @@ class ReservationController extends Controller
      */
     public function update(ReservationRequest $request, Reservation $reservation): ReservationResource
     {
-        $reservation->update(array_merge($request->validated(),[
-            'clinic_id' => Auth::user()->clinic_id
-        ]));
+        $reservation->update($request->validated());
 
         return ReservationResource::make($reservation->load('patient'));
     }
 
     /**
      * @OA\Patch(
-     *     path="/api/reservations/reservation/change-status",
+     *     path="/api/reservations/{reservation}/change-status",
      *     summary="Change the status of the specified reservation",
      *     security={ {"bearerAuth": {} }},
+     *     tags={"Reservation"},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="reservation",
      *         in="path",
      *         description="Reservation ID",
      *         required=true,
@@ -181,8 +186,9 @@ class ReservationController extends Controller
      *     path="/api/reservations/{reservation}",
      *     summary="Remove the specified reservation",
      *     security={ {"bearerAuth": {} }},
+     *     tags={"Reservation"},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="reservation",
      *         in="path",
      *         description="Reservation ID",
      *         required=true,

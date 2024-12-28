@@ -65,10 +65,12 @@
                             "schema": {
                                 "properties": {
                                     "username": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "default": "doctor-admin"
                                     },
                                     "password": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "default": "secret"
                                     }
                                 },
                                 "type": "object"
@@ -137,6 +139,9 @@
         },
         "/api/reservations": {
             "get": {
+                "tags": [
+                    "Reservation"
+                ],
                 "summary": "Display a listing of reservations",
                 "operationId": "fbc6050d9f7fdb07075d3aaeb157ffa9",
                 "parameters": [
@@ -183,6 +188,9 @@
                 ]
             },
             "post": {
+                "tags": [
+                    "Reservation"
+                ],
                 "summary": "Store a newly created reservation",
                 "operationId": "01e3d21dc330a31de025203bc142ffa3",
                 "requestBody": {
@@ -216,11 +224,14 @@
         },
         "/api/reservations/{reservation}": {
             "get": {
+                "tags": [
+                    "Reservation"
+                ],
                 "summary": "Display the specified reservation",
                 "operationId": "2aefc564f94e483fb93920c2935eeafe",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "reservation",
                         "in": "path",
                         "description": "Reservation ID",
                         "required": true,
@@ -248,11 +259,14 @@
                 ]
             },
             "put": {
+                "tags": [
+                    "Reservation"
+                ],
                 "summary": "Update the specified reservation",
                 "operationId": "459cb3958996a0266b294be06a643db0",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "reservation",
                         "in": "path",
                         "description": "Reservation ID",
                         "required": true,
@@ -290,11 +304,14 @@
                 ]
             },
             "delete": {
+                "tags": [
+                    "Reservation"
+                ],
                 "summary": "Remove the specified reservation",
                 "operationId": "9cb75e88bfb3a102881ea262dde33019",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "reservation",
                         "in": "path",
                         "description": "Reservation ID",
                         "required": true,
@@ -315,13 +332,16 @@
                 ]
             }
         },
-        "/api/reservations/reservation/change-status": {
+        "/api/reservations/{reservation}/change-status": {
             "patch": {
+                "tags": [
+                    "Reservation"
+                ],
                 "summary": "Change the status of the specified reservation",
-                "operationId": "6e46ac0e81d6bb99adfa4e1cba0d660b",
+                "operationId": "7a1c1fa9d7f6f73e232dd55187171795",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "reservation",
                         "in": "path",
                         "description": "Reservation ID",
                         "required": true,
@@ -645,6 +665,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Reservation",
+            "description": "Reservation"
         }
     ]
 }

@@ -2,75 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AuthRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Clinic;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class AuthController extends Controller
 {
     /**
      * @OA\Post(
      *     path="/api/auth/register",
-     *     summary="register a user",
+     *     summary="Register a new user",
      *     tags={"Auth"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"userName", "password"},
-     *             @OA\Property(property="userName", type="string", example="admin"),
-     *             @OA\Property(property="password", type="string", example="secret")
-     *         ),
+     *         @OA\JsonContent(ref="#/components/schemas/AuthRequest")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Successful login",
+     *         description="Successful registration",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="user", type="object"),
-     *             @OA\Property(property="authorisation", type="object",
-     *                 @OA\Property(property="token", type="string"),
-     *                 @OA\Property(property="type", type="string", example="bearer")
-     *             )
+     *             @OA\Property(property="accessToken", type="string"),
+     *             @OA\Property(property="tokenType", type="string"),
+     *             @OA\Property(property="user", ref="#/components/schemas/UserResource")
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Unauthorized")
-     *         )
-     *     )
+     *     @OA\Response(response=400, description="Bad request")
      * )
      */
-    public function register(Request $request): JsonResponse
+    public function register(AuthRequest $request): JsonResponse
     {
-        $request->validate([
-            'password' => 'required|string',
-            'userName' => ['required' , 'string' , Rule::unique('users' , 'userName')]
-        ]);
+        $clinic = Clinic::query()->create($request->clinicValidated());
 
-        $user = User::query()->create([
-            'userName' => $request->input('userName'),
-            'password' => $request->input('password'),
-            'is_verified' => true,
-            'admin' => false,
-            'longitude' => $request->input('longitude'),
-            'latitude' => $request->input('latitude'),
-        ]);
+        $user = User::query()->create(array_merge($request->userValidated(), [
+            'clinic_id' => $clinic->id
+        ]));
+
+        if ($request->has('planId'))
+            $clinic->plans()->sync($request->validated('planId'));
 
         return response()->json([
-            'status' => 'success',
-            'user' => UserResource::make($user),
-            'authorisation' => [
-                'token' => JWTAuth::fromUser($user),
-                'type' => 'bearer',
-            ]
+            'accessToken' => $user->createToken('auth_token')->plainTextToken,
+            'tokenType' => 'Bearer',
+            'user' => UserResource::make($user)
         ]);
     }
 
@@ -82,57 +60,63 @@ class AuthController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"userName" , "password"},
-     *             @OA\Property(property="userName", type="string", example="admin"),
-     *             @OA\Property(property="password", type="string", example="secret")
-     *         ),
+     *             @OA\Property(property="username", type="string" , default="doctor-admin"),
+     *             @OA\Property(property="password", type="string" , default="secret")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful login",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="user", type="object"),
-     *             @OA\Property(property="authorisation", type="object",
-     *                 @OA\Property(property="token", type="string"),
-     *                 @OA\Property(property="type", type="string", example="bearer")
-     *             )
+     *             @OA\Property(property="accessToken", type="string"),
+     *             @OA\Property(property="tokenType", type="string"),
+     *             @OA\Property(property="user", ref="#/components/schemas/UserResource")
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="message", type="string", example="Unauthorized")
-     *         )
-     *     )
+     *     @OA\Response(response=401, description="Unauthorized")
      * )
      */
     public function login(Request $request): JsonResponse
     {
         $request->validate([
-            'password' => 'nullable|string',
-            'userName' => ['required' , 'string']
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $user = User::query()->where('userName' , $request->input('userName'))->first();
+        if (Auth::attempt($request->only('username', 'password'))) {
+            $user = Auth::user();
+            if ($user->is_banned)
+                return response()->json(['error' => 'your account is banned. please contact your administrator'], ResponseAlias::HTTP_FORBIDDEN);
 
-        if (!$user || !Hash::check($request->input('password') , $user->password) ){
             return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 401);
+                'accessToken' => $user->createToken('auth_token')->plainTextToken,
+                'tokenType' => 'Bearer',
+                'user' => UserResource::make($user)
+            ]);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'user' => UserResource::make($user),
-            'authorisation' => [
-                'token' => auth()->login($user),
-                'type' => 'bearer',
-            ]
-        ]);
+        return response()->json(['message' => 'Unauthorized'], ResponseAlias::HTTP_UNAUTHORIZED);
+    }
 
+    /**
+     * @OA\Post(
+     *     path="/api/auth/logout",
+     *     summary="Logout a user",
+     *     tags={"Auth"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful logout",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     )
+     * )
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logged out successfully']);
     }
 }

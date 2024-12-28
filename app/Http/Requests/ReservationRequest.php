@@ -6,6 +6,7 @@ use App\Enums\ReservationStatuses;
 use App\Enums\ReservationTypes;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 
@@ -73,14 +74,18 @@ class ReservationRequest extends FormRequest
             'end' => ['required', 'date_format:Y-m-d H:i:s'],
             'patientId' => ['required' , 'integer' , Rule::exists('patients' , 'id')],
             'type' => ['required' , Rule::in(ReservationTypes::values())],
-            'status' => ['nullable' , 'string' , Rule::in(ReservationStatuses::values())]
+            'status' => ['nullable' , 'string' , Rule::in(ReservationStatuses::values())],
+            'doctorId' => ['nullable' , 'integer' , Rule::exists('users'  , 'id')]
         ];
     }
 
     public function validated($key = null, $default = null)
     {
         return array_merge(parent::validated($key, $default) , [
-            'status' => $this->input('status' , ReservationStatuses::INCOME)
+            'status' => $this->input('status' , ReservationStatuses::INCOME),
+            'patient_id' => $this->input('patientId'),
+            'clinic_id' => Auth::user()->clinic_id,
+            'doctor_id' => $this->input('doctorId')
         ]);
     }
 }
