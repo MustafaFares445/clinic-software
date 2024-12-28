@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReservationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,10 +10,11 @@ Route::get('/user', function (Request $request) {
 
 
 Route::prefix('auth')->group(function (){
-    Route::post('/login' , [AuthController::class , 'login']);
-    Route::post('/register' , [AuthController::class , 'register']);
-    Route::post('/logout' , [AuthController::class , 'logout'])->middleware('auth:api');
-    Route::post('/refresh' , [AuthController::class , 'refresh'])->middleware('auth:api');
-    Route::post('/send-code' , [AuthController::class , 'sendCode']);
-    Route::post('/check-code' , [AuthController::class , 'checkCode']);
+    Route::post('/login' , [\App\Http\Controllers\AuthController::class ,'login']);
+    Route::post('/register' , [\App\Http\Controllers\AuthController::class ,'register']);
+    Route::post('/logout' , [\App\Http\Controllers\AuthController::class ,'logout'])->middleware('auth:sanctum');
 });
+
+
+Route::apiResource('/reservations' , ReservationController::class)->middleware('auth:sanctum');
+Route::patch('/reservation/{reservation}/change-status' , [ReservationController::class , 'changeStatus'])->middleware('auth:sanctum');

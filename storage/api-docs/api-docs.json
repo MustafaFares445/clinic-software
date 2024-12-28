@@ -1,0 +1,650 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "CLinic Software Api ",
+        "description": "API Description",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "operationId": "d764dd091cc4494ae0baf360b03319f3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful registration",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "accessToken": {
+                                            "type": "string"
+                                        },
+                                        "tokenType": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login a user",
+                "operationId": "8dcb70df1020986038d098cc08d05dae",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "accessToken": {
+                                            "type": "string"
+                                        },
+                                        "tokenType": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout a user",
+                "operationId": "69281b12abb272c76871f19cb17ca563",
+                "responses": {
+                    "200": {
+                        "description": "Successful logout",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reservations": {
+            "get": {
+                "summary": "Display a listing of reservations",
+                "operationId": "fbc6050d9f7fdb07075d3aaeb157ffa9",
+                "parameters": [
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "description": "Start date filter",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end",
+                        "in": "query",
+                        "description": "End date filter",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ReservationResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "summary": "Store a newly created reservation",
+                "operationId": "01e3d21dc330a31de025203bc142ffa3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReservationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReservationResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reservations/{reservation}": {
+            "get": {
+                "summary": "Display the specified reservation",
+                "operationId": "2aefc564f94e483fb93920c2935eeafe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReservationResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "summary": "Update the specified reservation",
+                "operationId": "459cb3958996a0266b294be06a643db0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReservationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Resource updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReservationResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "summary": "Remove the specified reservation",
+                "operationId": "9cb75e88bfb3a102881ea262dde33019",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reservations/reservation/change-status": {
+            "patch": {
+                "summary": "Change the status of the specified reservation",
+                "operationId": "6e46ac0e81d6bb99adfa4e1cba0d660b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Reservation ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "income",
+                                            "check",
+                                            "dismiss",
+                                            "cancelled"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status changed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReservationResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AuthRequest": {
+                "required": [
+                    "firstName",
+                    "lastName",
+                    "email",
+                    "password",
+                    "username",
+                    "clinicName",
+                    "clinicAddress"
+                ],
+                "properties": {
+                    "firstName": {
+                        "description": "First name of the user",
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "format": "email",
+                        "example": "john.doe@example.com"
+                    },
+                    "password": {
+                        "description": "Password for the user account",
+                        "type": "string",
+                        "format": "password",
+                        "example": "password123"
+                    },
+                    "username": {
+                        "description": "Username for the user account",
+                        "type": "string",
+                        "example": "johndoe"
+                    },
+                    "clinicName": {
+                        "description": "Name of the clinic",
+                        "type": "string",
+                        "example": "Health Clinic"
+                    },
+                    "clinicAddress": {
+                        "description": "Address of the clinic",
+                        "type": "string",
+                        "example": "123 Main St"
+                    },
+                    "clinicLongitude": {
+                        "description": "Longitude of the clinic location",
+                        "type": "string",
+                        "example": "40.7128"
+                    },
+                    "clinicLatitude": {
+                        "description": "Latitude of the clinic location",
+                        "type": "string",
+                        "example": "-74.0060"
+                    },
+                    "clinicType": {
+                        "description": "Type of the clinic",
+                        "type": "string",
+                        "enum": [
+                            "hospital",
+                            "clinic",
+                            "health center"
+                        ]
+                    },
+                    "planId": {
+                        "description": "ID of the plan",
+                        "type": "integer",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ReservationRequest": {
+                "required": [
+                    "start",
+                    "end",
+                    "patientId",
+                    "type"
+                ],
+                "properties": {
+                    "start": {
+                        "description": "Reservation start time",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-12T02:30:00Z"
+                    },
+                    "end": {
+                        "description": "Reservation end time",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-12T03:30:00Z"
+                    },
+                    "patientId": {
+                        "description": "Patient ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "description": "Reservation type",
+                        "type": "string",
+                        "enum": [
+                            "surgery",
+                            "appointment",
+                            "inspection"
+                        ],
+                        "example": "appointment"
+                    },
+                    "status": {
+                        "description": "Reservation status",
+                        "type": "string",
+                        "default": "income",
+                        "enum": [
+                            "income",
+                            "check",
+                            "dismiss",
+                            "cancelled"
+                        ],
+                        "example": "income"
+                    }
+                },
+                "type": "object"
+            },
+            "MediaResource": {
+                "title": "MediaResource",
+                "description": "Media resource representation",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the media",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the media",
+                        "type": "string",
+                        "example": "Nature.jpg"
+                    },
+                    "fileName": {
+                        "description": "File name of the media",
+                        "type": "string",
+                        "example": "nature_image.jpg"
+                    },
+                    "collection": {
+                        "description": "Collection name of the media",
+                        "type": "string",
+                        "example": "Nature Collection"
+                    },
+                    "url": {
+                        "description": "Full URL of the media",
+                        "type": "string",
+                        "example": "https://example.com/media/nature.jpg"
+                    },
+                    "size": {
+                        "description": "Human-readable size of the media",
+                        "type": "string",
+                        "example": "2.5 MB"
+                    }
+                },
+                "type": "object"
+            },
+            "PatientResource": {
+                "title": "PatientResource",
+                "description": "Patient resource representation",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the patient",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "firstName": {
+                        "description": "First name of the patient",
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "description": "Last name of the patient",
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "avatar": {
+                        "$ref": "#/components/schemas/MediaResource"
+                    },
+                    "createdAt": {
+                        "description": "Creation timestamp of the patient record",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-12T07:20:50.52Z"
+                    }
+                },
+                "type": "object"
+            },
+            "ReservationResource": {
+                "title": "Reservation Resource",
+                "description": "Reservation resource representation",
+                "properties": {
+                    "id": {
+                        "description": "Reservation ID",
+                        "type": "integer"
+                    },
+                    "start": {
+                        "description": "Start date and time of the reservation",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "end": {
+                        "description": "End date and time of the reservation",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "type": {
+                        "description": "Type of the reservation",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Status of the reservation",
+                        "type": "string"
+                    },
+                    "patient": {
+                        "$ref": "#/components/schemas/PatientResource"
+                    },
+                    "createdAt": {
+                        "description": "Creation timestamp of the reservation",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "UserResource",
+                "description": "User resource representation",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the user",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "fullName": {
+                        "description": "Full name of the user",
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "description": "Email address of the user",
+                        "type": "string",
+                        "example": "john.doe@example.com"
+                    },
+                    "username": {
+                        "description": "Username of the user",
+                        "type": "string",
+                        "example": "johndoe"
+                    },
+                    "avatar": {
+                        "$ref": "#/components/schemas/MediaResource"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        }
+    ]
+}
