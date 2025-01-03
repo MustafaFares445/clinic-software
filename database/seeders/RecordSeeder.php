@@ -4,7 +4,13 @@ namespace Database\Seeders;
 
 use App\Enums\RecordTypes;
 use App\Enums\ReservationTypes;
+use App\Models\Clinic;
+use App\Models\Ill;
+use App\Models\Medicine;
+use App\Models\Patient;
 use App\Models\Record;
+use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,60 +21,62 @@ class RecordSeeder extends Seeder
      */
     public function run(): void
     {
+        $medicinesCount = Medicine::query()->count();
+        $illCount = Ill::query()->count();
        $record = Record::query()->create([
-            'patient_id' => 1,
-            'clinic_id' => 1,
-            'reservation_id' => 1,
+            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
+            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+            'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
             'description' => 'وصف موجز',
             'type' => RecordTypes::APPOINTMENT,
             'price' => 5,
        ]);
 
-       $record->medicines()->sync([1 , 2]);
-       $record->ills()->sync([1 , 2 , 3]);
-       $record->doctors()->sync([3]);
+       $record->medicines()->sync(Medicine::query()->inRandomOrder()->take(rand(1 , $medicinesCount))->pluck('id')->toArray());
+       $record->ills()->sync(Ill::query()->inRandomOrder()->take(rand(1 , $illCount))->pluck('id')->toArray());
+       $record->doctors()->sync(User::query()->inRandomOrder()->take(rand(1 , 2))->pluck('id')->toArray());
        $record->transaction()->create([
           'type' => 'income',
           'amount' => 5,
-          'clinic_id' => 1
+          'clinic_id' => Clinic::query()->inRandomOrder()->first()->id
        ]);
 
        $record2  = Record::query()->create([
-            'patient_id' => 2,
-            'clinic_id' => 1,
-            'reservation_id' => 2,
+            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
+            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+            'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
             'description' => 'وصف موجز',
             'type' => RecordTypes::SURGERY,
             'price' => 50,
        ]);
 
-        $record2->medicines()->sync([2 , 3]);
-        $record2->ills()->sync([3 , 4]);
-        $record2->doctors()->sync([3]);
+        $record2->medicines()->sync(Medicine::query()->inRandomOrder()->take(rand(1 , $medicinesCount))->pluck('id')->toArray());
+        $record2->ills()->sync(Ill::query()->inRandomOrder()->take(rand(1 , $illCount))->pluck('id')->toArray());
+        $record2->doctors()->sync(User::query()->inRandomOrder()->take(rand(1 , 2))->pluck('id')->toArray());
 
         $record2->transaction()->create([
             'type' => 'income',
             'amount' => 50,
-            'clinic_id' => 1
+            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id
         ]);
 
        $record3 =  Record::query()->create([
-            'patient_id' => 1,
-            'clinic_id' => 1,
-            'reservation_id' => 3,
+            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
+            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+            'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
             'description' => 'وصف موجز',
             'type' => RecordTypes::INSPECTION,
             'price' => 10,
        ]);
 
-        $record3->medicines()->sync([4 , 5]);
-        $record3->ills()->sync([2 , 3 , 4]);
-        $record3->doctors()->sync([3]);
+        $record3->medicines()->sync(Medicine::query()->inRandomOrder()->take(rand(1 , $medicinesCount))->pluck('id')->toArray());
+        $record3->ills()->sync(Ill::query()->inRandomOrder()->take(rand(1 , $illCount))->pluck('id')->toArray());
+        $record3->doctors()->sync(User::query()->inRandomOrder()->take(rand(1 , 2))->pluck('id')->toArray());
 
         $record3->transaction()->create([
             'type' => 'income',
             'amount' => 10,
-            'clinic_id' => 1
+            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id
         ]);
     }
 }

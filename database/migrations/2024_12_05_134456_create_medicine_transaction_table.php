@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('medicine_transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('clinic_id')->constrained('clinics');
-            $table->foreignId('medicine_id')->constrained('medicines');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('clinic_id')->constrained('clinics');
+            $table->foreignUuid('medicine_id')->constrained('medicines');
             $table->unsignedInteger('quantity')->default(1);
             $table->timestamps();
             $table->softDeletes();

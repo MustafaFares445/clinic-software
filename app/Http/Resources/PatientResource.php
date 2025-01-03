@@ -52,11 +52,11 @@ class PatientResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
+            'id' => $this->when($this->id , $this->id),
+            'firstName' => $this->when($this->firstName , $this->firstName),
+            'lastName' => $this->when($this->lastName , $this->lastName),
             'avatar' => MediaResource::make($this->getFirstMedia('patients')),
-            'createdAt' => Carbon::parse($this->created_at)->toDateTimeString()
+            'createdAt' => $this->when($this->created_at , Carbon::parse($this->created_at)->toDateTimeString())
         ];
     }
 }

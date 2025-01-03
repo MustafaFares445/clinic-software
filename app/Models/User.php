@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -18,7 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable , HasRoles , HasApiTokens , InteractsWithMedia;
+    use HasFactory, Notifiable , HasRoles , HasApiTokens , InteractsWithMedia , HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -26,8 +27,7 @@ class User extends Authenticatable implements HasMedia
      * @var array<int, string>
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'fullName',
         'email',
         'password',
         'username',
@@ -64,8 +64,18 @@ class User extends Authenticatable implements HasMedia
             self::query()->where('clinic_id' , Auth::user()->clinic_id);
     }
 
-    public function clinics(): BelongsToMany
+    public function clinic(): BelongsTo
     {
-        return $this->belongsToMany(Clinic::class);
+        return $this->belongsTo(Clinic::class , 'clinic_id');
+    }
+
+    public function doctorClinics(): BelongsToMany
+    {
+        return $this->belongsToMany(Clinic::class , 'clinic_doctor' , 'doctor_id' , 'clinic_id');
+    }
+
+    public function doctorSpecifications(): BelongsToMany
+    {
+        return $this->belongsToMany(Specification::class , 'doctor_specification' , 'doctor_id' , 'specification_id');
     }
 }

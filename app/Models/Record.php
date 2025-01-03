@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\RecordFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,8 +17,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Record extends Model implements HasMedia
 {
     /** @use HasFactory<RecordFactory> */
-    use HasFactory , InteractsWithMedia , SoftDeletes;
-
+    use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
 
     protected $fillable = [
       'patient_id',

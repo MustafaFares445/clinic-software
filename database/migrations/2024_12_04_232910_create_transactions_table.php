@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('clinic_id')->constrained('clinics');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->enum('type' , ['income' , 'outcome']);
             $table->unsignedBigInteger('amount');
-            $table->morphs('relateable');
+            $table->uuidMorphs('relateable');
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();

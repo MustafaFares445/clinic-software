@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\CategoryFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,10 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Category extends Model implements HasMedia
+class Specification extends Model implements HasMedia
 {
     /** @use HasFactory<CategoryFactory> */
-    use HasFactory , InteractsWithMedia , SoftDeletes;
+    use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
 
     protected $fillable = [
       'name',

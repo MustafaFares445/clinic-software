@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Database\Factories\ClinicFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,14 +12,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Clinic extends Model implements HasMedia
 {
     /** @use HasFactory<ClinicFactory> */
-    use HasFactory , InteractsWithMedia , SoftDeletes;
+    use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
+
 
     protected $fillable = [
       'name',
@@ -27,7 +28,9 @@ class Clinic extends Model implements HasMedia
       'latitude',
       'description',
       'is_banned',
-      'type'
+      'type',
+      'start',
+      'end'
     ];
 
     public function currentPlan(): ?Model
@@ -46,9 +49,9 @@ class Clinic extends Model implements HasMedia
         return $this->belongsToMany(Coupon::class);
     }
 
-    public function categories(): BelongsToMany
+    public function specifications(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Specification::class);
     }
 
     public function users(): HasMany

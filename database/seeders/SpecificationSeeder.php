@@ -2,26 +2,26 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
+use App\Models\Specification;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CategorySeeder extends Seeder
+class SpecificationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Category::query()->create([
+        Specification::query()->create([
            'name' => 'سنية',
         ]);
 
-        Category::query()->create([
+        Specification::query()->create([
             'name' => 'جراحة سنية'
         ]);
 
-        Category::query()->create([
+        Specification::query()->create([
             'name' => 'تقويم'
         ]);
     }

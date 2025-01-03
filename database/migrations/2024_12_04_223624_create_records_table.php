@@ -13,10 +13,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('records', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('patient_id')->constrained('patients');
-            $table->foreignId('clinic_id')->constrained('clinics');
-            $table->foreignId('reservation_id')->nullable()->constrained('reservations');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('patient_id')->constrained('patients');
+            $table->foreignUuid('clinic_id')->constrained('clinics');
+            $table->foreignUuid('reservation_id')->nullable()->constrained('reservations');
             $table->longText('description');
             $table->enum('type' , RecordTypes::values());//surgery
             $table->unsignedBigInteger('price')->nullable();

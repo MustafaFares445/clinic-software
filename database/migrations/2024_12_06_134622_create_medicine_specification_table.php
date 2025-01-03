@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('category_ill', function (Blueprint $table) {
-            $table->foreignId('category_id')->constrained('categories');
-            $table->foreignId('ill_id')->constrained('ills');
+        Schema::create('medicine_specification', function (Blueprint $table) {
+            $table->foreignUuid('specification_id')->constrained('specifications');
+            $table->foreignUuid('medicine_id')->constrained('medicines');
         });
     }
 
@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('category_ill');
+        Schema::dropIfExists('category_medicine');
     }
 };

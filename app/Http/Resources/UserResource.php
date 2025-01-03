@@ -50,10 +50,10 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'fullName' => $this->fullName,
-            'email' => $this->email,
-            'username' => $this->username,
+            'id' => $this->when($this->id , $this->id),
+            'fullName' => $this->when($this->fullName , $this->fullName),
+            'email' => $this->when($this->email , $this->email),
+            'username' => $this->when($this->username , $this->username),
             'avatar' => MediaResource::make($this->getFirstMedia('users'))
         ];
     }

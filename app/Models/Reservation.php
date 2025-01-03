@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\ReservationFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Reservation extends Model implements HasMedia
 {
     /** @use HasFactory<ReservationFactory> */
-    use HasFactory , InteractsWithMedia;
+    use HasFactory , InteractsWithMedia , HasUuids;
 
 
     protected $fillable = [
@@ -47,5 +48,10 @@ class Reservation extends Model implements HasMedia
     public function doctor(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function specification(): BelongsTo
+    {
+        return $this->belongsTo(Specification::class);
     }
 }

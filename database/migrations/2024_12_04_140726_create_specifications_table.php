@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('category_medicine', function (Blueprint $table) {
-            $table->foreignId('category_id')->constrained('categories');
-            $table->foreignId('medicine_id')->constrained('medicines');
+        Schema::create('specifications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name')->unique();
+            $table->text('description')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('category_medicine');
+        Schema::dropIfExists('category');
     }
 };

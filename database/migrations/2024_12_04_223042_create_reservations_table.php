@@ -14,14 +14,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reservations', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->dateTime('start');
-            $table->dateTime('end')->nullable();
-            $table->foreignId('patient_id')->constrained('patients');
-            $table->foreignId('clinic_id')->constrained('clinics');
-            $table->foreignId('doctor_id')->nullable()->constrained('users');
-            $table->enum('type' , ReservationTypes::values())->default('appointment');
-            $table->enum('status' , ReservationStatuses::values())->default('income');
+            $table->dateTime('end');
+            $table->foreignUuid('patient_id')->constrained('patients');
+            $table->foreignUuid('clinic_id')->constrained('clinics');
+            $table->foreignUuid('doctor_id')->nullable()->constrained('users');
+            $table->foreignUuid('specification_id')->nullable()->constrained('specifications');
+            $table->enum('type' , ReservationTypes::values())->default(ReservationTypes::APPOINTMENT);
+            $table->enum('status' , ReservationStatuses::values())->default(ReservationStatuses::INCOME);
             $table->timestamps();
         });
     }

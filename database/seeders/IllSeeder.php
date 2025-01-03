@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Ill;
+use App\Models\Specification;
 use Illuminate\Database\Seeder;
 
 class IllSeeder extends Seeder
@@ -15,26 +16,26 @@ class IllSeeder extends Seeder
         Ill::query()->create([
             'name' => 'نخر بسيط',
             'description' => null
-        ])->categories()->sync([1]);
+        ])->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
         Ill::query()->create([
             'name' => 'ضرس عقل',
             'description' => null
-        ])->categories()->sync([1]);
+        ])->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
         Ill::query()->create([
             'name' => 'التهاب لسة',
             'description' => null
-        ])->categories()->sync([1]);
+        ])->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
         Ill::query()->create([
             'name' => 'خراجات',
             'description' => null
-        ])->categories()->sync([2]);
+        ])->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
         Ill::query()->create([
             'name' => 'نخر عصب',
             'description' => null
-        ])->categories()->sync([2]);
+        ])->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
     }
 }

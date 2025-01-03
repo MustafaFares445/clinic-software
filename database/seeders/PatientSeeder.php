@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Clinic;
 use App\Models\Patient;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -23,9 +24,8 @@ class PatientSeeder extends Seeder
             'motherName' => 'بهيجة',
             'nationalNumber' =>  '123332432423',
             'address' => 'الفرقان,مفرق السكن',
-            'clinic_id' => 1,
-            'description' => 'وصف موجز' ,
-            'code' => Str::uuid()
+            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+            'description' => 'وصف موجز'
         ]);
 
         Patient::query()->create([
@@ -37,9 +37,8 @@ class PatientSeeder extends Seeder
             'motherName' => 'تغريد',
             'nationalNumber' =>  '34324232432',
             'address' => 'موكامبو,دوار المايل',
-            'clinic_id' => 1,
+            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'description' => 'وصف موجز' ,
-            'code' => Str::uuid()
         ]);
     }
 }

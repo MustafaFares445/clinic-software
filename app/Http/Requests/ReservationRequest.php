@@ -49,6 +49,12 @@ use Illuminate\Validation\Rule;
  *         default="income",
  *         description="Reservation status",
  *         enum={"income", "check", "dismiss", "cancelled"}
+ *     ),
+ *     @OA\Property(
+ *         property="doctorId",
+ *         type="integer",
+ *         example=2,
+ *         description="Doctor ID"
  *     )
  * )
  */

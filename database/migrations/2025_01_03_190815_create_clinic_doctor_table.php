@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->unique();
-            $table->text('description')->nullable();
+        Schema::create('clinic_doctor', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('clinic_id')->constrained('clinics');
+            $table->foreignUuid('doctor_id')->constrained('users');
+            $table->foreignUuid('specification_id')->constrained('specifications');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('category');
+        Schema::dropIfExists('clinic_doctor');
     }
 };

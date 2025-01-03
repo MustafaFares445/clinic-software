@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\TransactionFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,8 +15,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Transaction extends Model implements HasMedia
 {
     /** @use HasFactory<TransactionFactory> */
-    use HasFactory , InteractsWithMedia , SoftDeletes;
-
+    use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
 
     protected $fillable = [
       'clinic_id',

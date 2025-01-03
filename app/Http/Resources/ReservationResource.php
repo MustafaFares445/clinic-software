@@ -63,12 +63,14 @@ class ReservationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-           'start' => Carbon::parse($this->start)->toDateTimeString(),
-            'end' => Carbon::parse($this->end)->toDateTimeString(),
-            'type' => $this->type,
-            'status' => $this->status,
+            'id' => $this->when($this->id , $this->id),
+            'start' => $this->when($this->start  , Carbon::parse($this->start)->toDateTimeString()),
+            'end' => $this->when($this->end , Carbon::parse($this->end)->toDateTimeString()),
+            'type' => $this->when($this->type , $this->type),
+            'status' => $this->when($this->status , $this->status),
             'patient' => PatientResource::make($this->whenLoaded('patient')),
+            'doctor' => $this->when($this->doctor_id , UserResource::make($this->whenLoaded('doctor'))),
+            'specification' => $this->when($this->specification_id , SpecificationTransformer::make($this->whenLoaded('specification'))),
             'createdAt' => Carbon::parse($this->created_at)->toDateTimeString()
         ];
     }

@@ -13,8 +13,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('clinics', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
+            $table->time('start')->nullable();
+            $table->time('end')->nullable();
             $table->string('address')->nullable();
             $table->string('longitude')->nullable();
             $table->string('latitude')->nullable();
