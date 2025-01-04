@@ -31,7 +31,7 @@ use Illuminate\Validation\Rule;
  *     ),
  *     @OA\Property(
  *         property="patientId",
- *         type="integer",
+ *         type="string",
  *         example=1,
  *         description="Patient ID"
  *     ),
@@ -52,10 +52,16 @@ use Illuminate\Validation\Rule;
  *     ),
  *     @OA\Property(
  *         property="doctorId",
- *         type="integer",
+ *         type="string",
  *         example=2,
  *         description="Doctor ID"
- *     )
+ *     ),
+ *     @OA\Property(
+ *          property="specificationId",
+ *          type="string",
+ *          example=2,
+ *          description="Doctor ID"
+ *      )
  * )
  */
 class ReservationRequest extends FormRequest
@@ -78,10 +84,11 @@ class ReservationRequest extends FormRequest
         return [
             'start' => ['required', 'date_format:Y-m-d H:i:s'],
             'end' => ['required', 'date_format:Y-m-d H:i:s'],
-            'patientId' => ['required' , 'integer' , Rule::exists('patients' , 'id')],
+            'patientId' => ['required' , 'string' , Rule::exists('patients' , 'id')],
             'type' => ['required' , Rule::in(ReservationTypes::values())],
             'status' => ['nullable' , 'string' , Rule::in(ReservationStatuses::values())],
-            'doctorId' => ['nullable' , 'integer' , Rule::exists('users'  , 'id')]
+            'doctorId' => ['nullable' , 'string' , Rule::exists('users'  , 'id')],
+            'specificationId' => ['nullable' , 'string' , Rule::exists('specifications'  , 'id')]
         ];
     }
 
@@ -91,7 +98,8 @@ class ReservationRequest extends FormRequest
             'status' => $this->input('status' , ReservationStatuses::INCOME),
             'patient_id' => $this->input('patientId'),
             'clinic_id' => Auth::user()->clinic_id,
-            'doctor_id' => $this->input('doctorId')
+            'doctor_id' => $this->input('doctorId'),
+            'specification_id' => $this->input('specificationId')
         ]);
     }
 }

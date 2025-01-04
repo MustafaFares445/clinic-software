@@ -138,55 +138,6 @@
             }
         },
         "/api/reservations": {
-            "get": {
-                "tags": [
-                    "Reservation"
-                ],
-                "summary": "Display a listing of reservations",
-                "operationId": "fbc6050d9f7fdb07075d3aaeb157ffa9",
-                "parameters": [
-                    {
-                        "name": "start",
-                        "in": "query",
-                        "description": "Start date filter",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    },
-                    {
-                        "name": "end",
-                        "in": "query",
-                        "description": "End date filter",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/ReservationResource"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
             "post": {
                 "tags": [
                     "Reservation"
@@ -490,7 +441,7 @@
                     },
                     "patientId": {
                         "description": "Patient ID",
-                        "type": "integer",
+                        "type": "string",
                         "example": 1
                     },
                     "type": {
@@ -514,6 +465,16 @@
                             "cancelled"
                         ],
                         "example": "income"
+                    },
+                    "doctorId": {
+                        "description": "Doctor ID",
+                        "type": "string",
+                        "example": 2
+                    },
+                    "specificationId": {
+                        "description": "Doctor ID",
+                        "type": "string",
+                        "example": 2
                     }
                 },
                 "type": "object"
@@ -592,7 +553,7 @@
                 "properties": {
                     "id": {
                         "description": "Reservation ID",
-                        "type": "integer"
+                        "type": "string"
                     },
                     "start": {
                         "description": "Start date and time of the reservation",
@@ -615,10 +576,38 @@
                     "patient": {
                         "$ref": "#/components/schemas/PatientResource"
                     },
+                    "specification": {
+                        "$ref": "#/components/schemas/SpecificationResource"
+                    },
                     "createdAt": {
                         "description": "Creation timestamp of the reservation",
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "SpecificationResource": {
+                "title": "SpecificationResource",
+                "description": "Specification resource representation",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the specification",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the specification",
+                        "type": "string",
+                        "example": "Specification Name"
+                    },
+                    "description": {
+                        "description": "Description of the specification",
+                        "type": "string",
+                        "example": "This is a detailed description of the specification."
+                    },
+                    "image": {
+                        "$ref": "#/components/schemas/MediaResource"
                     }
                 },
                 "type": "object"

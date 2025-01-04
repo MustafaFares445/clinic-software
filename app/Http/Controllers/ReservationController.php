@@ -92,6 +92,9 @@ class ReservationController extends Controller
             ->with(['doctor' => function ($query) {
                 $query->select(['id' , 'fullName']);
             }])
+            ->with(['specification' => function ($query) {
+                $query->select(['id' , 'name']);
+            }])
             ->whereDate('start', '>=', $startDate)
             ->whereDate('end', '<=', $endDate)
             ->when(Auth::user()->hasExactRoles('doctor'), function (Builder $query) {

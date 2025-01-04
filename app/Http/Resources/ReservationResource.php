@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
  *     description="Reservation resource representation",
  *     @OA\Property(
  *         property="id",
- *         type="integer",
+ *         type="string",
  *         description="Reservation ID"
  *     ),
  *     @OA\Property(
@@ -46,6 +46,11 @@ use Illuminate\Support\Facades\Auth;
  *         description="Patient associated with the reservation"
  *     ),
  *     @OA\Property(
+ *          property="specification",
+ *          ref="#/components/schemas/SpecificationResource",
+ *          description="Patient associated with the reservation"
+ *      ),
+ *     @OA\Property(
  *         property="createdAt",
  *         type="string",
  *         format="date-time",
@@ -70,7 +75,7 @@ class ReservationResource extends JsonResource
             'status' => $this->when($this->status , $this->status),
             'patient' => PatientResource::make($this->whenLoaded('patient')),
             'doctor' => $this->when($this->doctor_id , UserResource::make($this->whenLoaded('doctor'))),
-            'specification' => $this->when($this->specification_id , SpecificationTransformer::make($this->whenLoaded('specification'))),
+            'specification' => $this->when($this->specification_id , SpecificationResource::make($this->whenLoaded('specification'))),
             'createdAt' => Carbon::parse($this->created_at)->toDateTimeString()
         ];
     }
