@@ -131,7 +131,7 @@ class ReservationController extends Controller
 
         $reservation = Reservation::query()->create($data);
 
-        return ReservationResource::make($reservation->load(['patient' , 'doctor']));
+        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
     }
 
 
@@ -157,7 +157,7 @@ class ReservationController extends Controller
      */
     public function show(Reservation $reservation): AnonymousResourceCollection
     {
-        return ReservationResource::collection($reservation->load(['patient' , 'doctor']));
+        return ReservationResource::collection($reservation->load(['patient' , 'doctor' , 'specification']));
     }
 
     /**
@@ -192,7 +192,7 @@ class ReservationController extends Controller
 
         $reservation->update($data);
 
-        return ReservationResource::make($reservation->load(['patient' , 'doctor']));
+        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
     }
 
     /**
@@ -229,7 +229,7 @@ class ReservationController extends Controller
 
         $reservation->update(['status' => $request->input('status')]);
 
-        return ReservationResource::make($reservation->load(['patient' , 'doctor']));
+        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
     }
 
     /**
