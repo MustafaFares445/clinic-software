@@ -137,6 +137,277 @@
                 ]
             }
         },
+        "/api/patients": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get a list of patients",
+                "operationId": "4a397b69598fdd620ee7120b8610185b",
+                "parameters": [
+                    {
+                        "name": "clinicId",
+                        "in": "query",
+                        "description": "Filter patients by clinic ID",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "orderBy",
+                        "in": "query",
+                        "description": "Field to order patients by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "firstName",
+                                "lastName",
+                                "nextReservation",
+                                "lastReservation",
+                                "createdAt"
+                            ],
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "orderType",
+                        "in": "query",
+                        "description": "Order type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "DESC",
+                                "ASC"
+                            ],
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of patients per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PatientResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "You are not allowed."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Store a newly created patient",
+                "description": "Create a new patient record and return the created patient resource",
+                "operationId": "d81c0f99b503153ba6d47c7899a882a4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatientRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PatientResource"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/patients/{patient}": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get a specific patient",
+                "description": "Returns a specific patient resource with related data",
+                "operationId": "getPatientById",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "ID of the patient to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "clinicId",
+                        "in": "query",
+                        "description": "Filter reservations by clinic ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PatientResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Update a patient",
+                "operationId": "18504a6046ba0359d94ad6749b840931",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "ID of the patient to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatientRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Patient updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PatientResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Delete a patient",
+                "operationId": "1c9bebd2827e52b62fb5467aaea126ca",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "ID of the patient to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Patient deleted successfully"
+                    },
+                    "404": {
+                        "description": "Patient not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/reservations": {
             "post": {
                 "tags": [
@@ -419,6 +690,94 @@
                 },
                 "type": "object"
             },
+            "PatientIndexRequest": {
+                "title": "Patient Index Request",
+                "description": "Request parameters for indexing patients",
+                "properties": {
+                    "clinicId": {
+                        "description": "The ID of the clinic. Must exist in the clinics table.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "orderBy": {
+                        "description": "The field to order by. Allowed values: firstName, lastName, nextReservation, lastReservation, createdAt.",
+                        "type": "string",
+                        "enum": [
+                            "firstName",
+                            "lastName",
+                            "nextReservation",
+                            "lastReservation",
+                            "createdAt"
+                        ],
+                        "nullable": true
+                    },
+                    "orderType": {
+                        "description": "The order type. Allowed values: DESC, ASC.",
+                        "type": "string",
+                        "enum": [
+                            "DESC",
+                            "ASC"
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PatientRequest": {
+                "title": "Patient Request",
+                "description": "Request body data for creating or updating a patient",
+                "required": [
+                    "firstName",
+                    "lastName"
+                ],
+                "properties": {
+                    "firstName": {
+                        "description": "The first name of the patient",
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "description": "The last name of the patient",
+                        "type": "string"
+                    },
+                    "phone": {
+                        "description": "The phone number of the patient",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "age": {
+                        "description": "The age of the patient",
+                        "type": "number",
+                        "format": "float",
+                        "nullable": true
+                    },
+                    "fatherName": {
+                        "description": "The father's name of the patient",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "motherName": {
+                        "description": "The mother's name of the patient",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "nationalNumber": {
+                        "description": "The national number of the patient",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "address": {
+                        "description": "The address of the patient",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Additional description about the patient",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "ReservationRequest": {
                 "required": [
                     "start",
@@ -538,11 +897,104 @@
                     "avatar": {
                         "$ref": "#/components/schemas/MediaResource"
                     },
+                    "age": {
+                        "description": "Age of the patient",
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "fatherName": {
+                        "description": "Father's name of the patient",
+                        "type": "string",
+                        "example": "Robert"
+                    },
+                    "motherName": {
+                        "description": "Mother's name of the patient",
+                        "type": "string",
+                        "example": "Jane"
+                    },
+                    "nationalNumber": {
+                        "description": "National identification number of the patient",
+                        "type": "string",
+                        "example": "123456789"
+                    },
+                    "address": {
+                        "description": "Address of the patient",
+                        "type": "string",
+                        "example": "123 Main St, Anytown, USA"
+                    },
                     "createdAt": {
                         "description": "Creation timestamp of the patient record",
                         "type": "string",
                         "format": "date-time",
                         "example": "2023-10-12T07:20:50.52Z"
+                    },
+                    "nextReservation": {
+                        "description": "Next reservation date for the patient",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-11-15T10:00:00.00Z"
+                    },
+                    "lastReservation": {
+                        "description": "Last reservation date for the patient",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-09-10T14:30:00.00Z"
+                    },
+                    "pastReservationsCount": {
+                        "description": "Count of past reservations for the patient",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "upComingReservationCount": {
+                        "description": "Count of upcoming reservations for the patient",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "records": {
+                        "description": "List of records associated with the patient",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "RecordResource": {
+                "title": "Record Resource",
+                "description": "Record resource representation",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the record",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "description": {
+                        "description": "Description of the record",
+                        "type": "string",
+                        "example": "This is a sample record description."
+                    },
+                    "type": {
+                        "description": "Type of the record",
+                        "type": "string",
+                        "example": "Medical"
+                    },
+                    "images": {
+                        "description": "List of images associated with the record",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MediaResource"
+                        }
+                    },
+                    "files": {
+                        "description": "List of files associated with the record",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MediaResource"
+                        }
+                    },
+                    "reservation": {
+                        "$ref": "#/components/schemas/ReservationResource"
                     }
                 },
                 "type": "object"
@@ -654,6 +1106,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Patients",
+            "description": "Patients"
         },
         {
             "name": "Reservation",

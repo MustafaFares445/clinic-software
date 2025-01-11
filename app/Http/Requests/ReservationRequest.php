@@ -97,7 +97,6 @@ class ReservationRequest extends FormRequest
         return array_merge(parent::validated($key, $default) , [
             'status' => $this->input('status' , ReservationStatuses::INCOME),
             'patient_id' => $this->input('patientId'),
-            'clinic_id' => Auth::user()->clinic_id,
             'doctor_id' => $this->input('doctorId'),
             'specification_id' => $this->input('specificationId')
         ]);

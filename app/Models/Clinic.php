@@ -20,7 +20,6 @@ class Clinic extends Model implements HasMedia
     /** @use HasFactory<ClinicFactory> */
     use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
 
-
     protected $fillable = [
       'name',
       'address',

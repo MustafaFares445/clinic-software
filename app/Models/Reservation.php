@@ -17,7 +17,6 @@ class Reservation extends Model implements HasMedia
     /** @use HasFactory<ReservationFactory> */
     use HasFactory , InteractsWithMedia , HasUuids;
 
-
     protected $fillable = [
       'start',
       'end',
@@ -30,7 +29,7 @@ class Reservation extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        if (Auth::check() && !Auth::user()->hasRole('super admin'))
+        if (Auth::check() && !Auth::user()->hasRole('super admin') && !request()->has('clinicId'))
             self::query()->where('clinic_id' , Auth::user()->clinic_id);
     }
 

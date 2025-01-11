@@ -30,7 +30,7 @@ class Record extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        if (Auth::check() && !Auth::user()->hasRole('super admin'))
+        if (Auth::check() && !Auth::user()->hasRole('super admin') && !request()->has('clinicId'))
             self::query()->where('clinic_id' , Auth::user()->clinic_id);
     }
 

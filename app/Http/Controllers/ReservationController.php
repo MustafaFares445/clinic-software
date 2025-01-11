@@ -8,16 +8,14 @@ use App\Http\Requests\ReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Models\Clinic;
 use App\Models\Reservation;
-use Carbon\Carbon;
 use Carbon\CarbonInterface;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class ReservationController extends Controller
 {
@@ -56,11 +54,6 @@ class ReservationController extends Controller
      */
     public function index(ReservationIndexRequest $request): AnonymousResourceCollection|JsonResponse
     {
-        // Validate clinic access for the authenticated user
-        if ($request->validated('clinicId') && Auth::user()->doctorClinics()->where('clinic_id', $request->validated('clinicId'))->doesntExist()) {
-            return response()->json(['error' => 'You are not allowed.'], ResponseAlias::HTTP_FORBIDDEN);
-        }
-
         // Determine the clinic ID to use
         $clinicId = $request->validated('clinicId') ?? Auth::user()->clinic_id;
         $clinic = Clinic::query()->select(['start', 'end'])->find($clinicId);
@@ -97,7 +90,7 @@ class ReservationController extends Controller
             }])
             ->whereDate('start', '>=', $startDate)
             ->whereDate('end', '<=', $endDate)
-            ->when(Auth::user()->hasExactRoles('doctor'), function (Builder $query) {
+            ->when($request->has('clinicId'), Auth::user()->hasRole('doctor'), function (Builder $query) {
                 $query->where('doctor_id', Auth::id());
             })
             ->orderBy('start');
@@ -123,13 +116,12 @@ class ReservationController extends Controller
      *     )
      * )
      */
-    public function store(ReservationRequest $request): ReservationResource
+    public function store(ReservationRequest $request): ReservationResource|JsonResponse
     {
-        $data = $request->validated();
-        if (Auth::user()->hasExactRoles('doctor'))
-            $data['doctor_id'] = Auth::id();
-
-        $reservation = Reservation::query()->create($data);
+        $reservation = Reservation::query()->create(array_merge($request->validated(),[
+            'clinic_id' => $request->validated('clinicId') ?: Auth::user()->clinic_id,
+            'doctor_id' => Auth::user()->hasRole('doctor') ? Auth::id() : $request->input('doctorId'),
+        ]));
 
         return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
     }
@@ -186,11 +178,10 @@ class ReservationController extends Controller
      */
     public function update(ReservationRequest $request, Reservation $reservation): ReservationResource
     {
-        $data = $request->validated();
-        if (Auth::user()->hasExactRoles('doctor'))
-            $data['doctor_id'] = Auth::id();
-
-        $reservation->update($data);
+        $reservation->update(array_merge($request->validated(),[
+            'clinic_id' => $request->validated('clinicId') ?: Auth::user()->clinic_id,
+            'doctor_id' => Auth::user()->hasRole('doctor') ? Auth::id() : $request->input('doctorId'),
+        ]));
 
         return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
     }
