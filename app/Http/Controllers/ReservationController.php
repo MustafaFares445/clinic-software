@@ -90,7 +90,7 @@ class ReservationController extends Controller
             }])
             ->whereDate('start', '>=', $startDate)
             ->whereDate('end', '<=', $endDate)
-            ->when($request->has('clinicId'), Auth::user()->hasRole('doctor'), function (Builder $query) {
+            ->when($request->has('clinicId') && Auth::user()->hasRole('doctor'), function (Builder $query) {
                 $query->where('doctor_id', Auth::id());
             })
             ->orderBy('start');
