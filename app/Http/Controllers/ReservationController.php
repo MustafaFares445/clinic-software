@@ -8,6 +8,7 @@ use App\Http\Requests\ReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Models\Clinic;
 use App\Models\Reservation;
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -65,8 +66,8 @@ class ReservationController extends Controller
             ->update(['status' => ReservationStatuses::CHECK]);
 
         // Determine the start and end dates for the query
-        $startDate = $request->validated('start') ?? now()->startOfWeek(CarbonInterface::SATURDAY);
-        $endDate = $request->validated('end') ?? now()->endOfWeek(CarbonInterface::FRIDAY);
+        $startDate = Carbon::parse($request->validated('start')) ?? now()->startOfWeek(CarbonInterface::SATURDAY);
+        $endDate = Carbon::parse($request->validated('end')) ?? now()->endOfWeek(CarbonInterface::FRIDAY);
 
         // Adjust start and end dates based on clinic working hours
         if ($clinic->start && $clinic->end) {
