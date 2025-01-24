@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Clinic;
+use App\Models\Ill;
+use App\Models\Medicine;
 use App\Models\Patient;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,7 +17,7 @@ class PatientSeeder extends Seeder
      */
     public function run(): void
     {
-        Patient::query()->create([
+       $patient1 = Patient::query()->create([
             'firstName' => 'محمد',
             'lastName' => 'بكري',
             'phone' => '091111111',
@@ -28,7 +30,10 @@ class PatientSeeder extends Seeder
             'description' => 'وصف موجز'
         ]);
 
-        Patient::query()->create([
+       $patient1->permanentIlls()->sync(Ill::query()->inRandomOrder()->first()->id);
+       $patient1->permanentMedicines()->sync(Medicine::query()->inRandomOrder()->first()->id);
+
+       $patient2 = Patient::query()->create([
             'firstName' => 'حسن',
             'lastName' => 'فاضل',
             'phone' => '091111112',
@@ -40,5 +45,8 @@ class PatientSeeder extends Seeder
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'description' => 'وصف موجز' ,
         ]);
+
+        $patient2->permanentIlls()->sync(Ill::query()->inRandomOrder()->first()->id);
+        $patient2->permanentMedicines()->sync(Medicine::query()->inRandomOrder()->first()->id);
     }
 }

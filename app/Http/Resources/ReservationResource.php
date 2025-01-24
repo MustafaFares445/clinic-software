@@ -46,15 +46,30 @@ use Illuminate\Support\Facades\Auth;
  *         description="Patient associated with the reservation"
  *     ),
  *     @OA\Property(
- *          property="specification",
- *          ref="#/components/schemas/SpecificationResource",
- *          description="Patient associated with the reservation"
- *      ),
+ *         property="doctor",
+ *         ref="#/components/schemas/DoctorResource",
+ *         description="Doctor associated with the reservation"
+ *     ),
+ *     @OA\Property(
+ *         property="specification",
+ *         ref="#/components/schemas/SpecificationResource",
+ *         description="Specification associated with the reservation"
+ *     ),
  *     @OA\Property(
  *         property="createdAt",
  *         type="string",
  *         format="date-time",
  *         description="Creation timestamp of the reservation"
+ *     ),
+ *     @OA\Property(
+ *         property="pastReservationsCount",
+ *         type="integer",
+ *         description="Count of past reservations"
+ *     ),
+ *     @OA\Property(
+ *         property="upComingReservationCount",
+ *         type="integer",
+ *         description="Count of upcoming reservations"
  *     )
  * )
  */
@@ -68,15 +83,17 @@ class ReservationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->when($this->id , $this->id),
-            'start' => $this->when($this->start  , Carbon::parse($this->start)->toDateTimeString()),
-            'end' => $this->when($this->end , Carbon::parse($this->end)->toDateTimeString()),
-            'type' => $this->when($this->type , $this->type),
-            'status' => $this->when($this->status , $this->status),
+            'id' => $this->when($this->id, $this->id),
+            'start' => $this->when($this->start, Carbon::parse($this->start)->toDateTimeString()),
+            'end' => $this->when($this->end, Carbon::parse($this->end)->toDateTimeString()),
+            'type' => $this->when($this->type, $this->type),
+            'status' => $this->when($this->status, $this->status),
             'patient' => PatientResource::make($this->whenLoaded('patient')),
-            'doctor' => $this->when($this->doctor_id , UserResource::make($this->whenLoaded('doctor'))),
-            'specification' => $this->when($this->specification_id , SpecificationResource::make($this->whenLoaded('specification'))),
-            'createdAt' => Carbon::parse($this->created_at)->toDateTimeString()
+            'doctor' => $this->when($this->doctor_id, DoctorResource::make($this->whenLoaded('doctor'))),
+            'specification' => $this->when($this->specification_id, SpecificationResource::make($this->whenLoaded('specification'))),
+            'createdAt' => Carbon::parse($this->created_at)->toDateTimeString(),
+            'pastReservationsCount' => $this->when($this->pastReservationsCount, $this->pastReservationsCount),
+            'upComingReservationCount' => $this->when($this->upComingReservationCount, $this->upComingReservationCount),
         ];
     }
 }

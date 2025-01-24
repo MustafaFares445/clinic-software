@@ -6,13 +6,18 @@ use App\Actions\PatientsOrder;
 use App\Http\Requests\PatientIndexRequest;
 use App\Http\Requests\PatientRequest;
 use App\Http\Resources\PatientResource;
+use App\Http\Resources\RecordResource;
+use App\Http\Resources\ReservationResource;
 use App\Models\Patient;
 use App\Models\Reservation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class PatientController extends Controller
@@ -78,20 +83,7 @@ class PatientController extends Controller
      */
     public function index(PatientIndexRequest $request , PatientsOrder $patientsOrderAction): AnonymousResourceCollection|JsonResponse
     {
-        // Validate clinic access for the authenticated user
-        if ($request->has('clinicId') && Auth::user()->doctorClinics()->where('clinic_id', $request->validated('clinicId'))->doesntExist()) {
-            return response()->json(['error' => 'You are not allowed.'], ResponseAlias::HTTP_FORBIDDEN);
-        }
-
         $patientsQuery = Patient::with('media')
-            ->when($request->has('clinicId') , function (Builder $query){
-                $query->where('clinic_id' , request()->input('clinicId'));
-            })
-            ->when(request()->has('clinicId') && Auth::user()->hasRole('doctor'), function (Builder $query) {
-                $query->whereHas('reservations' , function (Builder $query){
-                    $query->where('doctor_id' , Auth::id());
-                });
-            })
             ->select([
                 'patients.id',
                 'patients.firstName',
@@ -155,9 +147,7 @@ class PatientController extends Controller
      */
     public function store(PatientRequest $request): PatientResource
     {
-        $patient = Patient::query()->create(array_merge($request->validated(),[
-            'clinic_id' => Auth::user()->clinic_id
-        ]));
+        $patient = Patient::query()->create($request->validated());
 
         return PatientResource::make($patient);
     }
@@ -199,18 +189,159 @@ class PatientController extends Controller
      */
     public function show(Patient $patient): PatientResource
     {
-        $reservationQuery = $patient->reservations()
-            ->when(request()->has('clinicId'), function (Builder $query) {
-                $query->where('clinic_id', request()->get('clinicId'));
-            })
-            ->when(Auth::user()->hasRole('doctor'), function (Builder $query) {
-                $query->where('doctor_id', Auth::id());
-            });
+        return PatientResource::make($patient->load(['media' , 'permanentIlls']));
+    }
 
-        $pastReservationsCount = $reservationQuery->clone()->whereDate('start', '<', now())->count();
-        $upComingReservationsCount = $reservationQuery->clone()->whereDate('start', '>=', now())->count();
+    /**
+     * @OA\Get(
+     *     path="/api/patients/{patient}/records",
+     *     summary="Get patient records",
+     *     description="Retrieves all records for a specific patient with related media, reservation, and doctor information",
+     *     operationId="patientRecords",
+     *     tags={"Patients"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="patient",
+     *         in="path",
+     *         required=true,
+     *         description="Patient ID",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/RecordResource")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Patient not found"
+     *     )
+     * )
+     */
+    public function patientRecords(Patient $patient): AnonymousResourceCollection
+    {
+        return RecordResource::collection(
+            $patient->records()
+                ->with('media')
+                ->with(['reservation' => function ($query){
+                    $query->select(['id' , 'start' , 'end']);
+                }])
+                ->with(['doctors' => function ($query){
+                    $query->select(['id' , 'fullName']);
+                }])
+                ->with(['medicines' => function ($query){
+                    $query->select(['medicines.id' , 'name']);
+                }])
+                ->with(['ills' => function ($query){
+                    $query->select(['ills.id' , 'name' ]);
+                }])
+                ->orderByDesc('dateTime')
+                ->cursorPaginate()
+        );
+    }
 
-        return PatientResource::make($patient->load(['media', 'records', 'records.reservation']), $pastReservationsCount, $upComingReservationsCount);
+    /**
+     * @OA\Get(
+     *     path="/api/patients/{patient}/reservations",
+     *     summary="Get patient reservations",
+     *     description="Retrieves all reservations for a specific patient with related media and doctor information",
+     *     operationId="patientReservations",
+     *     tags={"Patients"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="patient",
+     *         in="path",
+     *         required=true,
+     *         description="Patient ID",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/ReservationResource")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Patient not found"
+     *     )
+     * )
+     */
+    public function patientReservations(Patient $patient): AnonymousResourceCollection
+    {
+        return ReservationResource::collection(
+            $patient->reservations()->with(['media', 'doctor'])->orderByDesc('created_at')->cursorPaginate()
+        );
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/patients/{patient}/reservations/count",
+     *     summary="Get patient reservations count",
+     *     description="Get the count of past and upcoming reservations for a specific patient",
+     *     operationId="patientReservationsCount",
+     *     tags={"Patients"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="patient",
+     *         in="path",
+     *         required=true,
+     *         description="Patient ID",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="clinicId",
+     *         in="query",
+     *         required=false,
+     *         description="Clinic ID to filter reservations",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="pastReservationCount",
+     *                 type="integer",
+     *                 description="Number of past reservations"
+     *             ),
+     *             @OA\Property(
+     *                 property="upComingReservationsCount",
+     *                 type="integer",
+     *                 description="Number of upcoming reservations"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Patient not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function patientReservationsCount(Patient $patient): JsonResponse
+    {
+        return response()->json([
+            'pastReservationCount' => $patient->reservations()->whereDate('start', '<', now())->count(),
+            'upComingReservationsCount' => $patient->reservations()->whereDate('start', '>=', now())->count()
+        ]);
     }
 
     /**

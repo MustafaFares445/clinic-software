@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Schema(
@@ -95,5 +96,12 @@ class PatientRequest extends FormRequest
             'address' => ['nullable' , 'string'],
             'description' => ['nullable' , 'string'],
         ];
+    }
+
+    public function validated($key = null, $default = null)
+    {
+        return array_merge(parent::validated($key, $default) , [
+            'clinic_id' => Auth::user()->clinic_id
+        ]);
     }
 }

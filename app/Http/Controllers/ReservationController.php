@@ -66,8 +66,8 @@ class ReservationController extends Controller
             ->update(['status' => ReservationStatuses::CHECK]);
 
         // Determine the start and end dates for the query
-        $startDate = Carbon::parse($request->validated('start')) ?? now()->startOfWeek(CarbonInterface::SATURDAY);
-        $endDate = Carbon::parse($request->validated('end')) ?? now()->endOfWeek(CarbonInterface::FRIDAY);
+        $startDate = $request->has('start') ? Carbon::parse($request->validated('start')) : now()->startOfWeek(CarbonInterface::SATURDAY);
+        $endDate = $request->has('end') ? Carbon::parse($request->validated('end')) : now()->endOfWeek(CarbonInterface::FRIDAY);
 
         // Adjust start and end dates based on clinic working hours
         if ($clinic->start && $clinic->end) {
@@ -91,9 +91,6 @@ class ReservationController extends Controller
             }])
             ->whereDate('start', '>=', $startDate)
             ->whereDate('end', '<=', $endDate)
-            ->when($request->has('clinicId') && Auth::user()->hasRole('doctor'), function (Builder $query) {
-                $query->where('doctor_id', Auth::id());
-            })
             ->orderBy('start');
 
         // Return the collection of reservations
@@ -213,7 +210,7 @@ class ReservationController extends Controller
      *     )
      * )
      */
-    public function changeStatus(Request $request, Reservation $reservation): ReservationResource
+    public function changeStatus(Request $request, Reservation $reservation): Response
     {
         $request->validate([
             'status' => ['required' , 'string' , Rule::in(ReservationStatuses::values())]
@@ -221,7 +218,7 @@ class ReservationController extends Controller
 
         $reservation->update(['status' => $request->input('status')]);
 
-        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
+        return response()->noContent();
     }
 
     /**

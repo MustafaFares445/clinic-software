@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\RecordIllsTypes;
 use Database\Factories\RecordFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,13 +26,21 @@ class Record extends Model implements HasMedia
       'reservation_id',
       'description',
       'type',
-      'price',
+      'dateTime'
     ];
+
+    public static array $mediaCollection = ['x-ray' , 'pdf' , 'files' , 'images' , 'audios' , 'videos'];
 
     protected static function booted(): void
     {
         if (Auth::check() && !Auth::user()->hasRole('super admin') && !request()->has('clinicId'))
             self::query()->where('clinic_id' , Auth::user()->clinic_id);
+
+        if (request()->has('clinicId'))
+            self::query()->where('clinic_id' , request()->input('clinicId'));
+
+       if (Auth::check() && Auth::user()->hasRole('doctor'))
+           self::query()->whereRelation( 'doctors' , 'doctor_id' , '=' , Auth::id());
     }
 
 
@@ -52,17 +61,19 @@ class Record extends Model implements HasMedia
 
     public function ills(): BelongsToMany
     {
-        return $this->belongsToMany(Ill::class);
+        return $this->belongsToMany(Ill::class , 'ill_record')->withPivot('type');
     }
 
     public function medicines(): BelongsToMany
     {
-        return $this->belongsToMany(Medicine::class);
+        return $this->belongsToMany(Medicine::class , 'medicine_record')
+            ->using(MedicineRecord::class)
+            ->withPivot(['id' , 'note' , 'type']);
     }
 
     public function doctors(): BelongsToMany
     {
-        return $this->belongsToMany(User::class , 'record_user' , 'record_id' , 'user_id');
+        return $this->belongsToMany(User::class , 'doctor_record' , 'record_id' , 'doctor_id');
     }
     public function transaction(): MorphMany
     {

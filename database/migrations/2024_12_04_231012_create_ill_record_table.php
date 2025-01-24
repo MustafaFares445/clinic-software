@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RecordIllsTypes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,6 +15,8 @@ return new class extends Migration
         Schema::create('ill_record', function (Blueprint $table) {
             $table->foreignUuid('ill_id')->constrained('ills');
             $table->foreignUuid('record_id')->constrained('records');
+            $table->enum('type' , RecordIllsTypes::values())->default(RecordIllsTypes::DIAGNOSED);
+            $table->unique(['ill_id' , 'record_id' , 'type']);
         });
     }
 

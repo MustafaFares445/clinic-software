@@ -2,11 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Enums\RecordIllsTypes;
+use App\Enums\RecordMedicinesTypes;
 use App\Enums\RecordTypes;
 use App\Enums\ReservationTypes;
 use App\Models\Clinic;
 use App\Models\Ill;
 use App\Models\Medicine;
+use App\Models\MedicineRecord;
 use App\Models\Patient;
 use App\Models\Record;
 use App\Models\Reservation;
@@ -21,37 +24,58 @@ class RecordSeeder extends Seeder
      */
     public function run(): void
     {
-        $medicinesCount = Medicine::query()->count();
-        $illCount = Ill::query()->count();
        $record = Record::query()->create([
             'patient_id' => Patient::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
             'description' => 'وصف موجز',
             'type' => RecordTypes::APPOINTMENT,
-            'price' => 5,
+            'dateTime' => now()
        ]);
 
-       $record->medicines()->sync(Medicine::query()->inRandomOrder()->take(rand(1 , $medicinesCount))->pluck('id')->toArray());
-       $record->ills()->sync(Ill::query()->inRandomOrder()->take(rand(1 , $illCount))->pluck('id')->toArray());
+        $record->ills()->attach( Ill::query()->inRandomOrder()->first()->id, [
+            'type' => RecordIllsTypes::DIAGNOSED,
+        ]);
+
+        $record->ills()->attach( Ill::query()->inRandomOrder()->first()->id , [
+            'type' => RecordIllsTypes::TRANSIENT,
+        ]);
+
+        $record->medicines()->attach( Medicine::query()->inRandomOrder()->first()->id,[
+            'type' => RecordMedicinesTypes::DIAGNOSED,
+            'note' => '200 gm من الدواء ثلاث مرات باليوم لمدة أسبوع'
+        ]);
+
+        $record->medicines()->attach( Medicine::query()->inRandomOrder()->first()->id,[
+            'type' => RecordMedicinesTypes::TRANSIENT,
+            'note' => '400 gm من الدواء 5 مرات باليوم لمدة شهر'
+        ]);
+
        $record->doctors()->sync(User::query()->inRandomOrder()->take(rand(1 , 2))->pluck('id')->toArray());
+
        $record->transaction()->create([
           'type' => 'income',
           'amount' => 5,
           'clinic_id' => Clinic::query()->inRandomOrder()->first()->id
        ]);
 
-       $record2  = Record::query()->create([
+       $record2 = Record::query()->create([
             'patient_id' => Patient::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
             'description' => 'وصف موجز',
             'type' => RecordTypes::SURGERY,
-            'price' => 50,
+            'dateTime' => now()
        ]);
 
-        $record2->medicines()->sync(Medicine::query()->inRandomOrder()->take(rand(1 , $medicinesCount))->pluck('id')->toArray());
-        $record2->ills()->sync(Ill::query()->inRandomOrder()->take(rand(1 , $illCount))->pluck('id')->toArray());
+        $record2->ills()->attach( Ill::query()->inRandomOrder()->first()->id, [
+            'type' => RecordIllsTypes::DIAGNOSED,
+        ]);
+
+        $record2->ills()->attach( Ill::query()->inRandomOrder()->first()->id , [
+            'type' => RecordIllsTypes::TRANSIENT,
+        ]);
+
         $record2->doctors()->sync(User::query()->inRandomOrder()->take(rand(1 , 2))->pluck('id')->toArray());
 
         $record2->transaction()->create([
@@ -66,11 +90,19 @@ class RecordSeeder extends Seeder
             'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
             'description' => 'وصف موجز',
             'type' => RecordTypes::INSPECTION,
-            'price' => 10,
+            'dateTime' => now()
        ]);
 
-        $record3->medicines()->sync(Medicine::query()->inRandomOrder()->take(rand(1 , $medicinesCount))->pluck('id')->toArray());
-        $record3->ills()->sync(Ill::query()->inRandomOrder()->take(rand(1 , $illCount))->pluck('id')->toArray());
+        $record3->medicines()->attach( Medicine::query()->inRandomOrder()->first()->id,[
+            'type' => RecordMedicinesTypes::DIAGNOSED,
+        ]);
+
+        $record3->medicines()->attach( Medicine::query()->inRandomOrder()->first()->id,[
+            'type' => RecordMedicinesTypes::TRANSIENT,
+            'note' => '400 gm من الدواء 5 مرات باليوم لمدة شهر'
+        ]);
+
+
         $record3->doctors()->sync(User::query()->inRandomOrder()->take(rand(1 , 2))->pluck('id')->toArray());
 
         $record3->transaction()->create([

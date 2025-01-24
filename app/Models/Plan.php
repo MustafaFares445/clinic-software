@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Trait\HasThumbnail;
 use Database\Factories\PlanFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Plan extends Model implements HasMedia
 {
     /** @use HasFactory<PlanFactory> */
-    use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
+    use HasFactory , HasThumbnail , SoftDeletes , HasUuids;
 
     protected $fillable = [
       'name',

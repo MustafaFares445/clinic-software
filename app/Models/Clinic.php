@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Trait\HasThumbnail;
 use Carbon\Carbon;
 use Database\Factories\ClinicFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -18,7 +19,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Clinic extends Model implements HasMedia
 {
     /** @use HasFactory<ClinicFactory> */
-    use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
+    use HasFactory , HasThumbnail , SoftDeletes , HasUuids;
 
     protected $fillable = [
       'name',

@@ -408,6 +408,167 @@
                 ]
             }
         },
+        "/api/patients/{patient}/records": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get patient records",
+                "description": "Retrieves all records for a specific patient with related media, reservation, and doctor information",
+                "operationId": "patientRecords",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "Patient ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/RecordResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/patients/{patient}/reservations": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get patient reservations",
+                "description": "Retrieves all reservations for a specific patient with related media and doctor information",
+                "operationId": "patientReservations",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "Patient ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ReservationResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/patients/{patient}/reservations/count": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get patient reservations count",
+                "description": "Get the count of past and upcoming reservations for a specific patient",
+                "operationId": "patientReservationsCount",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "Patient ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "clinicId",
+                        "in": "query",
+                        "description": "Clinic ID to filter reservations",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "pastReservationCount": {
+                                            "description": "Number of past reservations",
+                                            "type": "integer"
+                                        },
+                                        "upComingReservationsCount": {
+                                            "description": "Number of upcoming reservations",
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/reservations": {
             "post": {
                 "tags": [
@@ -838,6 +999,56 @@
                 },
                 "type": "object"
             },
+            "DoctorResource": {
+                "title": "Doctor Resource",
+                "description": "Doctor resource representation",
+                "properties": {
+                    "string": {
+                        "description": "The unique identifier of the doctor",
+                        "type": "string"
+                    },
+                    "fullName": {
+                        "description": "The full name of the doctor",
+                        "type": "string"
+                    },
+                    "avatar": {
+                        "$ref": "#/components/schemas/MediaResource"
+                    }
+                },
+                "type": "object"
+            },
+            "IllResource": {
+                "title": "Ill Resource",
+                "description": "Ill resource representation",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the ill",
+                        "type": "string",
+                        "example": "1245654"
+                    },
+                    "name": {
+                        "description": "Name of the ill",
+                        "type": "string",
+                        "example": "ill-name"
+                    },
+                    "description": {
+                        "description": "Description of the ill",
+                        "type": "string",
+                        "example": "This is a sample ill description."
+                    },
+                    "specifications": {
+                        "description": "List of specifications associated with the ill",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SpecificationResource"
+                        }
+                    },
+                    "image": {
+                        "$ref": "#/components/schemas/MediaResource"
+                    }
+                },
+                "type": "object"
+            },
             "MediaResource": {
                 "title": "MediaResource",
                 "description": "Media resource representation",
@@ -871,6 +1082,38 @@
                         "description": "Human-readable size of the media",
                         "type": "string",
                         "example": "2.5 MB"
+                    }
+                },
+                "type": "object"
+            },
+            "MedicineResource": {
+                "title": "Medicine Resource",
+                "description": "Medicine resource representation",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the medicine",
+                        "type": "string",
+                        "example": "12343"
+                    },
+                    "name": {
+                        "description": "name of the medicine",
+                        "type": "string",
+                        "example": "cetamol"
+                    },
+                    "description": {
+                        "description": "description of the medicine",
+                        "type": "string",
+                        "example": "This is a sample medicine description."
+                    },
+                    "specifications": {
+                        "description": "List of specification associated with the medicine",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SpecificationResource"
+                        }
+                    },
+                    "image": {
+                        "$ref": "#/components/schemas/MediaResource"
                     }
                 },
                 "type": "object"
@@ -979,22 +1222,56 @@
                         "type": "string",
                         "example": "Medical"
                     },
-                    "images": {
-                        "description": "List of images associated with the record",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/MediaResource"
-                        }
-                    },
-                    "files": {
-                        "description": "List of files associated with the record",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/MediaResource"
-                        }
+                    "date": {
+                        "description": "Date of the record",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-01T12:34:56Z"
                     },
                     "reservation": {
                         "$ref": "#/components/schemas/ReservationResource"
+                    },
+                    "doctors": {
+                        "description": "List of doctors associated with the record",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DoctorResource"
+                        }
+                    },
+                    "ills": {
+                        "description": "List of illnesses associated with the record",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/IllResource"
+                        }
+                    },
+                    "transientIlls": {
+                        "description": "List of transient illnesses associated with the record",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/IllResource"
+                        }
+                    },
+                    "medicines": {
+                        "description": "List of medicines associated with the record",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MedicineResource"
+                        }
+                    },
+                    "transientMedicines": {
+                        "description": "List of transient medicines associated with the record",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MedicineResource"
+                        }
+                    },
+                    "media": {
+                        "description": "List of media files associated with the record",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MediaResource"
+                        }
                     }
                 },
                 "type": "object"
@@ -1028,6 +1305,9 @@
                     "patient": {
                         "$ref": "#/components/schemas/PatientResource"
                     },
+                    "doctor": {
+                        "$ref": "#/components/schemas/DoctorResource"
+                    },
                     "specification": {
                         "$ref": "#/components/schemas/SpecificationResource"
                     },
@@ -1035,6 +1315,14 @@
                         "description": "Creation timestamp of the reservation",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "pastReservationsCount": {
+                        "description": "Count of past reservations",
+                        "type": "integer"
+                    },
+                    "upComingReservationCount": {
+                        "description": "Count of upcoming reservations",
+                        "type": "integer"
                     }
                 },
                 "type": "object"

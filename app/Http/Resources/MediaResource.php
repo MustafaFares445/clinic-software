@@ -4,6 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Spatie\Image\Exceptions\CouldNotLoadImage;
+use Spatie\Image\Image;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\InvalidConversion;
+
 
 /**
  * @OA\Schema(
@@ -53,16 +57,36 @@ class MediaResource extends JsonResource
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
+     * @throws CouldNotLoadImage
      */
     public function toArray(Request $request): array
     {
-        return [
+        $data =  [
             'id' => $this->id,
             'name' => $this->name,
             'fileName' => $this->file_name,
             'collection' => $this->collection_name,
             'url' => $this->getFullUrl(),
             'size' => $this->human_readable_size,
+            'type' => $this->getTypeAttribute(),
+            'extension' => $this->getExtensionAttribute(),
+            'caption' => $this->getCustomProperty('caption') ?? $this->name,
         ];
+
+        if ($this->getTypeAttribute() === 'image'){
+            $imageInstance = Image::load($this->getPath());
+            $data['width'] = $imageInstance->getWidth();
+            $data['height'] = $imageInstance->getHeight();
+        }
+
+        // Check if the 'thumb' conversion exists
+        try {
+            $thumbnailUrl = $this->getFullUrl('thumb');
+            $data['thumbnailUrl'] = $thumbnailUrl;
+        } catch (InvalidConversion $e) {
+            // If the 'thumb' conversion does not exist, do not add 'thumbnailUrl'
+        }
+
+        return $data;
     }
 }

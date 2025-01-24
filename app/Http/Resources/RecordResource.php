@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\RecordIllsTypes;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -30,21 +32,52 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         example="Medical"
  *     ),
  *     @OA\Property(
- *         property="images",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/MediaResource"),
- *         description="List of images associated with the record"
- *     ),
- *     @OA\Property(
- *         property="files",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/MediaResource"),
- *         description="List of files associated with the record"
+ *         property="date",
+ *         type="string",
+ *         format="date-time",
+ *         description="Date of the record",
+ *         example="2023-10-01T12:34:56Z"
  *     ),
  *     @OA\Property(
  *         property="reservation",
  *         ref="#/components/schemas/ReservationResource",
  *         description="Reservation associated with the record"
+ *     ),
+ *     @OA\Property(
+ *         property="doctors",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/DoctorResource"),
+ *         description="List of doctors associated with the record"
+ *     ),
+ *     @OA\Property(
+ *         property="ills",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/IllResource"),
+ *         description="List of illnesses associated with the record"
+ *     ),
+ *     @OA\Property(
+ *         property="transientIlls",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/IllResource"),
+ *         description="List of transient illnesses associated with the record"
+ *     ),
+ *     @OA\Property(
+ *         property="medicines",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/MedicineResource"),
+ *         description="List of medicines associated with the record"
+ *     ),
+ *     @OA\Property(
+ *         property="transientMedicines",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/MedicineResource"),
+ *         description="List of transient medicines associated with the record"
+ *     ),
+ *     @OA\Property(
+ *         property="media",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/MediaResource"),
+ *         description="List of media files associated with the record"
  *     )
  * )
  */
@@ -61,9 +94,22 @@ class RecordResource extends JsonResource
             'id' => $this->when($this->id , $this->id),
             'description' => $this->when($this->description , $this->description),
             'type' => $this->when($this->type , $this->type),
-            'images' => MediaResource::collection($this->whenLoaded('images')),
-            'files' => MediaResource::collection($this->whenLoaded('files')),
-            'reservation' => ReservationResource::make($this->whenLoaded('reservation'))
+            'date' => $this->when($this->date , Carbon::parse($this->date)->toDateTimeString()),
+            'reservation' => ReservationResource::make($this->whenLoaded('reservation')),
+            'doctors' => DoctorResource::collection($this->whenLoaded('doctors')),
+            'ills' => IllResource::collection($this->whenLoaded('ills', function () {
+                return $this->ills->where('pivot.type', RecordIllsTypes::DIAGNOSED);
+            })),
+            'transientIlls' => IllResource::collection($this->whenLoaded('ills', function () {
+                return $this->ills->where('pivot.type', RecordIllsTypes::TRANSIENT);
+            })),
+            'medicines' => MedicineResource::collection($this->whenLoaded('medicines', function () {
+                return $this->medicines->where('pivot.type', RecordIllsTypes::DIAGNOSED);
+            })),
+            'transientMedicines' => MedicineResource::collection($this->whenLoaded('medicines', function () {
+                return $this->medicines->where('pivot.type', RecordIllsTypes::TRANSIENT);
+            })),
+            'media' => MediaResource::collection($this->whenLoaded('media'))
         ];
     }
 }

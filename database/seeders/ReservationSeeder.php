@@ -21,8 +21,8 @@ class ReservationSeeder extends Seeder
     public function run(): void
     {
         Reservation::query()->create([
-            'start' => '2025-01-04 11:00:00',
-            'end' => '2025-01-04 12:00:00',
+            'start' => '2025-01-27 11:00:00',
+            'end' => '2025-01-27 12:00:00',
             'patient_id' => Patient::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->first()->id,
             'doctor_id' => User::query()->inRandomOrder()->first()->id,
@@ -31,8 +31,8 @@ class ReservationSeeder extends Seeder
         ]);
 
         Reservation::query()->create([
-            'start' => '2025-01-04 02:00:00',
-            'end' => '2025-01-04 03:00:00',
+            'start' => '2025-01-26 02:00:00',
+            'end' => '2025-01-26 03:00:00',
             'patient_id' => Patient::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->first()->id,
             'doctor_id' => User::query()->inRandomOrder()->first()->id,
@@ -42,8 +42,8 @@ class ReservationSeeder extends Seeder
         ]);
 
         Reservation::query()->create([
-            'start' => '2025-01-05 02:00:00',
-            'end' => '2025-01-05 03:00:00',
+            'start' => '2025-01-25 02:00:00',
+            'end' => '2025-01-25 03:00:00',
             'patient_id' => Patient::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->first()->id,
             'doctor_id' => User::query()->inRandomOrder()->first()->id,
@@ -53,8 +53,8 @@ class ReservationSeeder extends Seeder
         ]);
 
         Reservation::query()->create([
-            'start' => '2025-01-07 02:00:00',
-            'end' => '2025-01-07 03:00:00',
+            'start' => '2025-01-28 02:00:00',
+            'end' => '2025-01-28 03:00:00',
             'patient_id' => Patient::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->first()->id,
             'doctor_id' => User::query()->inRandomOrder()->first()->id,

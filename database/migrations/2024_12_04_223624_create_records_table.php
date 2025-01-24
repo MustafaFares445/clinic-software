@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->foreignUuid('reservation_id')->nullable()->constrained('reservations');
             $table->longText('description');
-            $table->enum('type' , RecordTypes::values());//surgery
-            $table->unsignedBigInteger('price')->nullable();
+            $table->enum('type' , RecordTypes::values());
+            $table->dateTime('dateTime');
             $table->timestamps();
             $table->softDeletes();
         });
