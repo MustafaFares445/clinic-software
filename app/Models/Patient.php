@@ -65,7 +65,7 @@ class Patient extends Model implements HasMedia
 
     public function reservations(): HasMany
     {
-        return $this->hasMany(Reservation::class)->orderByDesc('start_date');
+        return $this->hasMany(Reservation::class)->orderByDesc('start');
     }
 
     public function permanentIlls(): BelongsToMany
