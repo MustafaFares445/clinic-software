@@ -5,20 +5,16 @@ namespace App\Http\Controllers;
 use App\Actions\PatientsOrder;
 use App\Http\Requests\PatientIndexRequest;
 use App\Http\Requests\PatientRequest;
+use App\Http\Resources\MediaResource;
 use App\Http\Resources\PatientResource;
-use App\Http\Resources\RecordResource;
 use App\Http\Resources\ReservationResource;
 use App\Models\Patient;
 use App\Models\Reservation;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class PatientController extends Controller
 {
@@ -189,15 +185,15 @@ class PatientController extends Controller
      */
     public function show(Patient $patient): PatientResource
     {
-        return PatientResource::make($patient->load(['media' , 'permanentIlls']));
+        return PatientResource::make($patient->load(['media' , 'permanentIlls' , 'permanentMedicines']));
     }
 
     /**
      * @OA\Get(
-     *     path="/api/patients/{patient}/records",
-     *     summary="Get patient records",
-     *     description="Retrieves all records for a specific patient with related media, reservation, and doctor information",
-     *     operationId="patientRecords",
+     *     path="/api/patients/{patient}/files",
+     *     summary="Get patient files",
+     *     description="Retrieves all files for a specific patient",
+     *     operationId="patientFiles",
      *     tags={"Patients"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
@@ -215,7 +211,7 @@ class PatientController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/RecordResource")
+     *                 @OA\Items(ref="#/components/schemas/MediaResource")
      *             )
      *         )
      *     ),
@@ -225,24 +221,11 @@ class PatientController extends Controller
      *     )
      * )
      */
-    public function patientRecords(Patient $patient): AnonymousResourceCollection
+    public function patientRecords(Patient $patient , Request $request): AnonymousResourceCollection
     {
-        return RecordResource::collection(
-            $patient->records()
-                ->with('media')
-                ->with(['reservation' => function ($query){
-                    $query->select(['id' , 'start' , 'end']);
-                }])
-                ->with(['doctors' => function ($query){
-                    $query->select(['id' , 'fullName']);
-                }])
-                ->with(['medicines' => function ($query){
-                    $query->select(['medicines.id' , 'name']);
-                }])
-                ->with(['ills' => function ($query){
-                    $query->select(['ills.id' , 'name' ]);
-                }])
-                ->orderByDesc('dateTime')
+        return MediaResource::collection(
+            $patient->media()
+                ->when($request->has('collection'), fn($query) => $query->where('collection_name' , $request->input('collection')))
                 ->cursorPaginate()
         );
     }

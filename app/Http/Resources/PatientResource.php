@@ -128,7 +128,8 @@ class PatientResource extends JsonResource
             'nextReservation' => $this->when($this->next_reservation_date , Carbon::parse($this->next_reservation_date)->toDateTimeString()),
             'lastReservation' => $this->when($this->last_reservation_date , Carbon::parse($this->last_reservation_date)->toDateTimeString()),
 
-            'permanentIlls' =>IllResource::collection($this->whenLoaded('permanentIlls'))
+            'permanentIlls' => IllResource::collection($this->whenLoaded('permanentIlls')),
+            'permanentMedicines' => MedicineResource::collection($this->whenLoaded('permanentMedicines')),
         ];
     }
 }

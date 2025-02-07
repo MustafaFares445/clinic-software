@@ -23,7 +23,7 @@ class RecordController extends Controller
     public function __construct()
     {
         $this->recordService = new RecordService();
-        $this->mediaService = new MediaService();
+        $this->mediaService = new MediaService(Record::$mediaCollection);
     }
 
     /**
@@ -48,7 +48,7 @@ class RecordController extends Controller
         if ($request->has('doctorsIds'))
             $record->doctors()->sync($request->validated('doctorsIds'));
 
-        $this->mediaService->handleMediaUpload($record , $request , Record::$mediaCollection);
+        $this->mediaService->handleMediaUpload($record , $request);
 
         return RecordResource::make($record->load(['media' , 'reservation' , 'ills' , 'medicines' , 'doctors']));
     }
