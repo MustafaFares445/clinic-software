@@ -21,8 +21,10 @@ return new class extends Migration
             $table->string('motherName')->nullable();
             $table->string('nationalNumber')->nullable();
             $table->string('address')->nullable();
+            $table->string('birth')->nullable();
+            $table->string('gender')->nullable();
             $table->foreignUuid('clinic_id')->constrained('clinics');
-            $table->longText('description')->nullable();
+            $table->longText('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

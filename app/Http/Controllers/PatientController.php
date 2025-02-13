@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Actions\PatientsOrder;
 use App\Http\Requests\PatientIndexRequest;
 use App\Http\Requests\PatientRequest;
+use App\Http\Requests\ProfileRequest;
 use App\Http\Resources\MediaResource;
 use App\Http\Resources\PatientResource;
 use App\Http\Resources\ReservationResource;
 use App\Models\Patient;
 use App\Models\Reservation;
+use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -18,6 +20,12 @@ use Illuminate\Support\Facades\Auth;
 
 class PatientController extends Controller
 {
+    protected MediaService $mediaService;
+    public function __construct()
+    {
+        $this->mediaService = new MediaService();
+    }
+
     /**
      * @OA\Get(
      *     path="/api/patients",
@@ -38,7 +46,7 @@ class PatientController extends Controller
      *         required=false,
      *         @OA\Schema(
      *             type="string",
-     *             enum={"firstName", "lastName", "nextReservation", "lastReservation", "createdAt"},
+     *             enum={"firstName", "lastName", "nextReservation", "lastReservation", "registeredAt"},
      *             nullable=true
      *         )
      *     ),
@@ -83,7 +91,9 @@ class PatientController extends Controller
             ->select([
                 'patients.id',
                 'patients.firstName',
+                'patients.fatherName',
                 'patients.lastName',
+                'patients.phone',
                 'patients.created_at',
                 'next_reservation.start as next_reservation_date',
                 'last_reservation.start as last_reservation_date',
@@ -112,7 +122,7 @@ class PatientController extends Controller
 
         $patientsOrderAction->order($patientsQuery);
 
-        return PatientResource::collection($patientsQuery->simplePaginate($request->integer('perPage' , 20)));
+        return PatientResource::collection($patientsQuery->paginate($request->integer('perPage' , 20)));
     }
 
     /**
@@ -144,8 +154,7 @@ class PatientController extends Controller
     public function store(PatientRequest $request): PatientResource
     {
         $patient = Patient::query()->create($request->validated());
-
-        return PatientResource::make($patient);
+        return PatientResource::make($patient->load('media'));
     }
 
     /**
@@ -224,9 +233,7 @@ class PatientController extends Controller
     public function patientRecords(Patient $patient , Request $request): AnonymousResourceCollection
     {
         return MediaResource::collection(
-            $patient->media()
-                ->when($request->has('collection'), fn($query) => $query->where('collection_name' , $request->input('collection')))
-                ->cursorPaginate()
+            $patient->records()->with('media')->orderByDesc('created_at')->cursorPaginate()
         );
     }
 
@@ -361,9 +368,7 @@ class PatientController extends Controller
      */
     public function update(PatientRequest $request, Patient $patient): PatientResource
     {
-        $patient->update(array_merge($request->validated(),[
-            'clinic_id' => Auth::user()->clinic_id
-        ]));
+        $patient->update($request->validated());
 
         return PatientResource::make($patient);
     }
@@ -394,6 +399,90 @@ class PatientController extends Controller
     public function destroy(Patient $patient): Response
     {
         $patient->delete();
+        return response()->noContent();
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/patients/{patient}/profile-image",
+     *     summary="Upload patient profile image",
+     *     description="Upload and associate a profile image with a patient",
+     *     operationId="addProfileImage",
+     *     tags={"Patients"},
+     *     security={{ "bearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="patient",
+     *         in="path",
+     *         description="Patient ID",
+     *         required=true,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="image",
+     *                     type="string",
+     *                     format="binary",
+     *                     description="Profile image file"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Profile image uploaded successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/MediaResource")
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     */
+    public function addProfileImage(Patient $patient, ProfileRequest $request): MediaResource
+    {
+        return MediaResource::make(
+            $this->mediaService->handleMediaUpload($patient, $request->file('image'), 'profile')
+        );
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/patients/{patient}/profile-image",
+     *     summary="Delete patient profile image",
+     *     description="Remove the profile image associated with a patient",
+     *     operationId="deleteProfileImage",
+     *     tags={"Patients"},
+     *     security={{ "bearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="patient",
+     *         in="path",
+     *         description="Patient ID",
+     *         required=true,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Profile image deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Profile image not found"
+     *     )
+     * )
+     */
+    public function deleteProfileImage(Patient $patient): Response
+    {
+        $patient->getFirstMedia('profile')->delete();
+
         return response()->noContent();
     }
 }

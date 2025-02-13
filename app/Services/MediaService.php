@@ -4,23 +4,26 @@ namespace App\Services;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaService
 {
-    public array $mediaCollections;
+    public static array $mediaCollections = ['files' , 'images' , 'audios' , 'videos'];
+    public static array $medicalMediaCollections = ['x-ray' , 'tests'];
 
-    public function __construct(array $mediaCollections = ['files' , 'images' , 'audios' , 'videos'])
+    public function handleMultipleMediaUpload(Model $model , Request $request): void
     {
-        $this->mediaCollections = $mediaCollections;
+        collect(array_merge(self::$mediaCollections, self::$mediaCollections))->map(function (string $collection) use ($model , $request){
+            foreach ($request->file($collection) as $file)
+                $this->handleMediaUpload($model , $file , $collection);
+        });
     }
 
-    public function handleMediaUpload(Model $model , Request $request): void
+    public function handleMediaUpload(Model $model, $media, string $collection): Media|null
     {
-        foreach ($this->mediaCollections as $collection) {
-            if ($request->hasFile($collection)) {
-                foreach ($request->file($collection) as $file)
-                    $model->addMedia($file)->toMediaCollection($collection);
-            }
-        }
+        if ($media)
+            return $model->addMedia($media)->usingName($media->hashName())->toMediaCollection($collection);
+
+        return null;
     }
 }

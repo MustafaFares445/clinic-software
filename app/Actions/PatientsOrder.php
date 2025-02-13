@@ -12,7 +12,7 @@ class PatientsOrder
             $patientQuery->orderBy('patients.firstName' , request()->input('orderType' , 'ASC'));
         if (request()->input('orderBy') == 'lastName')
             $patientQuery->orderBy('patients.lastName' , request()->input('orderType' , 'ASC'));
-        if (request()->input('orderBy') == 'createdAt')
+        if (request()->input('orderBy') == 'registeredAt')
             $patientQuery->orderBy('patients.created_at' , request()->input('orderType' , 'ASC'));
         else
             $this->reservationOrder($patientQuery , request()->input('orderBy'));

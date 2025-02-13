@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\RecordController;
 use App\Http\Controllers\ReservationController;
@@ -23,10 +24,17 @@ Route::prefix('/patients')->middleware('auth:sanctum')->group(function (){
     Route::get('/{patient}/records' , [PatientController::class , 'patientRecords']);
     Route::get('/{patient}/reservations' , [PatientController::class , 'patientReservations']);
     Route::get('/{patient}/reservations/count' , [PatientController::class , 'patientReservationsCount']);
+    Route::post('/{patient}/profile-image' , [PatientController::class , 'addProfileImage']);
+    Route::delete('/{patient}/profile-image' , [PatientController::class , 'deleteProfileImage']);
 });
 
 Route::apiResource('/reservations' , ReservationController::class)->middleware('auth:sanctum');
 Route::patch('/reservations/{reservation}/change-status' , [ReservationController::class , 'changeStatus'])->middleware('auth:sanctum');
 
-
 Route::apiResource('records' , RecordController::class)->except(['index']);
+
+Route::prefix('overviews')->middleware('auth:sanctum')->group(function (){
+    Route::get('/patients/gender/count' , [OverviewController::class , 'patientsGenderCount']);
+    Route::get('/ills/count' , [OverviewController::class , 'illsCount']);
+    Route::get('/records/count' , [OverviewController::class , 'recordsCount']);
+});

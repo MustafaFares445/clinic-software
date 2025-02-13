@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
 
 /**
  * @OA\Schema(
@@ -61,10 +63,29 @@ use Illuminate\Support\Facades\Auth;
  *         description="The address of the patient"
  *     ),
  *     @OA\Property(
- *         property="description",
+ *         property="notes",
  *         type="string",
  *         nullable=true,
- *         description="Additional description about the patient"
+ *         description="Additional notes about the patient"
+ *     ),
+ *     @OA\Property(
+ *         property="birth",
+ *         type="string",
+ *         nullable=true,
+ *         description="The birth date of the patient"
+ *     ),
+ *     @OA\Property(
+ *         property="gender",
+ *         type="string",
+ *         enum={"male", "female"},
+ *         nullable=true,
+ *         description="The gender of the patient"
+ *     ),
+ *     @OA\Property(
+ *         property="clinicId",
+ *         type="string",
+ *         nullable=true,
+ *         description="The ID of the clinic the patient belongs to"
  *     )
  * )
  */
@@ -94,14 +115,17 @@ class PatientRequest extends FormRequest
             'motherName' => ['nullable' , 'string'],
             'nationalNumber' => ['nullable' , 'string'],
             'address' => ['nullable' , 'string'],
-            'description' => ['nullable' , 'string'],
+            'notes' => ['nullable' , 'string'],
+            'birth' => ['nullable' , 'string'],
+            'gender' => ['nullable' , 'string' , Rule::in(['female' , 'male'])],
+            'clinicId' => ['nullable' , 'string' , Rule::in('clinics' , 'id')]
         ];
     }
 
     public function validated($key = null, $default = null)
     {
         return array_merge(parent::validated($key, $default) , [
-            'clinic_id' => Auth::user()->clinic_id
+            'clinic_id' => $this->input('clinicId') ?? Auth::user()->clinic_id
         ]);
     }
 }

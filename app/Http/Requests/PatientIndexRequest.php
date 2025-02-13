@@ -22,8 +22,8 @@ use Illuminate\Validation\Rule;
  *         property="orderBy",
  *         type="string",
  *         nullable=true,
- *         description="The field to order by. Allowed values: firstName, lastName, nextReservation, lastReservation, createdAt.",
- *         enum={"firstName", "lastName", "nextReservation", "lastReservation", "createdAt"}
+ *         description="The field to order by. Allowed values: firstName, lastName, nextReservation, lastReservation, registeredAt.",
+ *         enum={"firstName", "lastName", "nextReservation", "lastReservation", "registeredAt"}
  *     ),
  *     @OA\Property(
  *         property="orderType",
@@ -53,7 +53,7 @@ class PatientIndexRequest extends FormRequest
     {
         return [
             'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
-            'orderBy' => ['nullable', 'string', Rule::in(['firstName', 'lastName', 'nextReservation', 'lastReservation', 'createdAt'])],
+            'orderBy' => ['nullable', 'string', Rule::in(['firstName', 'lastName', 'nextReservation', 'lastReservation', 'registeredAt'])],
             'orderType' => ['nullable', 'string', Rule::in(['DESC', 'ASC'])]
         ];
     }

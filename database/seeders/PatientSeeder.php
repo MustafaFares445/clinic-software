@@ -26,8 +26,10 @@ class PatientSeeder extends Seeder
             'motherName' => 'بهيجة',
             'nationalNumber' =>  '123332432423',
             'address' => 'الفرقان,مفرق السكن',
+            'gender' => 'male',
+            'birth' => '2003',
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'description' => 'وصف موجز'
+            'notes' => 'وصف موجز'
         ]);
 
        $patient1->permanentIlls()->sync(Ill::query()->inRandomOrder()->first()->id);
@@ -38,12 +40,14 @@ class PatientSeeder extends Seeder
             'lastName' => 'فاضل',
             'phone' => '091111112',
             'age' => 20,
+            'gender' => 'male',
+            'birth' => '2003',
             'fatherName' => 'ياسر',
             'motherName' => 'تغريد',
             'nationalNumber' =>  '34324232432',
             'address' => 'موكامبو,دوار المايل',
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'description' => 'وصف موجز' ,
+            'notes' => 'وصف موجز' ,
         ]);
 
         $patient2->permanentIlls()->sync(Ill::query()->inRandomOrder()->first()->id);
