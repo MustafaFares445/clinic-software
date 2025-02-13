@@ -9,7 +9,18 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class MediaService
 {
     public static array $mediaCollections = ['files' , 'images' , 'audios' , 'videos'];
-    public static array $medicalMediaCollections = ['x-ray' , 'tests'];
+    public static array $medicalMediaCollections = [
+        'x-ray',
+        'tests',
+        'mri-scans',
+        'ct-scans',
+        'ultrasound',
+        'lab-reports',
+        'medical-reports',
+        'patient-history',
+        'prescriptions',
+        'ecg-records',
+    ];
 
     public function handleMultipleMediaUpload(Model $model , Request $request): void
     {

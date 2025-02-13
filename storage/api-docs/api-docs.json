@@ -1014,6 +1014,409 @@
                 ]
             }
         },
+        "/api/records": {
+            "post": {
+                "tags": [
+                    "Records"
+                ],
+                "summary": "Create a new medical record",
+                "operationId": "b1cb58080b97f1cc484352515a66d98b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "patientId",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "patientId": {
+                                        "description": "Patient's UUID",
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "clinicId": {
+                                        "description": "Clinic's UUID",
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "reservationId": {
+                                        "description": "Reservation's UUID",
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "description": {
+                                        "description": "Record description",
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "description": "Record type",
+                                        "type": "string",
+                                        "enum": [
+                                            "diagnosed",
+                                            "transient"
+                                        ]
+                                    },
+                                    "price": {
+                                        "description": "Record price",
+                                        "type": "integer"
+                                    },
+                                    "doctorsIds": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        }
+                                    },
+                                    "medicines": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "note": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "ills": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "note": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Record created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/records/{record}": {
+            "get": {
+                "tags": [
+                    "Records"
+                ],
+                "summary": "Get a specific medical record",
+                "operationId": "47225c01ff19852c8677a75817dfba23",
+                "parameters": [
+                    {
+                        "name": "record",
+                        "in": "path",
+                        "description": "Record UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Record details retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Records"
+                ],
+                "summary": "Update an existing medical record",
+                "operationId": "655d1da6268656aec3196b2a415ff766",
+                "parameters": [
+                    {
+                        "name": "record",
+                        "in": "path",
+                        "description": "Record UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RecordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Record updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Records"
+                ],
+                "summary": "Soft delete a medical record",
+                "operationId": "c64288c2e8dee1b0c0e537d8e11422cc",
+                "parameters": [
+                    {
+                        "name": "record",
+                        "in": "path",
+                        "description": "Record UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Record deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
+        "/api/records/{record}/restore": {
+            "post": {
+                "tags": [
+                    "Records"
+                ],
+                "summary": "Restore a soft-deleted medical record",
+                "operationId": "17ef4b59be4d8a2a9458c829bccfa33f",
+                "parameters": [
+                    {
+                        "name": "record",
+                        "in": "path",
+                        "description": "Record UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Record restored successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RecordResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
+                }
+            }
+        },
+        "/api/records/{record}/media": {
+            "post": {
+                "tags": [
+                    "Records"
+                ],
+                "summary": "Add media to a medical record",
+                "operationId": "196dfbe0851610f467de64eb60d9cf2a",
+                "parameters": [
+                    {
+                        "name": "record",
+                        "in": "path",
+                        "description": "Record UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "image": {
+                                        "type": "file"
+                                    },
+                                    "collection": {
+                                        "type": "string",
+                                        "enum": [
+                                            "files",
+                                            "images",
+                                            "audios",
+                                            "videos",
+                                            "x-ray",
+                                            "tests"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Media added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MediaResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/records/{record}/media/{media}": {
+            "delete": {
+                "tags": [
+                    "Records"
+                ],
+                "summary": "Delete media from a medical record",
+                "description": "Removes a specific media file associated with a medical record. Only media belonging to the specified record can be deleted.",
+                "operationId": "e6d7904132fbac7e3e899d5941e1705b",
+                "parameters": [
+                    {
+                        "name": "record",
+                        "in": "path",
+                        "description": "Record UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                        }
+                    },
+                    {
+                        "name": "media",
+                        "in": "path",
+                        "description": "Media ID to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Media deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MediaResource"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Media does not belong to this record",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "not Allowed."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record or Media not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/reservations": {
             "post": {
                 "tags": [
@@ -1296,6 +1699,139 @@
                 },
                 "type": "object"
             },
+            "MediaRequest": {
+                "title": "Media Upload Request",
+                "description": "Request validation rules for various types of medical media uploads",
+                "properties": {
+                    "files": {
+                        "description": "General media files (max 10 files, 50MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 10
+                    },
+                    "images": {
+                        "description": "Image files (jpeg, png, jpg, gif - max 20 files, 5MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 20
+                    },
+                    "audios": {
+                        "description": "Audio files (mp3, wav, ogg - max 5 files, 10MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 5
+                    },
+                    "videos": {
+                        "description": "Video files (mp4, mov, avi, wmv - max 3 files, 50MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 3
+                    },
+                    "x-ray": {
+                        "description": "X-ray files (dicom, dcm, jpeg, png - max 10 files, 20MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 10
+                    },
+                    "mri-scans": {
+                        "description": "MRI scan files (dicom, dcm, nii, nii.gz - max 15 files, 50MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 15
+                    },
+                    "ct-scans": {
+                        "description": "CT scan files (dicom, dcm, nii, nii.gz - max 15 files, 50MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 15
+                    },
+                    "ultrasound": {
+                        "description": "Ultrasound files (dicom, dcm, mp4, avi - max 10 files, 30MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 10
+                    },
+                    "tests": {
+                        "description": "Test documents (pdf, doc, docx - max 15 files, 5MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 15
+                    },
+                    "lab-reports": {
+                        "description": "Lab reports (pdf, doc, docx, xlsx, csv - max 20 files, 10MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 20
+                    },
+                    "prescriptions": {
+                        "description": "Prescriptions (pdf, jpg, png - max 10 files, 2MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 10
+                    },
+                    "medical-reports": {
+                        "description": "Medical reports (pdf, doc, docx - max 20 files, 15MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 20
+                    },
+                    "patient-history": {
+                        "description": "Patient history files (pdf, doc, docx - max 5 files, 20MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 5
+                    },
+                    "ecg-records": {
+                        "description": "ECG records (pdf, dcm, xml, json - max 10 files, 10MB each)",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "maxItems": 10
+                    }
+                },
+                "type": "object"
+            },
             "PatientIndexRequest": {
                 "title": "Patient Index Request",
                 "description": "Request parameters for indexing patients",
@@ -1398,6 +1934,60 @@
                     "clinicId": {
                         "description": "The ID of the clinic the patient belongs to",
                         "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "RecordRequest": {
+                "title": "Record Request",
+                "description": "Record request body for creating or updating records",
+                "properties": {
+                    "patientId": {
+                        "description": "The ID of the patient",
+                        "type": "string",
+                        "example": "pat_123456789"
+                    },
+                    "clinicId": {
+                        "description": "The ID of the clinic",
+                        "type": "string",
+                        "example": "cln_123456789",
+                        "nullable": true
+                    },
+                    "reservationId": {
+                        "description": "The ID of the reservation",
+                        "type": "string",
+                        "example": "res_123456789",
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Description of the record",
+                        "type": "string",
+                        "example": "Patient visited for regular checkup",
+                        "nullable": true
+                    },
+                    "type": {
+                        "description": "Type of the record",
+                        "type": "string",
+                        "enum": [
+                            "surgery",
+                            "appointment",
+                            "inspection"
+                        ]
+                    },
+                    "price": {
+                        "description": "Price of the service",
+                        "type": "integer",
+                        "example": 1000,
+                        "nullable": true
+                    },
+                    "doctorsIds": {
+                        "description": "Array of doctor IDs",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "doc_123456789"
+                        },
                         "nullable": true
                     }
                 },
@@ -1947,6 +2537,10 @@
         {
             "name": "Overview",
             "description": "API Endpoints for dashboard overview statistics"
+        },
+        {
+            "name": "Records",
+            "description": "API Endpoints for managing medical records"
         },
         {
             "name": "Auth",
