@@ -109,7 +109,7 @@ class RecordResource extends JsonResource
             'transientMedicines' => MedicineResource::collection($this->whenLoaded('medicines', function () {
                 return $this->medicines->where('pivot.type', RecordIllsTypes::TRANSIENT);
             })),
-            'media' => MediaResource::collection($this->whenLoaded('media'))
+            'media' => MediaResource::collection($this->whenLoaded('media' , $this->getMedia()))
         ];
     }
 }

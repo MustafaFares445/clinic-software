@@ -745,7 +745,7 @@
                 ]
             }
         },
-        "/api/patients/{patient}/files": {
+        "/api/patients/{patient}/records": {
             "get": {
                 "tags": [
                     "Patients"

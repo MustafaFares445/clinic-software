@@ -199,7 +199,7 @@ class PatientController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/patients/{patient}/files",
+     *     path="/api/patients/{patient}/records",
      *     summary="Get patient files",
      *     description="Retrieves all files for a specific patient",
      *     operationId="patientFiles",
