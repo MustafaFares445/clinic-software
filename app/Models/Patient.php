@@ -31,7 +31,9 @@ class Patient extends Model implements HasMedia
       'nationalNumber',
       'address',
       'clinic_id',
-      'description',
+      'notes',
+      'birth',
+      'gender'
     ];
 
     protected static function booted(): void

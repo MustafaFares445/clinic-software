@@ -29,8 +29,6 @@ class Record extends Model implements HasMedia
       'dateTime'
     ];
 
-    public static array $mediaCollection = ['x-ray' , 'pdf' , 'files' , 'images' , 'audios' , 'videos'];
-
     protected static function booted(): void
     {
         if (Auth::check() && !Auth::user()->hasRole('super admin') && !request()->has('clinicId'))
