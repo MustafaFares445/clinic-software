@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MedicineTransactions;
 use Illuminate\Http\Request;
 
 class MedicineTransactionsController extends Controller

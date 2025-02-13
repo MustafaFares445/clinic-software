@@ -2,48 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClinicRequest;
+use App\Http\Resources\ClinicResource;
 use App\Models\Clinic;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class ClinicController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+   public function get(): ClinicResource
+   {
+      return ClinicResource::make(Auth::user()->clinic);
+   }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+   public function addClinicSubscription(ClinicRequest $request): Response
+   {
+       Clinic::query()->create($request->clinicValidated());
+       $user =  User::query()->create($request->userValidated());
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Clinic $clinic)
-    {
-        //
-    }
+       $user->assignRole('admin');
+       return response()->noContent();
+   }
+   public function update(ClinicRequest $request): ClinicResource
+   {
+        $clinic = Auth::user()->clinic;
+        $clinic->update($request->validated());
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Clinic $clinic)
-    {
-        //
-    }
+        return ClinicResource::make($clinic);
+   }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Clinic $clinic)
-    {
-        //
-    }
+  public function changeStatus(): Response
+  {
+      $clinic = Auth::user()->clinic;
+      $clinic->update(['is_banned' => true]);
+
+      User::query()->where(['clinic_id' => $clinic->id])->update(['is_banned' => true]);
+
+      return response()->noContent();
+  }
 }
