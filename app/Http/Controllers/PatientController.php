@@ -8,6 +8,7 @@ use App\Http\Requests\PatientRequest;
 use App\Http\Requests\ProfileRequest;
 use App\Http\Resources\MediaResource;
 use App\Http\Resources\PatientResource;
+use App\Http\Resources\RecordResource;
 use App\Http\Resources\ReservationResource;
 use App\Models\Patient;
 use App\Models\Reservation;
@@ -220,7 +221,7 @@ class PatientController extends Controller
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/MediaResource")
+     *                 @OA\Items(ref="#/components/schemas/RecordResource")
      *             )
      *         )
      *     ),
@@ -232,9 +233,8 @@ class PatientController extends Controller
      */
     public function patientRecords(Patient $patient , Request $request): AnonymousResourceCollection
     {
-        dd('hello');
-        return MediaResource::collection(
-            $patient->records()->orderByDesc('created_at')->cursorPaginate()
+        return RecordResource::collection(
+            $patient->records()->with('media')->orderByDesc('created_at')->cursorPaginate()
         );
     }
 

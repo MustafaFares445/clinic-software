@@ -774,7 +774,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/MediaResource"
+                                                "$ref": "#/components/schemas/RecordResource"
                                             }
                                         }
                                     },
