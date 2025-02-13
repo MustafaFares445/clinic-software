@@ -233,7 +233,7 @@ class PatientController extends Controller
     public function patientRecords(Patient $patient , Request $request): AnonymousResourceCollection
     {
         return MediaResource::collection(
-            $patient->records()->with('media')->orderByDesc('created_at')->cursorPaginate()
+            $patient->records()->orderByDesc('created_at')->cursorPaginate()
         );
     }
 
