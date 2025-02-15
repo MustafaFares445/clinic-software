@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FileManagerController;
 use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\RecordController;
@@ -26,6 +27,7 @@ Route::prefix('/patients')->middleware('auth:sanctum')->group(function (){
     Route::get('/{patient}/reservations/count' , [PatientController::class , 'patientReservationsCount']);
     Route::post('/{patient}/profile-image' , [PatientController::class , 'addProfileImage']);
     Route::delete('/{patient}/profile-image' , [PatientController::class , 'deleteProfileImage']);
+    Route::post('/{patient}/file' , [PatientController::class , 'addFile']);
 });
 
 Route::apiResource('/reservations' , ReservationController::class)->middleware('auth:sanctum');
@@ -37,4 +39,12 @@ Route::prefix('overviews')->middleware('auth:sanctum')->group(function (){
     Route::get('/patients/gender/count' , [OverviewController::class , 'patientsGenderCount']);
     Route::get('/ills/count' , [OverviewController::class , 'illsCount']);
     Route::get('/records/count' , [OverviewController::class , 'recordsCount']);
+});
+
+Route::prefix('/file-manager')->middleware('auth:sanctum')->group(function (){
+    Route::get('' , [FileManagerController::class , 'index']);
+    Route::post('' , [FileManagerController::class , 'store']);
+    Route::delete('/' , [FileManagerController::class , 'delete']);
+    Route::get('/{media}/download' , [FileManagerController::class , 'download']);
+    Route::get('/medical-collections' , [FileManagerController::class , 'getMedicalCollections']);
 });

@@ -193,13 +193,10 @@
                         "multipart/form-data": {
                             "schema": {
                                 "properties": {
-                                    "files[]": {
+                                    "file": {
                                         "description": "Files to upload",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "binary"
-                                        }
+                                        "type": "string",
+                                        "format": "binary"
                                     },
                                     "collection": {
                                         "description": "Collection name for the files",
@@ -1005,6 +1002,61 @@
                     },
                     "404": {
                         "description": "Profile image not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/patient/{patient}/file": {
+            "post": {
+                "tags": [
+                    "File Manager"
+                ],
+                "summary": "Upload new file",
+                "operationId": "efeb1979fa6c1b98ffa0e7fe9f4c1ef4",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "Patient ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Files to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "collection": {
+                                        "description": "Collection name for the files",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Files uploaded successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [

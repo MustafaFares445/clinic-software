@@ -99,9 +99,9 @@ class FileManagerController extends Controller
      *             @OA\Schema(
      *                 type="object",
      *                 @OA\Property(
-     *                     property="files[]",
-     *                     type="array",
-     *                     @OA\Items(type="string", format="binary"),
+     *                     property="file",
+     *                     type="string",
+     *                      format="binary",
      *                     description="Files to upload"
      *                 ),
      *                 @OA\Property(
@@ -122,10 +122,10 @@ class FileManagerController extends Controller
      *     )
      * )
      */
-    public function store(MediaRequest $request): Response
+    public function store(MediaRequest $request): MediaResource
     {
-        $this->mediaService->handleMediaUpload(new FileManager(), $request->file(), $request->input('collection'));
-        return response()->noContent();
+        $fileManager = FileManager::query()->create(['name' => $request->file()->getClientOriginalName()]);
+        return MediaResource::make($this->mediaService->handleMediaUpload($fileManager, $request->file(), $request->input('collection')));
     }
 
     /**

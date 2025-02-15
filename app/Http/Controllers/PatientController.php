@@ -486,4 +486,52 @@ class PatientController extends Controller
 
         return response()->noContent();
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/patient/{patient}/file",
+     *     summary="Upload new file",
+     *     tags={"File Manager"},
+     *     security={{ "bearerAuth": {} }},
+     *    @OA\Parameter(
+     *          name="patient",
+     *          in="path",
+     *          description="Patient ID",
+     *          required=true,
+     *          @OA\Schema(type="string", format="uuid")
+     *      ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="file",
+     *                     type="string",
+     *                      format="binary",
+     *                     description="Files to upload"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="collection",
+     *                     type="string",
+     *                     description="Collection name for the files"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Files uploaded successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function addFile(Patient $patient , Request $request): MediaResource
+    {
+        return MediaResource::make($this->mediaService->handleMediaUpload($patient , $request->file() , $request->input('collection')));
+    }
 }
