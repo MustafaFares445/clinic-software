@@ -672,7 +672,7 @@
                         "description": "ID of the patient to update",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -885,6 +885,49 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/patients/{patient}/notes": {
+            "patch": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Update a patient",
+                "operationId": "e3a7300bdd0392d4ccdec8386fd024ee",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "ID of the patient to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Patient updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PatientResource"
                                 }
                             }
                         }
