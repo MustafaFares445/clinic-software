@@ -37,4 +37,12 @@ class MediaService
 
         return null;
     }
+
+    public function handleMediaUploadByPath(Model $model,string $path, string $collection): Media|null
+    {
+        if ($media)
+            return $model->addMedia($media)->usingName($media->hashName())->toMediaCollection($collection);
+
+        return null;
+    }
 }

@@ -13,11 +13,13 @@ use App\Http\Resources\ReservationResource;
 use App\Models\Patient;
 use App\Models\Reservation;
 use App\Services\MediaService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class PatientController extends Controller
 {
@@ -195,7 +197,7 @@ class PatientController extends Controller
      */
     public function show(Patient $patient): PatientResource
     {
-        return PatientResource::make($patient->load(['media' , 'permanentIlls' , 'permanentMedicines']));
+        return PatientResource::make($patient->load(['permanentIlls' , 'permanentMedicines']));
     }
 
     /**
@@ -231,7 +233,7 @@ class PatientController extends Controller
      *     )
      * )
      */
-    public function patientRecords(Patient $patient , Request $request): AnonymousResourceCollection
+    public function patientRecords(Patient $patient): AnonymousResourceCollection
     {
         return RecordResource::collection(
             $patient->records()->with(['media', 'reservation', 'ills', 'medicines', 'doctors'])->orderByDesc('created_at')->cursorPaginate()
@@ -345,7 +347,7 @@ class PatientController extends Controller
      *         in="path",
      *         required=true,
      *         description="ID of the patient to update",
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
@@ -370,6 +372,45 @@ class PatientController extends Controller
     public function update(PatientRequest $request, Patient $patient): PatientResource
     {
         $patient->update($request->validated());
+
+        return PatientResource::make($patient);
+    }
+
+
+
+    /**
+     * @OA\Patch(
+     *     path="/api/patients/{patient}/notes",
+     *     summary="Update a patient",
+     *     tags={"Patients"},
+     *     @OA\Parameter(
+     *         name="patient",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the patient to update",
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Patient updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/PatientResource")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Patient not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     ),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
+    public function updateNotes(PatientRequest $request, Patient $patient): PatientResource
+    {
+        $patient->update([
+            'notes' => $request->input('notes'),
+        ]);
 
         return PatientResource::make($patient);
     }
@@ -451,7 +492,7 @@ class PatientController extends Controller
     public function addProfileImage(Patient $patient, ProfileRequest $request): MediaResource
     {
         return MediaResource::make(
-            $this->mediaService->handleMediaUpload($patient, $request->file('image'), 'profile')
+            $this->mediaService->handleMediaUpload($patient , $request->file('image') , 'profile')  
         );
     }
 
@@ -488,10 +529,44 @@ class PatientController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/patients/{patient}/files",
+     *     summary="get patient files",
+     *     tags={"Patients"},
+     *     security={{ "bearerAuth": {} }},
+     *     @OA\Parameter(
+     *          name="patient",
+     *          in="path",
+     *          description="Patient ID",
+     *          required=true,
+     *          @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *        response=200,
+     *         description="Profile image uploaded successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/MediaResource")
+     *     ),
+     * )
+     */
+    public function getFiles(Patient $patient): AnonymousResourceCollection
+    {
+        $patient->load('media');
+        $profileImage = $patient->getFirstMedia('profile');
+
+        return MediaResource::collection(
+            $patient->media()->get()->when($profileImage , function ($collection) use ($profileImage){
+                $collection->reject(function ($media) use ($profileImage){
+                    return $media->id === $profileImage->id;
+                });
+            })
+        );
+    }
+
+    /**
      * @OA\Post(
-     *     path="/api/patient/{patient}/file",
+     *     path="/api/patients/{patient}/file",
      *     summary="Upload new file",
-     *     tags={"File Manager"},
+     *     tags={"Patients"},
      *     security={{ "bearerAuth": {} }},
      *    @OA\Parameter(
      *          name="patient",
@@ -532,6 +607,8 @@ class PatientController extends Controller
      */
     public function addFile(Patient $patient , Request $request): MediaResource
     {
-        return MediaResource::make($this->mediaService->handleMediaUpload($patient , $request->file() , $request->input('collection')));
+        return MediaResource::make(
+            $this->mediaService->handleMediaUpload($patient , $request->file('file') , $request->input('collection'))
+        );
     }
 }

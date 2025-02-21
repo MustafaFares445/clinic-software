@@ -3,15 +3,14 @@
 namespace App\Models;
 
 use App\Trait\HasThumbnail;
-use Database\Factories\CategoryFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use Database\Factories\CategoryFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Specification extends Model implements HasMedia
 {
@@ -20,8 +19,19 @@ class Specification extends Model implements HasMedia
 
     protected $fillable = [
       'name',
-      'description'
+      'description',
+      'parent_id'
     ];
+
+    public function scopeRoot(Builder $query): void
+    {
+        $query->whereNull('parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Specification::class , 'parent_id');
+    }
 
     public function clinics(): HasMany
     {

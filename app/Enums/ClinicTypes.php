@@ -2,18 +2,9 @@
 
 namespace App\Enums;
 
-enum ClinicTypes
+enum ClinicTypes : string
 {
-    CONST HOSPITAL = 'hospital';
-    CONST CLINIC = 'clinic';
-    CONST HEALTH_CENTER = 'health center';
-
-    public static function values()
-    {
-        return [
-          self::HOSPITAL,
-          self::CLINIC,
-          self::HEALTH_CENTER
-        ];
-    }
+    CASE HOSPITAL = 'hospital';
+    CASE CLINIC = 'clinic';
+    CASE HEALTH_CENTER = 'health center';
 }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->text('description')->nullable();
+            $table->foreignUuid('parent_id')->nullable()->constrained('specifications');
             $table->timestamps();
             $table->softDeletes();
         });

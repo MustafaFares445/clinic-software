@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('medicine_id')->constrained('medicines');
             $table->foreignUuid('record_id')->constrained('records');
-            $table->enum('type' , RecordMedicinesTypes::values())->default(RecordMedicinesTypes::DIAGNOSED);
+            $table->enum('type' , array_column(RecordMedicinesTypes::cases(), 'value'))->default(RecordMedicinesTypes::DIAGNOSED->value)->index();
             $table->text('note')->nullable();
         });
     }

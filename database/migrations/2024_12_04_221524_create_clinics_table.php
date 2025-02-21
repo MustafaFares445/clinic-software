@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('latitude')->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_banned')->default(false);
-            $table->enum('type', ClinicTypes::values())->default('clinic');
+            $table->enum('type', array_column(ClinicTypes::cases(), 'value'))->default(ClinicTypes::CLINIC->value);
             $table->timestamps();
             $table->softDeletes();
         });

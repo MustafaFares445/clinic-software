@@ -2,18 +2,9 @@
 
 namespace App\Enums;
 
-enum RecordTypes
+enum RecordTypes : string
 {
-    CONST SURGERY = 'surgery';
-    CONST APPOINTMENT =  'appointment';
-    CONST  INSPECTION = 'inspection';
-
-    public static function values(): array
-    {
-        return [
-            self::INSPECTION,
-            self::APPOINTMENT,
-            self::SURGERY
-        ];
-    }
+    CASE SURGERY = 'surgery';
+    CASE APPOINTMENT =  'appointment';
+    CASE INSPECTION = 'inspection';
 }

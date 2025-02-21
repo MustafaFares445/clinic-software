@@ -1011,13 +1011,51 @@
                 ]
             }
         },
-        "/api/patient/{patient}/file": {
+        "/api/patients/{patient}/files": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "get patient files",
+                "operationId": "8fa95c8438c1363b8f25ea700463c162",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "Patient ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Profile image uploaded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MediaResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/patients/{patient}/file": {
             "post": {
                 "tags": [
-                    "File Manager"
+                    "Patients"
                 ],
                 "summary": "Upload new file",
-                "operationId": "efeb1979fa6c1b98ffa0e7fe9f4c1ef4",
+                "operationId": "ccf1077c17cf7a9087df118ca058dc19",
                 "parameters": [
                     {
                         "name": "patient",

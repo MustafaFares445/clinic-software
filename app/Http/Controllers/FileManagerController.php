@@ -8,7 +8,6 @@ use App\Models\FileManager;
 use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -22,12 +21,7 @@ use OpenApi\Annotations as OA;
  */
 class FileManagerController extends Controller
 {
-    protected MediaService $mediaService;
-
-    public function __construct()
-    {
-        $this->mediaService = new MediaService();
-    }
+    public function __construct(protected MediaService $mediaService){}
 
     /**
      * @OA\Get(
@@ -56,7 +50,7 @@ class FileManagerController extends Controller
      *     )
      * )
      */
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request)
     {
         return MediaResource::collection(
             Media::query()
@@ -127,6 +121,7 @@ class FileManagerController extends Controller
         $fileManager = FileManager::query()->create(['name' => $request->file()->getClientOriginalName()]);
         return MediaResource::make($this->mediaService->handleMediaUpload($fileManager, $request->file(), $request->input('collection')));
     }
+
 
     /**
      * @OA\Delete(

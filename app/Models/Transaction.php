@@ -18,10 +18,13 @@ class Transaction extends Model implements HasMedia
     use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
 
     protected $fillable = [
-      'clinic_id',
-      'type',
-      'amount',
-      'description'
+        'clinic_id',
+        'type',
+        'amount',
+        'description',
+        'finance',
+        'from',
+        'user_id'
     ];
 
     protected static function booted(): void
@@ -33,10 +36,5 @@ class Transaction extends Model implements HasMedia
     public function clinic(): BelongsTo
     {
         return $this->belongsTo(Clinic::class);
-    }
-
-    public function relateable()
-    {
-        return $this->morphTo();
     }
 }

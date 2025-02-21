@@ -5,16 +5,13 @@ namespace Database\Seeders;
 use App\Enums\RecordIllsTypes;
 use App\Enums\RecordMedicinesTypes;
 use App\Enums\RecordTypes;
-use App\Enums\ReservationTypes;
 use App\Models\Clinic;
 use App\Models\Ill;
 use App\Models\Medicine;
-use App\Models\MedicineRecord;
 use App\Models\Patient;
 use App\Models\Record;
 use App\Models\Reservation;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class RecordSeeder extends Seeder
@@ -54,9 +51,11 @@ class RecordSeeder extends Seeder
        $record->doctors()->sync(User::query()->inRandomOrder()->take(rand(1 , 2))->pluck('id')->toArray());
 
        $record->transaction()->create([
-          'type' => 'income',
+          'type' => 'in',
           'amount' => 5,
-          'clinic_id' => Clinic::query()->inRandomOrder()->first()->id
+          'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+          'user_id' => User::query()->inRandomOrder()->first()->id,
+          'finance' => true,
        ]);
 
        $record2 = Record::query()->create([
@@ -79,9 +78,11 @@ class RecordSeeder extends Seeder
         $record2->doctors()->sync(User::query()->inRandomOrder()->take(rand(1 , 2))->pluck('id')->toArray());
 
         $record2->transaction()->create([
-            'type' => 'income',
+            'type' => 'in',
+            'finance' => true,
             'amount' => 50,
-            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id
+            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+            'user_id' => User::query()->inRandomOrder()->first()->id,
         ]);
 
        $record3 =  Record::query()->create([
@@ -106,9 +107,11 @@ class RecordSeeder extends Seeder
         $record3->doctors()->sync(User::query()->inRandomOrder()->take(rand(1 , 2))->pluck('id')->toArray());
 
         $record3->transaction()->create([
-            'type' => 'income',
+            'type' => 'in',
             'amount' => 10,
-            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id
+            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'finance' => true,
         ]);
     }
 }

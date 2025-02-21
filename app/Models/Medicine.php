@@ -32,11 +32,6 @@ class Medicine extends Model implements HasMedia
         return $this->belongsToMany(Clinic::class);
     }
 
-    public function medicineTransaction(): HasMany
-    {
-        return $this->hasMany(MedicineTransaction::class);
-    }
-
     public function transactions(): MorphMany
     {
         return $this->morphMany(Transaction::class , 'relateable');

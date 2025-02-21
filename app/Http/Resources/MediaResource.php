@@ -103,7 +103,6 @@ class MediaResource extends JsonResource
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
-     * @throws CouldNotLoadImage
      */
     public function toArray(Request $request): array
     {
@@ -114,16 +113,16 @@ class MediaResource extends JsonResource
             'collection' => $this->collection_name,
             'url' => $this->getFullUrl(),
             'size' => $this->human_readable_size,
-            'type' => $this->getTypeAttribute(),
-            'extension' => $this->getExtensionAttribute(),
+            'extension' => $this->extension,
+            'type' => $this->getTypeFromExtension(),
             'caption' => $this->getCustomProperty('caption') ?? $this->name,
         ];
 
-        if ($this->getTypeAttribute() === 'image'){
-            $imageInstance = Image::load($this->getPath());
-            $data['width'] = $imageInstance->getWidth();
-            $data['height'] = $imageInstance->getHeight();
-        }
+        if ($this->whenLoaded('model') && $this->model_type == 'App\Models\Patient')
+            $data['patient'] = PatientResource::make($this->model);
+
+        if ($this->whenLoaded('model') && $this->model_type == 'App\Models\Record')
+            $data['patient'] = PatientResource::make($this->model->patient);
 
         // Check if the 'thumb' conversion exists
         try {

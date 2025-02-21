@@ -2,20 +2,10 @@
 
 namespace App\Enums;
 
-enum ReservationStatuses
+enum ReservationStatuses : string
 {
-    CONST INCOME = 'income';
-    CONST CHECK = 'check';
-    CONST DISMISS = 'dismiss';
-    CONST CANCELLED = 'cancelled';
-
-    public static function values()
-    {
-        return [
-          self::INCOME,
-          self::CHECK,
-          self::DISMISS,
-          self::CANCELLED
-        ];
-    }
+    CASE INCOME = 'income';
+    CASE CHECK = 'check';
+    CASE DISMISS = 'dismiss';
+    CASE CANCELLED = 'cancelled';
 }

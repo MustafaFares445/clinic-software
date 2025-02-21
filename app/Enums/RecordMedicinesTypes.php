@@ -2,16 +2,8 @@
 
 namespace App\Enums;
 
-enum RecordMedicinesTypes
+enum RecordMedicinesTypes : string
 {
-    CONST TRANSIENT = 'transient';
-    CONST DIAGNOSED =  'diagnosed';
-
-    public static function values(): array
-    {
-        return [
-            self::TRANSIENT,
-            self::DIAGNOSED,
-        ];
-    }
+    CASE TRANSIENT = 'transient';
+    CASE DIAGNOSED =  'diagnosed';
 }

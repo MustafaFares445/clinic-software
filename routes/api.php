@@ -13,6 +13,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::prefix('overview')->group(function (){
+    Route::get('/patients/gender/count' , [OverviewController::class , 'patientsGenderCount']);
+    Route::get('/ills/count' , [OverviewController::class , 'illsCount']);
+    Route::get('/records/count' , [OverviewController::class , 'recordsCount']  );
+});
 
 Route::prefix('auth')->group(function (){
     Route::post('/login' , [AuthController::class ,'login']);
@@ -23,10 +28,14 @@ Route::prefix('auth')->group(function (){
 Route::apiResource('/patients' , PatientController::class)->middleware('auth:sanctum');
 Route::prefix('/patients')->middleware('auth:sanctum')->group(function (){
     Route::get('/{patient}/records' , [PatientController::class , 'patientRecords']);
+
     Route::get('/{patient}/reservations' , [PatientController::class , 'patientReservations']);
     Route::get('/{patient}/reservations/count' , [PatientController::class , 'patientReservationsCount']);
+
+    Route::patch('/patients/{patient}/patients/notes' , [PatientController::class])->middleware('auth:sanctum');
     Route::post('/{patient}/profile-image' , [PatientController::class , 'addProfileImage']);
     Route::delete('/{patient}/profile-image' , [PatientController::class , 'deleteProfileImage']);
+    Route::get('/{patient}/files' , [PatientController::class , 'getFiles']);
     Route::post('/{patient}/file' , [PatientController::class , 'addFile']);
 });
 
@@ -35,16 +44,11 @@ Route::patch('/reservations/{reservation}/change-status' , [ReservationControlle
 
 Route::apiResource('records' , RecordController::class)->except(['index']);
 
-Route::prefix('overviews')->middleware('auth:sanctum')->group(function (){
-    Route::get('/patients/gender/count' , [OverviewController::class , 'patientsGenderCount']);
-    Route::get('/ills/count' , [OverviewController::class , 'illsCount']);
-    Route::get('/records/count' , [OverviewController::class , 'recordsCount']);
-});
-
-Route::prefix('/file-manager')->middleware('auth:sanctum')->group(function (){
+Route::prefix('/file-manager')->group(function (){
     Route::get('' , [FileManagerController::class , 'index']);
     Route::post('' , [FileManagerController::class , 'store']);
     Route::delete('/' , [FileManagerController::class , 'delete']);
     Route::get('/{media}/download' , [FileManagerController::class , 'download']);
     Route::get('/medical-collections' , [FileManagerController::class , 'getMedicalCollections']);
 });
+
