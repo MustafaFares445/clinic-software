@@ -114,12 +114,9 @@ class ReservationController extends Controller
      *     )
      * )
      */
-    public function store(ReservationRequest $request): ReservationResource|JsonResponse
+    public function store(ReservationRequest $request): ReservationResource
     {
-        $reservation = Reservation::query()->create(array_merge($request->validated(),[
-            'clinic_id' => $request->validated('clinicId') ?: Auth::user()->clinic_id,
-            'doctor_id' => Auth::user()->hasRole('doctor') ? Auth::id() : $request->input('doctorId'),
-        ]));
+        $reservation = Reservation::query()->create($request->validated());
 
         return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
     }
@@ -145,9 +142,10 @@ class ReservationController extends Controller
      *     )
      * )
      */
-    public function show(Reservation $reservation): AnonymousResourceCollection
+    public function show(Reservation $reservation): ReservationResource
     {
-        return ReservationResource::collection($reservation->load(['patient' , 'doctor' , 'specification']));
+
+        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
     }
 
     /**
@@ -176,13 +174,10 @@ class ReservationController extends Controller
      */
     public function update(ReservationRequest $request, Reservation $reservation): ReservationResource
     {
-        $reservation->update(array_merge($request->validated(),[
-            'clinic_id' => $request->validated('clinicId') ?: Auth::user()->clinic_id,
-            'doctor_id' => Auth::user()->hasRole('doctor') ? Auth::id() : $request->input('doctorId'),
-        ]));
+        $reservation->update($request->validated());
 
         return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
-    }
+    }   
 
     /**
      * @OA\Patch(
@@ -210,15 +205,15 @@ class ReservationController extends Controller
      *     )
      * )
      */
-    public function changeStatus(Request $request, Reservation $reservation): Response
+    public function changeStatus(Request $request, Reservation $reservation): ReservationResource
     {
         $request->validate([
-            'status' => ['required' , 'string' , Rule::in(ReservationStatuses::values())]
+            'status' => ['required' , 'string' , Rule::in(array_values(ReservationStatuses::cases()))]
         ]);
 
         $reservation->update(['status' => $request->input('status')]);
 
-        return response()->noContent();
+        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
     }
 
     /**
@@ -235,15 +230,20 @@ class ReservationController extends Controller
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
-     *         response=204,
-     *         description="No content"
+     *         response=200,
+     *         description="Resource deleted successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/ReservationResource")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Reservation not found"
      *     )
      * )
      */
-    public function destroy(Reservation $reservation): Response
+    public function destroy(Reservation $reservation): ReservationResource
     {
         $reservation->delete();
 
-        return response()->noContent();
+        return ReservationResource::make($reservation);
     }
 }

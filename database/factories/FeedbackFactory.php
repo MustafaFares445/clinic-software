@@ -17,7 +17,8 @@ class FeedbackFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'clinic_id' => \App\Models\Clinic::factory(),
+            'description' => fake()->paragraph(3),
         ];
     }
 }

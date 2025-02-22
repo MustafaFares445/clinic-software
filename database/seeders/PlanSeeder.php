@@ -16,7 +16,8 @@ class PlanSeeder extends Seeder
         Plan::query()->create([
             'name' => 'الخطة البرونزية',
             'description' => 'وصف موجز',
-            'price' => 70,
+            'fixed_value' => null,
+            'percent_value' => 70,
             'users_count' => 2,
             'duration' => '10:00:00'
         ]);
@@ -24,7 +25,7 @@ class PlanSeeder extends Seeder
         Plan::query()->create([
             'name' => 'الخطة الذهبية',
             'description' => 'وصف موجز',
-            'price' => 100,
+            'fixed_value' => 100,
             'users_count' => 10,
             'duration' => '10:00:00'
         ]);
@@ -32,7 +33,7 @@ class PlanSeeder extends Seeder
         Plan::query()->create([
             'name' => 'الخطة الألماسية',
             'description' => 'وصف موجز',
-            'price' => 200,
+            'fixed_value' => 200,
             'users_count' => 20,
             'duration' => '10:00:00'
         ]);

@@ -48,7 +48,12 @@
                     "400": {
                         "description": "Bad request"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/auth/login": {
@@ -1685,8 +1690,18 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No content"
+                    "200": {
+                        "description": "Resource deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ReservationResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Reservation not found"
                     }
                 },
                 "security": [
@@ -1758,62 +1773,127 @@
     "components": {
         "schemas": {
             "AuthRequest": {
+                "title": "Auth Request",
+                "description": "Authentication request parameters",
+                "properties": {
+                    "fullName": {
+                        "description": "Get the validation rules that apply to the request.",
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 2,
+                        "example": "Mustafa Fares"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "maxLength": 255,
+                        "example": "john.doe@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "maxLength": 255,
+                        "minLength": 8,
+                        "example": "secretpass123"
+                    },
+                    "username": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 3,
+                        "example": "johndoe"
+                    }
+                },
+                "type": "object"
+            },
+            "ClinicSubscriptionRequest": {
                 "required": [
-                    "firstName",
-                    "lastName",
+                    "fullName",
                     "email",
                     "password",
                     "username",
                     "clinicName",
-                    "clinicAddress"
+                    "clinicAddress",
+                    "clinicType"
                 ],
                 "properties": {
-                    "firstName": {
-                        "description": "First name of the user",
+                    "fullName": {
+                        "description": "The name of the user",
                         "type": "string",
-                        "example": "John"
-                    },
-                    "lastName": {
-                        "description": "Last name of the user",
-                        "type": "string",
-                        "example": "Doe"
+                        "maxLength": 255,
+                        "minLength": 2,
+                        "example": "Mustafa Fares"
                     },
                     "email": {
-                        "description": "Email address of the user",
+                        "description": "Email address of the user (must be unique)",
                         "type": "string",
                         "format": "email",
+                        "maxLength": 255,
                         "example": "john.doe@example.com"
                     },
                     "password": {
                         "description": "Password for the user account",
                         "type": "string",
                         "format": "password",
+                        "maxLength": 255,
+                        "minLength": 8,
                         "example": "password123"
                     },
                     "username": {
-                        "description": "Username for the user account",
+                        "description": "Username for the user account (must be unique, allows letters, numbers, dashes and underscores)",
                         "type": "string",
+                        "maxLength": 255,
+                        "minLength": 3,
                         "example": "johndoe"
                     },
                     "clinicName": {
                         "description": "Name of the clinic",
                         "type": "string",
+                        "maxLength": 255,
+                        "minLength": 2,
                         "example": "Health Clinic"
                     },
                     "clinicAddress": {
                         "description": "Address of the clinic",
                         "type": "string",
+                        "maxLength": 500,
                         "example": "123 Main St"
                     },
                     "clinicLongitude": {
-                        "description": "Longitude of the clinic location",
-                        "type": "string",
-                        "example": "40.7128"
+                        "description": "Longitude of the clinic location (-180 to 180)",
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 180,
+                        "minimum": -180,
+                        "example": "40.7128",
+                        "nullable": true
                     },
                     "clinicLatitude": {
                         "description": "Latitude of the clinic location",
+                        "type": "number",
+                        "format": "float",
+                        "maxLength": 255,
+                        "example": "-74.0060",
+                        "nullable": true
+                    },
+                    "clinicStartTime": {
+                        "description": "Clinic opening time",
                         "type": "string",
-                        "example": "-74.0060"
+                        "format": "time",
+                        "example": "09:00",
+                        "nullable": true
+                    },
+                    "clinicEndTime": {
+                        "description": "Clinic closing time",
+                        "type": "string",
+                        "format": "time",
+                        "example": "17:00",
+                        "nullable": true
+                    },
+                    "clinicDescription": {
+                        "description": "Description of the clinic",
+                        "type": "string",
+                        "example": "A modern healthcare facility",
+                        "nullable": true
                     },
                     "clinicType": {
                         "description": "Type of the clinic",
@@ -1821,12 +1901,13 @@
                         "enum": [
                             "hospital",
                             "clinic",
-                            "health center"
+                            "health_center"
                         ]
                     },
                     "planId": {
-                        "description": "ID of the plan",
-                        "type": "integer",
+                        "description": "UUID of the plan (must exist in plans table)",
+                        "type": "string",
+                        "format": "uuid",
                         "nullable": true
                     }
                 },
@@ -2179,9 +2260,14 @@
                         "example": 2
                     },
                     "specificationId": {
-                        "description": "Doctor ID",
+                        "description": "Specification ID",
                         "type": "string",
                         "example": 2
+                    },
+                    "clinicId": {
+                        "description": "Clinic ID",
+                        "type": "string",
+                        "example": 3
                     }
                 },
                 "type": "object"

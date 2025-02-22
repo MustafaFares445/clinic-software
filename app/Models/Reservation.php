@@ -20,6 +20,7 @@ class Reservation extends Model implements HasMedia
     protected $fillable = [
       'start',
       'end',
+      'specification_id',
       'patient_id',
       'clinic_id',
       'doctor_id',

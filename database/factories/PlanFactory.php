@@ -17,7 +17,13 @@ class PlanFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->word() . ' Plan',
+            'description' => fake()->sentence(),
+            'fixed_value' => fake()->randomFloat(2, 0, 1000),
+            'percent_value' => fake()->randomFloat(2, 0, 100),
+            'users_count' => fake()->numberBetween(1, 1000),
+            'duration' => fake()->numberBetween(1, 12), 
+            'created_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }

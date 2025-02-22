@@ -3,6 +3,6 @@
 return [
     App\Providers\AppServiceProvider::class,
     App\Providers\TelescopeServiceProvider::class,
-    Spatie\Permission\PermissionServiceProvider::class,
     Illuminate\Concurrency\ConcurrencyServiceProvider::class,
+    Spatie\Permission\PermissionServiceProvider::class,
 ];

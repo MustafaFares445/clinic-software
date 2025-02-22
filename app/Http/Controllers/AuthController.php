@@ -8,7 +8,7 @@ use App\Models\Clinic;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class AuthController extends Controller
@@ -18,6 +18,7 @@ class AuthController extends Controller
      *     path="/api/auth/register",
      *     summary="Register a new user",
      *     tags={"Auth"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/AuthRequest")
@@ -36,14 +37,7 @@ class AuthController extends Controller
      */
     public function register(AuthRequest $request): JsonResponse
     {
-        $clinic = Clinic::query()->create($request->clinicValidated());
-
-        $user = User::query()->create(array_merge($request->userValidated(), [
-            'clinic_id' => $clinic->id
-        ]));
-
-        if ($request->has('planId'))
-            $clinic->plans()->sync($request->validated('planId'));
+        $user = User::query()->create($request->validated());
 
         return response()->json([
             'accessToken' => $user->createToken('auth_token')->plainTextToken,
@@ -78,24 +72,35 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
+        // Validate the request
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($request->only('username', 'password'))) {
-            $user = Auth::user();
-            if ($user->is_banned)
-                return response()->json(['error' => 'your account is banned. please contact your administrator'], ResponseAlias::HTTP_FORBIDDEN);
+        $user = User::query()->where('username', $request->input('username'))->first();
+
+        // Check if the user exists and the password is correct
+        if ($user && Hash::check($request->input('password'), $user->password)) {
+            // Check if the user is banned
+            if ($user->is_banned) {
+                return response()->json(
+                    ['error' => 'Your account is banned. Please contact your administrator.'],
+                    ResponseAlias::HTTP_FORBIDDEN
+                );
+            }
 
             return response()->json([
                 'accessToken' => $user->createToken('auth_token')->plainTextToken,
                 'tokenType' => 'Bearer',
-                'user' => UserResource::make($user)
+                'user' => UserResource::make($user),
             ]);
         }
 
-        return response()->json(['message' => 'Unauthorized'], ResponseAlias::HTTP_UNAUTHORIZED);
+        return response()->json(
+            ['message' => 'Unauthorized'],
+            ResponseAlias::HTTP_UNAUTHORIZED
+        );
     }
 
     /**

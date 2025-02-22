@@ -60,7 +60,13 @@ use Illuminate\Validation\Rule;
  *          property="specificationId",
  *          type="string",
  *          example=2,
- *          description="Doctor ID"
+ *          description="Specification ID"
+ *      ),
+ *     @OA\Property(
+ *          property="clinicId",
+ *          type="string",
+ *          example=3,
+ *          description="Clinic ID"
  *      )
  * )
  */
@@ -82,13 +88,14 @@ class ReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start' => ['required', 'date_format:Y-m-d H:i:s'],
-            'end' => ['required', 'date_format:Y-m-d H:i:s'],
-            'patientId' => ['required' , 'string' , Rule::exists('patients' , 'id')],
-            'type' => ['required' , Rule::in(ReservationTypes::values())],
-            'status' => ['nullable' , 'string' , Rule::in(ReservationStatuses::values())],
-            'doctorId' => ['nullable' , 'string' , Rule::exists('users'  , 'id')],
-            'specificationId' => ['nullable' , 'string' , Rule::exists('specifications'  , 'id')]
+            'start' => ['required', 'date_format:Y-m-d H:i:s', 'after_or_equal:now'],
+            'end' => ['required', 'date_format:Y-m-d H:i:s', 'after:start'],
+            'patientId' => ['required', 'string', Rule::exists('patients', 'id')],
+            'type' => ['required', Rule::in(array_values(ReservationTypes::cases()))],
+            'status' => ['nullable', 'string', Rule::in(array_values(ReservationStatuses::cases()))],
+            'doctorId' => ['nullable', 'string', Rule::exists('users', 'id')],
+            'specificationId' => ['nullable', 'string', Rule::exists('specifications', 'id')],
+            'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')]
         ];
     }
 
@@ -98,7 +105,9 @@ class ReservationRequest extends FormRequest
             'status' => $this->input('status' , ReservationStatuses::INCOME),
             'patient_id' => $this->input('patientId'),
             'doctor_id' => $this->input('doctorId'),
-            'specification_id' => $this->input('specificationId')
+            'specification_id' => $this->input('specificationId'),
+            'clinic_id' => $this->input('clinicId' , Auth::user()->clinic_id),
+            'doctor_id' => Auth::user()->hasRole('doctor') ? Auth::id() : $this->input('doctorId' , Auth::id())
         ]);
     }
 }

@@ -18,10 +18,11 @@ return new class extends Migration
             $table->time('start')->nullable();
             $table->time('end')->nullable();
             $table->string('address')->nullable();
-            $table->string('longitude')->nullable();
-            $table->string('latitude')->nullable();
-            $table->text('description')->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->longText('description')->nullable();
             $table->boolean('is_banned')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->enum('type', array_column(ClinicTypes::cases(), 'value'))->default(ClinicTypes::CLINIC->value);
             $table->timestamps();
             $table->softDeletes();

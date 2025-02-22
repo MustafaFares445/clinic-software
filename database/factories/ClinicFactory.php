@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Clinic;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,6 +17,16 @@ class ClinicFactory extends Factory
      */
     public function definition(): array
     {
-       return [];
+       return [
+        'name' => $this->faker->name,
+        'address' => $this->faker->address,
+        'longitude' => $this->faker->longitude,
+        'latitude' => $this->faker->latitude,
+        'description' => $this->faker->sentence,
+        'is_banned' => $this->faker->boolean,
+        'type' => 'clinic',
+        'start' => $this->faker->time,
+        'end' => $this->faker->time,
+       ];
     }
 }
