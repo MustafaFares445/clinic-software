@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Str;
 
-class MedicineRecord extends Pivot
+final class MedicineRecord extends Pivot
 {
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected static function boot(): void
@@ -15,7 +16,7 @@ class MedicineRecord extends Pivot
         parent::boot();
 
         // Automatically generate a UUID when creating a new pivot record
-        static::creating(function ($model) {
+        self::creating(function ($model) {
             $model->id = Str::uuid();
         });
     }

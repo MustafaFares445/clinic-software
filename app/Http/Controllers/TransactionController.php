@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class TransactionController extends Controller
+final class TransactionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -26,7 +25,7 @@ class TransactionController extends Controller
     public function store(TransactionRequest $request): TransactionResource
     {
         return TransactionResource::make(
-          Transaction::query()->create($request->validated())
+            Transaction::query()->create($request->validated())
         );
     }
 
@@ -46,6 +45,7 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction): TransactionResource
     {
         $transaction->delete();
+
         return TransactionResource::make($transaction);
     }
 }

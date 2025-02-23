@@ -15,8 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->longText('description');
-            $table->unsignedBigInteger('fixed_value')->nullable(); //dollar price
-            $table->unsignedBigInteger('percent_value')->nullable(); //percent price
+            $table->unsignedBigInteger('fixed_value')->nullable(); // dollar price
+            $table->unsignedBigInteger('percent_value')->nullable(); // percent price
             $table->unsignedInteger('users_count')->nullable(); // null mean unlimited
             $table->time('duration')->nullable(); // null mean unlimited
             $table->timestamps();

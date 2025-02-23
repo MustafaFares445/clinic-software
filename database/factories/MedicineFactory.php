@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Medicine>
  */
-class MedicineFactory extends Factory
+final class MedicineFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
@@ -33,4 +33,4 @@ class MedicineFactory extends Factory
             'updated_at' => fake()->dateTimeBetween('-1 month'),
         ];
     }
-} 
+}

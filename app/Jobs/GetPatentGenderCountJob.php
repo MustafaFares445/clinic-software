@@ -6,12 +6,14 @@ use App\Models\Patient;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
-class GetPatentGenderCountJob implements ShouldQueue
+final class GetPatentGenderCountJob implements ShouldQueue
 {
     use Queueable;
 
     public string $gender;
+
     public int $result;
+
     /**
      * Create a new job instance.
      */
@@ -26,7 +28,7 @@ class GetPatentGenderCountJob implements ShouldQueue
     public function handle(): void
     {
         $this->result = Patient::query()
-            ->where('gender' , $this->gender)
+            ->where('gender', $this->gender)
             ->count();
     }
 }

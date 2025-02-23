@@ -21,8 +21,8 @@ return new class extends Migration
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->foreignUuid('doctor_id')->nullable()->constrained('users');
             $table->foreignUuid('specification_id')->nullable()->constrained('specifications');
-            $table->enum('type' , array_column(ReservationTypes::cases(), 'value'))->default(ReservationTypes::APPOINTMENT->value);
-            $table->enum('status' , array_column(ReservationStatuses::cases(), 'value'))->default(ReservationStatuses::INCOME->value    );
+            $table->enum('type', array_column(ReservationTypes::cases(), 'value'))->default(ReservationTypes::APPOINTMENT->value);
+            $table->enum('status', array_column(ReservationStatuses::cases(), 'value'))->default(ReservationStatuses::INCOME->value);
             $table->timestamps();
         });
     }

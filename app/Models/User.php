@@ -16,10 +16,10 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements HasMedia
+final class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable , HasRoles , HasApiTokens , HasThumbnail , HasUuids;
+    use HasApiTokens, HasFactory , HasRoles , HasThumbnail , HasUuids , Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -32,7 +32,7 @@ class User extends Authenticatable implements HasMedia
         'password',
         'username',
         'clinic_id',
-        'is_banned'
+        'is_banned',
     ];
 
     /**
@@ -60,22 +60,23 @@ class User extends Authenticatable implements HasMedia
 
     protected static function booted(): void
     {
-        if (Auth::check() && !Auth::user()->hasRole('super admin'))
-            self::query()->where('clinic_id' , Auth::user()->clinic_id);
+        if (Auth::check() && ! Auth::user()->hasRole('super admin')) {
+            self::query()->where('clinic_id', Auth::user()->clinic_id);
+        }
     }
 
     public function clinic(): BelongsTo
     {
-        return $this->belongsTo(Clinic::class , 'clinic_id');
+        return $this->belongsTo(Clinic::class, 'clinic_id');
     }
 
     public function doctorClinics(): BelongsToMany
     {
-        return $this->belongsToMany(Clinic::class , 'clinic_doctor' , 'doctor_id' , 'clinic_id');
+        return $this->belongsToMany(Clinic::class, 'clinic_doctor', 'doctor_id', 'clinic_id');
     }
 
     public function doctorSpecifications(): BelongsToMany
     {
-        return $this->belongsToMany(Specification::class , 'doctor_specification' , 'doctor_id' , 'specification_id');
+        return $this->belongsToMany(Specification::class, 'doctor_specification', 'doctor_id', 'specification_id');
     }
 }

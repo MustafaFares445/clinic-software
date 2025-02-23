@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Patient>
  */
-class PatientFactory extends Factory
+final class PatientFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.

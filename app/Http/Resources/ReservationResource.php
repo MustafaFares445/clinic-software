@@ -5,7 +5,6 @@ namespace App\Http\Resources;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Schema(
@@ -13,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
  *     type="object",
  *     title="Reservation Resource",
  *     description="Reservation resource representation",
+ *
  *     @OA\Property(
  *         property="id",
  *         type="string",
@@ -73,7 +73,7 @@ use Illuminate\Support\Facades\Auth;
  *     )
  * )
  */
-class ReservationResource extends JsonResource
+final class ReservationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

@@ -4,14 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthRequest;
 use App\Http\Resources\UserResource;
-use App\Models\Clinic;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class AuthController extends Controller
+final class AuthController extends Controller
 {
     /**
      * @OA\Post(
@@ -19,19 +18,25 @@ class AuthController extends Controller
      *     summary="Register a new user",
      *     tags={"Auth"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/AuthRequest")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful registration",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="accessToken", type="string"),
      *             @OA\Property(property="tokenType", type="string"),
      *             @OA\Property(property="user", ref="#/components/schemas/UserResource")
      *         )
      *     ),
+     *
      *     @OA\Response(response=400, description="Bad request")
      * )
      */
@@ -42,7 +47,7 @@ class AuthController extends Controller
         return response()->json([
             'accessToken' => $user->createToken('auth_token')->plainTextToken,
             'tokenType' => 'Bearer',
-            'user' => UserResource::make($user)
+            'user' => UserResource::make($user),
         ]);
     }
 
@@ -51,22 +56,29 @@ class AuthController extends Controller
      *     path="/api/auth/login",
      *     summary="Login a user",
      *     tags={"Auth"},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="username", type="string" , default="doctor-admin"),
      *             @OA\Property(property="password", type="string" , default="secret")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful login",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="accessToken", type="string"),
      *             @OA\Property(property="tokenType", type="string"),
      *             @OA\Property(property="user", ref="#/components/schemas/UserResource")
      *         )
      *     ),
+     *
      *     @OA\Response(response=401, description="Unauthorized")
      * )
      */
@@ -109,10 +121,13 @@ class AuthController extends Controller
      *     summary="Logout a user",
      *     tags={"Auth"},
      *     security={{"bearerAuth":{}}},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful logout",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="message", type="string")
      *         )
      *     )

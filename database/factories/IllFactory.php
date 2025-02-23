@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Ill>
  */
-class IllFactory extends Factory
+final class IllFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -25,4 +25,4 @@ class IllFactory extends Factory
             'updated_at' => fake()->dateTimeBetween('-1 year'),
         ];
     }
-} 
+}

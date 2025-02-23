@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ReservationIndexRequest extends FormRequest
+final class ReservationIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,7 @@ class ReservationIndexRequest extends FormRequest
         return [
             'start' => ['nullable', 'string', 'date'],
             'end' => ['nullable', 'string', 'date'],
-            'clinicId' => ['nullable', 'integer', Rule::exists('clinics' , 'id')]
+            'clinicId' => ['nullable', 'integer', Rule::exists('clinics', 'id')],
         ];
     }
 }

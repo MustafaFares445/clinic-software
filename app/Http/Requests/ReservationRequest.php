@@ -6,15 +6,13 @@ use App\Enums\ReservationStatuses;
 use App\Enums\ReservationTypes;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-
 
 /**
  * @OA\Schema(
  *     schema="ReservationRequest",
  *     type="object",
- *     required={"start", "end", "patientId", "type"},
+ *
  *     @OA\Property(
  *         property="start",
  *         type="string",
@@ -32,13 +30,14 @@ use Illuminate\Validation\Rule;
  *     @OA\Property(
  *         property="patientId",
  *         type="string",
- *         example=1,
- *         description="Patient ID"
+ *         format="uuid",
+ *         example="550e8400-e29b-41d4-a716-446655440000",
+ *         description="Patient UUID"
  *     ),
  *     @OA\Property(
  *         property="type",
  *         type="string",
- *         example="appointment",
+ *         example="surgery",
  *         description="Reservation type",
  *         enum={"surgery", "appointment", "inspection"}
  *     ),
@@ -53,24 +52,27 @@ use Illuminate\Validation\Rule;
  *     @OA\Property(
  *         property="doctorId",
  *         type="string",
- *         example=2,
- *         description="Doctor ID"
+ *         format="uuid",
+ *         example="550e8400-e29b-41d4-a716-446655440001",
+ *         description="Doctor UUID"
  *     ),
  *     @OA\Property(
- *          property="specificationId",
- *          type="string",
- *          example=2,
- *          description="Specification ID"
- *      ),
+ *         property="specificationId",
+ *         type="string",
+ *         format="uuid",
+ *         example="550e8400-e29b-41d4-a716-446655440002",
+ *         description="Specification UUID"
+ *     ),
  *     @OA\Property(
- *          property="clinicId",
- *          type="string",
- *          example=3,
- *          description="Clinic ID"
- *      )
+ *         property="clinicId",
+ *         type="string",
+ *         format="uuid",
+ *         example="550e8400-e29b-41d4-a716-446655440003",
+ *         description="Clinic UUID"
+ *     )
  * )
  */
-class ReservationRequest extends FormRequest
+final class ReservationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -87,27 +89,88 @@ class ReservationRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'start' => ['required', 'date_format:Y-m-d H:i:s', 'after_or_equal:now'],
-            'end' => ['required', 'date_format:Y-m-d H:i:s', 'after:start'],
-            'patientId' => ['required', 'string', Rule::exists('patients', 'id')],
-            'type' => ['required', Rule::in(array_values(ReservationTypes::cases()))],
-            'status' => ['nullable', 'string', Rule::in(array_values(ReservationStatuses::cases()))],
-            'doctorId' => ['nullable', 'string', Rule::exists('users', 'id')],
-            'specificationId' => ['nullable', 'string', Rule::exists('specifications', 'id')],
-            'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')]
-        ];
+        $rules = [];
+
+        if ($this->has('start')) {
+            $rules['start'] = ['date_format:Y-m-d H:i:s', 'after_or_equal:now'];
+        }
+
+        if ($this->has('end')) {
+            $rules['end'] = ['date_format:Y-m-d H:i:s', 'after:start'];
+        }
+
+        if ($this->has('patientId')) {
+            $rules['patientId'] = ['uuid', Rule::exists('patients', 'id')];
+        }
+
+        if ($this->has('type')) {
+            $rules['type'] = [Rule::in(array_values(ReservationTypes::cases()))];
+        }
+
+        if ($this->has('status')) {
+            $rules['status'] = ['string', Rule::in(array_values(ReservationStatuses::cases()))];
+        }
+
+        if ($this->has('doctorId')) {
+            $rules['doctorId'] = ['uuid', Rule::exists('users', 'id')];
+        }
+
+        if ($this->has('specificationId')) {
+            $rules['specificationId'] = ['uuid', Rule::exists('specifications', 'id')];
+        }
+
+        if ($this->has('clinicId')) {
+            $rules['clinicId'] = ['uuid', Rule::exists('clinics', 'id')];
+        }
+
+        if ($this->isMethod('POST')) {
+            $rules['start'] = ['required', 'date_format:Y-m-d H:i:s', 'after_or_equal:now'];
+            $rules['end'] = ['required', 'date_format:Y-m-d H:i:s', 'after:start'];
+            $rules['type'] = ['required', Rule::in(array_values(ReservationTypes::cases()))];
+            $rules['patientId'] = ['required', 'uuid', Rule::exists('patients', 'id')];
+        }
+
+        return $rules;
     }
 
     public function validated($key = null, $default = null)
     {
-        return array_merge(parent::validated($key, $default) , [
-            'status' => $this->input('status' , ReservationStatuses::INCOME),
-            'patient_id' => $this->input('patientId'),
-            'doctor_id' => $this->input('doctorId'),
-            'specification_id' => $this->input('specificationId'),
-            'clinic_id' => $this->input('clinicId' , Auth::user()->clinic_id),
-            'doctor_id' => Auth::user()->hasRole('doctor') ? Auth::id() : $this->input('doctorId' , Auth::id())
-        ]);
+        $validated = parent::validated($key, $default);
+
+        // Transform camelCase to snake_case keys
+        $transformedData = [];
+
+        if ($this->has('patientId')) {
+            $transformedData['patient_id'] = $this->input('patientId');
+        }
+
+        if ($this->has('doctorId')) {
+            $transformedData['doctor_id'] = $this->input('doctorId');
+        }
+
+        if ($this->has('specificationId')) {
+            $transformedData['specification_id'] = $this->input('specificationId');
+        }
+
+        if ($this->has('clinicId')) {
+            $transformedData['clinic_id'] = $this->input('clinicId');
+        }
+
+        // Set default status for new reservations
+        if ($this->isMethod('POST')) {
+            $transformedData['status'] = $this->input('status', ReservationStatuses::INCOME);
+        } elseif ($this->has('status')) {
+            $transformedData['status'] = $this->input('status');
+        }
+
+        // Keep the original validated data that doesn't need transformation
+        $keepOriginal = ['start', 'end', 'type'];
+        foreach ($keepOriginal as $field) {
+            if (isset($validated[$field])) {
+                $transformedData[$field] = $validated[$field];
+            }
+        }
+
+        return $transformedData;
     }
 }

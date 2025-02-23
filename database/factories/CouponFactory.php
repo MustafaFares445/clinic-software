@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Coupon>
  */
-class CouponFactory extends Factory
+final class CouponFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
@@ -55,4 +55,4 @@ class CouponFactory extends Factory
             'is_active' => false,
         ]);
     }
-} 
+}

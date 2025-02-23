@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class MediaService
+final class MediaService
 {
-    public static array $mediaCollections = ['files' , 'images' , 'audios' , 'videos'];
+    public static array $mediaCollections = ['files', 'images', 'audios', 'videos'];
+
     public static array $medicalMediaCollections = [
         'x-ray',
         'tests',
@@ -22,26 +23,29 @@ class MediaService
         'ecg-records',
     ];
 
-    public function handleMultipleMediaUpload(Model $model , Request $request): void
+    public function handleMultipleMediaUpload(Model $model, Request $request): void
     {
-        collect(array_merge(self::$mediaCollections, self::$mediaCollections))->map(function (string $collection) use ($model , $request){
-            foreach ($request->file($collection) as $file)
-                $this->handleMediaUpload($model , $file , $collection);
+        collect(array_merge(self::$mediaCollections, self::$mediaCollections))->map(function (string $collection) use ($model, $request) {
+            foreach ($request->file($collection) as $file) {
+                $this->handleMediaUpload($model, $file, $collection);
+            }
         });
     }
 
-    public function handleMediaUpload(Model $model, $media, string $collection): Media|null
+    public function handleMediaUpload(Model $model, $media, string $collection): ?Media
     {
-        if ($media)
+        if ($media) {
             return $model->addMedia($media)->usingName($media->hashName())->toMediaCollection($collection);
+        }
 
         return null;
     }
 
-    public function handleMediaUploadByPath(Model $model,string $path, string $collection): Media|null
+    public function handleMediaUploadByPath(Model $model, string $path, string $collection): ?Media
     {
-        if ($media)
+        if ($media) {
             return $model->addMedia($media)->usingName($media->hashName())->toMediaCollection($collection);
+        }
 
         return null;
     }

@@ -12,6 +12,7 @@ use Spatie\MediaLibrary\MediaCollections\Exceptions\InvalidConversion;
  *     title="MediaResource",
  *     description="Media resource representation for files and images",
  *     required={"id", "name", "fileName", "collection", "url", "size", "type", "extension", "caption"},
+ *
  *     @OA\Property(
  *         property="id",
  *         type="integer",
@@ -95,7 +96,7 @@ use Spatie\MediaLibrary\MediaCollections\Exceptions\InvalidConversion;
  *     )
  * )
  */
-class MediaResource extends JsonResource
+final class MediaResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -104,7 +105,7 @@ class MediaResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data =  [
+        $data = [
             'id' => $this->id,
             'name' => $this->name,
             'fileName' => $this->file_name,

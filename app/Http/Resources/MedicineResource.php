@@ -11,6 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     type="object",
  *     title="Medicine Resource",
  *     description="Medicine resource representation",
+ *
  *     @OA\Property(
  *         property="id",
  *         type="string",
@@ -32,9 +33,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="specifications",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/SpecificationResource"),
  *         description="List of specification associated with the medicine"
  *     ),
+ *
  *     @OA\Property(
  *         property="image",
  *         ref="#/components/schemas/MediaResource",
@@ -42,7 +45,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     )
  * )
  */
-class MedicineResource extends JsonResource
+final class MedicineResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -52,11 +55,11 @@ class MedicineResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->when($this->id , $this->id),
-            'name' => $this->when($this->name , $this->name),
+            'id' => $this->when($this->id, $this->id),
+            'name' => $this->when($this->name, $this->name),
             'specifications' => SpecificationResource::collection($this->whenLoaded('specifications')),
             'image' => $this->getFirstMedia('medicines'),
-            'note' => $this->whenPivotLoaded('medicine_record' , $this->pivot->note)
+            'note' => $this->whenPivotLoaded('medicine_record', $this->pivot->note),
         ];
     }
 }

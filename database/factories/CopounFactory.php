@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Coupon>
  */
-class CopounFactory extends Factory
+final class CopounFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class CopounFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+
         ];
     }
 }

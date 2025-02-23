@@ -12,6 +12,7 @@ use Illuminate\Validation\Rule;
  *     type="object",
  *     title="Patient Index Request",
  *     description="Request parameters for indexing patients",
+ *
  *     @OA\Property(
  *         property="clinicId",
  *         type="string",
@@ -34,7 +35,7 @@ use Illuminate\Validation\Rule;
  *     )
  * )
  */
-class PatientIndexRequest extends FormRequest
+final class PatientIndexRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -54,7 +55,7 @@ class PatientIndexRequest extends FormRequest
         return [
             'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
             'orderBy' => ['nullable', 'string', Rule::in(['firstName', 'lastName', 'nextReservation', 'lastReservation', 'registeredAt'])],
-            'orderType' => ['nullable', 'string', Rule::in(['DESC', 'ASC'])]
+            'orderType' => ['nullable', 'string', Rule::in(['DESC', 'ASC'])],
         ];
     }
 }

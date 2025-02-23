@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->uuidMorphs('relateable');
-            $table->enum('type' , ['in' , 'out'])->index();
+            $table->enum('type', ['in', 'out'])->index();
             $table->unsignedBigInteger('amount');
-            $table->enum('from' , array_column(TransactionFromTypes::cases(), 'value'))->index();
+            $table->enum('from', array_column(TransactionFromTypes::cases(), 'value'))->index();
             $table->boolean('finance')->default(false);
             $table->text('description')->nullable();
             $table->timestamps();

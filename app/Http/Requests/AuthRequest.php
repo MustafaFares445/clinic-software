@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+
 /**
  * @OA\Schema(
  *     schema="AuthRequest",
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
  *     description="Authentication request parameters"
  * )
  */
-class AuthRequest extends FormRequest
+final class AuthRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,7 +29,7 @@ class AuthRequest extends FormRequest
      * @OA\Property(property="email", type="string", format="email", maxLength=255, example="john.doe@example.com")
      * @OA\Property(property="password", type="string", format="password", minLength=8, maxLength=255, example="secretpass123")
      * @OA\Property(property="username", type="string", minLength=3, maxLength=255, example="johndoe")
-     * 
+     *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
@@ -43,9 +44,8 @@ class AuthRequest extends FormRequest
 
     public function validated($key = null, $default = null)
     {
-        return array_merge(parent::validated($key, $default) , [
-            'clinic_id' => $this->input('clinicId') ?? Auth::user()->clinic_id
+        return array_merge(parent::validated($key, $default), [
+            'clinic_id' => $this->input('clinicId') ?? Auth::user()->clinic_id,
         ]);
     }
-    
 }

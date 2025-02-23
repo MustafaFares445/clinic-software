@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @OA\Schema(
  *     title="PatientResource",
  *     description="Patient resource representation",
+ *
  *     @OA\Property(
  *         property="id",
  *         type="integer",
@@ -113,24 +114,29 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="permanentIlls",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/IllResource"),
  *         description="List of permanent illnesses associated with the patient"
  *     ),
+ *
  *     @OA\Property(
  *         property="permanentMedicines",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/MedicineResource"),
  *         description="List of permanent medicines associated with the patient"
  *     ),
+ *
  *     @OA\Property(
  *         property="media",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/MediaResource"),
  *         description="List of media files associated with the patient (excluding avatar)"
  *     )
  * )
  */
-class PatientResource extends JsonResource
+final class PatientResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -142,23 +148,23 @@ class PatientResource extends JsonResource
         $firstMedia = $this->getFirstMedia('profile');
 
         return [
-            'id' => $this->when($this->id , $this->id),
-            'firstName' => $this->when($this->firstName , $this->firstName),
-            'lastName' => $this->when($this->lastName , $this->lastName),
+            'id' => $this->when($this->id, $this->id),
+            'firstName' => $this->when($this->firstName, $this->firstName),
+            'lastName' => $this->when($this->lastName, $this->lastName),
             'avatar' => MediaResource::make($firstMedia),
-            'age' => $this->when($this->age , $this->age),
-            'fatherName' => $this->when($this->fatherName , $this->fatherName),
-            'motherName' => $this->when($this->motherName , $this->motherName),
-            'birth' => $this->when($this->birth , $this->birth),
-            'phone' => $this->when($this->phone , $this->phone),
-            'gender' => $this->when($this->gender , $this->gender),
-            'notes' => $this->when($this->note , $this->note),
-            'nationalNumber' => $this->when($this->nationalNumber , $this->nationalNumber),
-            'address' => $this->when($this->address , $this->address),
-            'createdAt' => $this->when($this->created_at , Carbon::parse($this->created_at)->toDateTimeString()),
+            'age' => $this->when($this->age, $this->age),
+            'fatherName' => $this->when($this->fatherName, $this->fatherName),
+            'motherName' => $this->when($this->motherName, $this->motherName),
+            'birth' => $this->when($this->birth, $this->birth),
+            'phone' => $this->when($this->phone, $this->phone),
+            'gender' => $this->when($this->gender, $this->gender),
+            'notes' => $this->when($this->note, $this->note),
+            'nationalNumber' => $this->when($this->nationalNumber, $this->nationalNumber),
+            'address' => $this->when($this->address, $this->address),
+            'createdAt' => $this->when($this->created_at, Carbon::parse($this->created_at)->toDateTimeString()),
 
-            'nextReservation' => $this->when($this->next_reservation_date , Carbon::parse($this->next_reservation_date)->toDateTimeString()),
-            'lastReservation' => $this->when($this->last_reservation_date , Carbon::parse($this->last_reservation_date)->toDateTimeString()),
+            'nextReservation' => $this->when($this->next_reservation_date, Carbon::parse($this->next_reservation_date)->toDateTimeString()),
+            'lastReservation' => $this->when($this->last_reservation_date, Carbon::parse($this->last_reservation_date)->toDateTimeString()),
 
             'permanentIlls' => IllResource::collection($this->whenLoaded('permanentIlls')),
             'permanentMedicines' => MedicineResource::collection($this->whenLoaded('permanentMedicines')),

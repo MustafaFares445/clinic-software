@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('nationalNumber')->nullable();
             $table->string('address')->nullable();
             $table->string('birth')->nullable();
-            $table->enum('gender' , ['male' , 'female'])->index()->nullable();
+            $table->enum('gender', ['male', 'female'])->index()->nullable();
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->longText('notes')->nullable();
             $table->timestamps();

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ClinicMedicine>
  */
-class ClinicMedicineFactory extends Factory
+final class ClinicMedicineFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class ClinicMedicineFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+
         ];
     }
 }

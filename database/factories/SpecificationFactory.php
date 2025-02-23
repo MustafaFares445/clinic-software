@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Specification>
  */
-class SpecificationFactory extends Factory
+final class SpecificationFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
@@ -46,4 +46,4 @@ class SpecificationFactory extends Factory
             ];
         });
     }
-} 
+}

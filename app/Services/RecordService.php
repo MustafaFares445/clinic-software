@@ -8,7 +8,7 @@ use App\Http\Requests\RecordRequest;
 use App\Models\Record;
 use Illuminate\Http\Request;
 
-class RecordService
+final class RecordService
 {
     /**
      * Handle the relationship updates for a record based on the request data.
@@ -16,9 +16,8 @@ class RecordService
      * This method processes the request and updates the record's relationships
      * for medicines, transient medicines, ills, transient ills, and doctors.
      *
-     * @param Record $record The record model to update.
-     * @param RecordRequest $request The HTTP request containing the relationship data.
-     * @return void
+     * @param Record        $record  the record model to update
+     * @param RecordRequest $request the HTTP request containing the relationship data
      */
     public function recordRelations(Record $record, RecordRequest $request): void
     {
@@ -44,7 +43,7 @@ class RecordService
 
         // Process each relationship mapping
         foreach ($relationMappings as $requestKey => $config) {
-            if (!$request->has($requestKey)) {
+            if (! $request->has($requestKey)) {
                 continue;
             }
 
@@ -64,10 +63,9 @@ class RecordService
     /**
      * Insert or update medicines for a record.
      *
-     * @param Record $record The record model to update.
-     * @param array $values Array of medicine data, each containing 'id' and optionally 'note'.
-     * @param string $type The type of medicine (default: DIAGNOSED).
-     * @return void
+     * @param Record $record the record model to update
+     * @param array  $values array of medicine data, each containing 'id' and optionally 'note'
+     * @param string $type   the type of medicine (default: DIAGNOSED)
      */
     public function insertMedicines(Record $record, array $values, string $type = RecordMedicinesTypes::DIAGNOSED): void
     {
@@ -77,10 +75,9 @@ class RecordService
     /**
      * Insert or update ills for a record.
      *
-     * @param Record $record The record model to update.
-     * @param array $values Array of ill data, each containing 'id' and optionally 'note'.
-     * @param string $type The type of ill (default: DIAGNOSED).
-     * @return void
+     * @param Record $record the record model to update
+     * @param array  $values array of ill data, each containing 'id' and optionally 'note'
+     * @param string $type   the type of ill (default: DIAGNOSED)
      */
     public function insertIlls(Record $record, array $values, string $type = RecordIllsTypes::DIAGNOSED): void
     {
@@ -93,11 +90,10 @@ class RecordService
      * This method prepares pivot data, checks for existing relationships,
      * and performs batch attach or update operations.
      *
-     * @param Record $record The record model to update.
+     * @param Record $record   the record model to update
      * @param string $relation The name of the relationship (e.g., 'medicines', 'ills').
-     * @param array $values Array of relationship data, each containing 'id' and optionally 'note'.
-     * @param string $type The type of relationship (e.g., DIAGNOSED, TRANSIENT).
-     * @return void
+     * @param array  $values   array of relationship data, each containing 'id' and optionally 'note'
+     * @param string $type     The type of relationship (e.g., DIAGNOSED, TRANSIENT).
      */
     protected function handleRelation(Record $record, string $relation, array $values, string $type): void
     {
@@ -117,7 +113,7 @@ class RecordService
         $toAttach = array_diff_key($pivotData, $toUpdate);
 
         // Batch attach new relationships
-        if (!empty($toAttach)) {
+        if (! empty($toAttach)) {
             $relationship->attach($toAttach);
         }
 
@@ -133,9 +129,10 @@ class RecordService
      * This method transforms the input array into a format suitable for attaching
      * or updating pivot tables, including the relationship type and optional notes.
      *
-     * @param array $values Array of data, each containing 'id' and optionally 'note'.
-     * @param string $type The type of relationship (e.g., DIAGNOSED, TRANSIENT).
-     * @return array An associative array where keys are IDs and values are pivot attributes.
+     * @param array  $values array of data, each containing 'id' and optionally 'note'
+     * @param string $type   The type of relationship (e.g., DIAGNOSED, TRANSIENT).
+     *
+     * @return array an associative array where keys are IDs and values are pivot attributes
      */
     protected function preparePivotData(array $values, string $type): array
     {
@@ -144,6 +141,7 @@ class RecordService
                 'type' => $type,
                 'note' => $item['note'] ?? null,
             ];
+
             return $carry;
         }, []);
     }

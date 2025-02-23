@@ -7,7 +7,7 @@ use App\Models\Ill;
 use App\Models\Record;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class IllRecordFactory extends Factory
+final class IllRecordFactory extends Factory
 {
     public function definition(): array
     {
@@ -37,4 +37,4 @@ class IllRecordFactory extends Factory
             'type' => RecordIllsTypes::TRANSIENT->value,
         ]);
     }
-} 
+}

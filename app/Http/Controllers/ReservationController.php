@@ -10,15 +10,11 @@ use App\Models\Clinic;
 use App\Models\Reservation;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
-class ReservationController extends Controller
+final class ReservationController extends Controller
 {
     /**
      * @OA\Get(
@@ -26,23 +22,29 @@ class ReservationController extends Controller
      *     summary="Display a listing of reservations",
      *     security={ {"bearerAuth": {} }},
      *     tags={"Reservation"},
+     *
      *     @OA\Parameter(
      *         name="start",
      *         in="query",
      *         description="Start date filter",
      *         required=false,
+     *
      *         @OA\Schema(type="string", format="date")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="end",
      *         in="query",
      *         description="End date filter",
      *         required=false,
+     *
      *         @OA\Schema(type="string", format="date")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
+     *
      *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/ReservationResource"))
      *     )
      * )
@@ -50,8 +52,9 @@ class ReservationController extends Controller
     /**
      * Handles the retrieval of reservations based on the provided request parameters.
      *
-     * @param ReservationIndexRequest $request The incoming request containing filters for reservations.
-     * @return AnonymousResourceCollection|JsonResponse A collection of reservations or a JSON response with an error.
+     * @param ReservationIndexRequest $request the incoming request containing filters for reservations
+     *
+     * @return AnonymousResourceCollection|JsonResponse a collection of reservations or a JSON response with an error
      */
     public function index(ReservationIndexRequest $request): AnonymousResourceCollection|JsonResponse
     {
@@ -81,13 +84,13 @@ class ReservationController extends Controller
         // Build the reservation query with necessary filters and sorting
         $reservationQuery = Reservation::query()
             ->with(['patient' => function ($query) {
-                $query->select(['id' , 'firstName' , 'lastName']);
+                $query->select(['id', 'firstName', 'lastName']);
             }])
             ->with(['doctor' => function ($query) {
-                $query->select(['id' , 'fullName']);
+                $query->select(['id', 'fullName']);
             }])
             ->with(['specification' => function ($query) {
-                $query->select(['id' , 'name']);
+                $query->select(['id', 'name']);
             }])
             ->whereDate('start', '>=', $startDate)
             ->whereDate('end', '<=', $endDate)
@@ -103,13 +106,17 @@ class ReservationController extends Controller
      *     summary="Store a newly created reservation",
      *     security={ {"bearerAuth": {} }},
      *     tags={"Reservation"},
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ReservationRequest")
      *     ),
+     *
      *     @OA\Response(
      *         response=201,
      *         description="Resource created",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ReservationResource")
      *     )
      * )
@@ -118,9 +125,8 @@ class ReservationController extends Controller
     {
         $reservation = Reservation::query()->create($request->validated());
 
-        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
+        return ReservationResource::make($reservation->load(['patient', 'doctor', 'specification']));
     }
-
 
     /**
      * @OA\Get(
@@ -128,16 +134,20 @@ class ReservationController extends Controller
      *     summary="Display the specified reservation",
      *     security={ {"bearerAuth": {} }},
      *     tags={"Reservation"},
+     *
      *     @OA\Parameter(
      *         name="reservation",
      *         in="path",
      *         description="Reservation ID",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ReservationResource")
      *     )
      * )
@@ -145,7 +155,7 @@ class ReservationController extends Controller
     public function show(Reservation $reservation): ReservationResource
     {
 
-        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
+        return ReservationResource::make($reservation->load(['patient', 'doctor', 'specification']));
     }
 
     /**
@@ -154,20 +164,26 @@ class ReservationController extends Controller
      *     summary="Update the specified reservation",
      *     security={ {"bearerAuth": {} }},
      *     tags={"Reservation"},
+     *
      *     @OA\Parameter(
      *         name="reservation",
      *         in="path",
      *         description="Reservation ID",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ReservationRequest")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Resource updated",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ReservationResource")
      *     )
      * )
@@ -176,44 +192,7 @@ class ReservationController extends Controller
     {
         $reservation->update($request->validated());
 
-        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
-    }   
-
-    /**
-     * @OA\Patch(
-     *     path="/api/reservations/{reservation}/change-status",
-     *     summary="Change the status of the specified reservation",
-     *     security={ {"bearerAuth": {} }},
-     *     tags={"Reservation"},
-     *     @OA\Parameter(
-     *         name="reservation",
-     *         in="path",
-     *         description="Reservation ID",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", enum={"income", "check", "dismiss", "cancelled"})
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Status changed",
-     *         @OA\JsonContent(ref="#/components/schemas/ReservationResource")
-     *     )
-     * )
-     */
-    public function changeStatus(Request $request, Reservation $reservation): ReservationResource
-    {
-        $request->validate([
-            'status' => ['required' , 'string' , Rule::in(array_values(ReservationStatuses::cases()))]
-        ]);
-
-        $reservation->update(['status' => $request->input('status')]);
-
-        return ReservationResource::make($reservation->load(['patient' , 'doctor' , 'specification']));
+        return ReservationResource::make($reservation->load(['patient', 'doctor', 'specification']));
     }
 
     /**
@@ -222,18 +201,23 @@ class ReservationController extends Controller
      *     summary="Remove the specified reservation",
      *     security={ {"bearerAuth": {} }},
      *     tags={"Reservation"},
+     *
      *     @OA\Parameter(
      *         name="reservation",
      *         in="path",
      *         description="Reservation ID",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Resource deleted successfully",
+     *
      *         @OA\JsonContent(ref="#/components/schemas/ReservationResource")
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Reservation not found"

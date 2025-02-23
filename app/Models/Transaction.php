@@ -12,10 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Transaction extends Model implements HasMedia
+final class Transaction extends Model implements HasMedia
 {
     /** @use HasFactory<TransactionFactory> */
-    use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
+    use HasFactory , HasUuids , InteractsWithMedia , SoftDeletes;
 
     protected $fillable = [
         'clinic_id',
@@ -24,13 +24,14 @@ class Transaction extends Model implements HasMedia
         'description',
         'finance',
         'from',
-        'user_id'
+        'user_id',
     ];
 
     protected static function booted(): void
     {
-        if (Auth::check() && !Auth::user()->hasRole('super admin'))
-            self::query()->where('clinic_id' , Auth::user()->clinic_id);
+        if (Auth::check() && ! Auth::user()->hasRole('super admin')) {
+            self::query()->where('clinic_id', Auth::user()->clinic_id);
+        }
     }
 
     public function clinic(): BelongsTo

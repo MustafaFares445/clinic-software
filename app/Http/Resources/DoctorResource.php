@@ -11,6 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     type="object",
  *     title="Doctor Resource",
  *     description="Doctor resource representation",
+ *
  *     @OA\Property(
  *         property="string",
  *         type="string",
@@ -28,7 +29,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     )
  * )
  */
-class DoctorResource extends JsonResource
+final class DoctorResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -40,7 +41,7 @@ class DoctorResource extends JsonResource
         return [
             'id' => $this->when($this->id, $this->id),
             'fullName' => $this->when($this->fullName, $this->fullName),
-            'avatar' => MediaResource::make($this->getFirstMedia('users'))
+            'avatar' => MediaResource::make($this->getFirstMedia('users')),
         ];
     }
 }

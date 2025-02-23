@@ -2,28 +2,30 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
+use App\Enums\ReservationStatuses;
+use App\Enums\ReservationTypes;
 use App\Models\Clinic;
 use App\Models\Patient;
 use App\Models\Reservation;
 use App\Models\Specification;
-use App\Enums\ReservationTypes;
-use App\Enums\ReservationStatuses;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
-class ReservationTest extends TestCase
+final class ReservationTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @var User */
     private User $user;
+
     private Clinic $clinic;
-    /** @var User */
+
     private User $doctor;
+
     private Patient $patient;
+
     private Specification $specification;
 
     protected function setUp(): void
@@ -33,21 +35,21 @@ class ReservationTest extends TestCase
         // Create base test data
         $this->clinic = Clinic::factory()->create([
             'start' => '09:00',
-            'end' => '17:00'
+            'end' => '17:00',
         ]);
 
         $this->user = User::factory()->create([
-            'clinic_id' => $this->clinic->id
+            'clinic_id' => $this->clinic->id,
         ]);
 
         // Create a doctor user
         $this->doctor = User::factory()->create([
-            'clinic_id' => $this->clinic->id
+            'clinic_id' => $this->clinic->id,
         ]);
         $this->doctor->assignRole('doctor');
 
         $this->patient = Patient::factory()->create([
-            'clinic_id' => $this->clinic->id
+            'clinic_id' => $this->clinic->id,
         ]);
 
         $this->specification = Specification::factory()->create();
@@ -57,7 +59,7 @@ class ReservationTest extends TestCase
         $this->actingAs($user);
     }
 
-    public function test_can_list_reservations()
+    public function testCanListReservations()
     {
         Reservation::factory()->count(3)->create([
             'clinic_id' => $this->clinic->id,
@@ -81,13 +83,13 @@ class ReservationTest extends TestCase
                         'status',
                         'patient',
                         'doctor',
-                        'specification'
-                    ]
-                ]
+                        'specification',
+                    ],
+                ],
             ]);
     }
 
-    public function test_can_filter_reservations_by_date_range()
+    public function testCanFilterReservationsByDateRange()
     {
         // Create reservations with different dates
         $pastReservation = Reservation::factory()->create([
@@ -109,7 +111,7 @@ class ReservationTest extends TestCase
             ->assertJsonCount(1, 'data');
     }
 
-    public function test_can_store_new_reservation()
+    public function testCanStoreNewReservation()
     {
         $reservationData = [
             'patientId' => $this->patient->id,
@@ -133,8 +135,8 @@ class ReservationTest extends TestCase
                     'status',
                     'patient',
                     'doctor',
-                    'specification'
-                ]
+                    'specification',
+                ],
             ]);
 
         $this->assertDatabaseHas('reservations', [
@@ -144,7 +146,7 @@ class ReservationTest extends TestCase
         ]);
     }
 
-    public function test_can_show_reservation()
+    public function testCanShowReservation()
     {
         $reservation = Reservation::factory()->create([
             'clinic_id' => $this->clinic->id,
@@ -164,12 +166,12 @@ class ReservationTest extends TestCase
                     'status',
                     'patient',
                     'doctor',
-                    'specification'
-                ]
+                    'specification',
+                ],
             ]);
     }
 
-    public function test_can_update_reservation()
+    public function testCanUpdateReservation()
     {
         $reservation = Reservation::factory()->create([
             'clinic_id' => $this->clinic->id,
@@ -192,7 +194,7 @@ class ReservationTest extends TestCase
 
         $response = $this->putJson("/api/reservations/{$reservation->id}", $updateData);
 
-      $response->assertOk();
+        $response->assertOk();
 
         $this->assertDatabaseHas('reservations', [
             'id' => $reservation->id,
@@ -201,7 +203,7 @@ class ReservationTest extends TestCase
         ]);
     }
 
-    public function test_can_change_reservation_status()
+    public function testCanChangeReservationStatus()
     {
         $reservation = Reservation::factory()->create([
             'clinic_id' => $this->clinic->id,
@@ -212,7 +214,7 @@ class ReservationTest extends TestCase
         ]);
 
         $response = $this->patchJson("/api/reservations/{$reservation->id}/change-status", [
-            'status' => ReservationStatuses::CHECK
+            'status' => ReservationStatuses::CHECK,
         ]);
 
         $response->assertOk();
@@ -223,7 +225,7 @@ class ReservationTest extends TestCase
         ]);
     }
 
-    public function test_can_delete_reservation()
+    public function testCanDeleteReservation()
     {
         $reservation = Reservation::factory()->create([
             'clinic_id' => $this->clinic->id,
@@ -241,15 +243,15 @@ class ReservationTest extends TestCase
         ]);
     }
 
-    public function test_validates_required_fields_when_storing_reservation()
+    public function testValidatesRequiredFieldsWhenStoringReservation()
     {
         $response = $this->postJson('/api/reservations', []);
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['patientId', 'start', 'end', 'type']);
     }
-    
-    public function test_validates_date_range_when_storing_reservation()
+
+    public function testValidatesDateRangeWhenStoringReservation()
     {
         $reservationData = [
             'patientId' => $this->patient->id,
@@ -267,4 +269,4 @@ class ReservationTest extends TestCase
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['end']);
     }
-} 
+}

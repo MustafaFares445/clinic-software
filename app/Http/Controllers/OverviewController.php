@@ -17,17 +17,20 @@ use OpenApi\Annotations as OA;
  *     description="API Endpoints for dashboard overview statistics"
  * )
  */
-class OverviewController extends Controller
+final class OverviewController extends Controller
 {
     /**
      * @OA\Get(
      *     path="/api/overview/patients/gender/count",
      *     summary="Get patient count by gender",
      *     tags={"Overview"},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Success",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="malesCount", type="integer", example=150),
      *             @OA\Property(property="femalesCount", type="integer", example=200)
      *         )
@@ -37,12 +40,12 @@ class OverviewController extends Controller
      */
     public function patientsGenderCount(): JsonResponse
     {
-        $malesCount =  Patient::query()->where('gender' , 'male')->count();
-        $femalesCount = Patient::query()->where('gender' , 'female')->count();
+        $malesCount = Patient::query()->where('gender', 'male')->count();
+        $femalesCount = Patient::query()->where('gender', 'female')->count();
 
         return response()->json([
-           'malesCount' => $malesCount,
-           'femalesCount' => $femalesCount
+            'malesCount' => $malesCount,
+            'femalesCount' => $femalesCount,
         ]);
     }
 
@@ -51,12 +54,17 @@ class OverviewController extends Controller
      *     path="/api/overview/ills/count",
      *     summary="Get illness statistics",
      *     tags={"Overview"},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Success",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="data", type="array",
+     *
      *                 @OA\Items(
+     *
      *                     @OA\Property(property="id", type="string", format="uuid"),
      *                     @OA\Property(property="name", type="string"),
      *                     @OA\Property(property="records_count", type="integer")
@@ -72,13 +80,13 @@ class OverviewController extends Controller
     {
         $ills = Ill::query()
             ->select('id', 'name')
-            ->whereRelation('records' , 'clinic_id' , Auth::user()->clinic_id)
+            ->whereRelation('records', 'clinic_id', Auth::user()->clinic_id)
             ->withCount('records')
             ->get();
 
         return response()->json([
             'data' => $ills,
-            'totalCount' => $ills->sum('records_count')
+            'totalCount' => $ills->sum('records_count'),
         ]);
     }
 
@@ -87,24 +95,31 @@ class OverviewController extends Controller
      *     path="/api/overview/records/count",
      *     summary="Get records count within date range",
      *     tags={"Overview"},
+     *
      *     @OA\Parameter(
      *         name="startDate",
      *         in="query",
      *         description="Start date for records count (Y-m-d)",
      *         required=false,
+     *
      *         @OA\Schema(type="string", format="date")
      *     ),
+     *
      *     @OA\Parameter(
      *         name="endDate",
      *         in="query",
      *         description="End date for records count (Y-m-d)",
      *         required=false,
+     *
      *         @OA\Schema(type="string", format="date")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Success",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="count", type="integer", example=50)
      *         )
      *     ),
@@ -114,12 +129,12 @@ class OverviewController extends Controller
     public function recordsCount(Request $request): JsonResponse
     {
         $count = Record::query()
-            ->whereDate('dateTime' , '>=' , $request->input('startDate') ?? Carbon::now()->firstOfMonth())
-            ->whereDate('dateTime' , '<=' ,$request->input('endDate') ?? Carbon::now()->lastOfMonth())
+            ->whereDate('dateTime', '>=', $request->input('startDate') ?? Carbon::now()->firstOfMonth())
+            ->whereDate('dateTime', '<=', $request->input('endDate') ?? Carbon::now()->lastOfMonth())
             ->count();
 
         return response()->json([
-            'count' => $count
+            'count' => $count,
         ]);
     }
 }

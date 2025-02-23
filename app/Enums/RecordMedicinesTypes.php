@@ -2,8 +2,8 @@
 
 namespace App\Enums;
 
-enum RecordMedicinesTypes : string
+enum RecordMedicinesTypes: string
 {
-    CASE TRANSIENT = 'transient';
-    CASE DIAGNOSED =  'diagnosed';
+    case TRANSIENT = 'transient';
+    case DIAGNOSED = 'diagnosed';
 }

@@ -6,36 +6,34 @@ use App\Models\Clinic;
 use App\Models\Ill;
 use App\Models\Medicine;
 use App\Models\Patient;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
-class PatientSeeder extends Seeder
+final class PatientSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-       $patient1 = Patient::query()->create([
+        $patient1 = Patient::query()->create([
             'firstName' => 'محمد',
             'lastName' => 'بكري',
             'phone' => '091111111',
             'age' => 21,
             'fatherName' => 'عبد القادر',
             'motherName' => 'بهيجة',
-            'nationalNumber' =>  '123332432423',
+            'nationalNumber' => '123332432423',
             'address' => 'الفرقان,مفرق السكن',
             'gender' => 'male',
             'birth' => '2003',
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'notes' => 'وصف موجز'
+            'notes' => 'وصف موجز',
         ]);
 
-       $patient1->permanentIlls()->sync(Ill::query()->inRandomOrder()->first()->id);
-       $patient1->permanentMedicines()->sync(Medicine::query()->inRandomOrder()->first()->id);
+        $patient1->permanentIlls()->sync(Ill::query()->inRandomOrder()->first()->id);
+        $patient1->permanentMedicines()->sync(Medicine::query()->inRandomOrder()->first()->id);
 
-       $patient2 = Patient::query()->create([
+        $patient2 = Patient::query()->create([
             'firstName' => 'حسن',
             'lastName' => 'فاضل',
             'phone' => '091111112',
@@ -44,10 +42,10 @@ class PatientSeeder extends Seeder
             'birth' => '2003',
             'fatherName' => 'ياسر',
             'motherName' => 'تغريد',
-            'nationalNumber' =>  '34324232432',
+            'nationalNumber' => '34324232432',
             'address' => 'موكامبو,دوار المايل',
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'notes' => 'وصف موجز' ,
+            'notes' => 'وصف موجز',
         ]);
 
         $patient2->permanentIlls()->sync(Ill::query()->inRandomOrder()->first()->id);

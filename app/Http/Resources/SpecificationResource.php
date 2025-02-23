@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @OA\Schema(
  *     title="SpecificationResource",
  *     description="Specification resource representation",
+ *
  *     @OA\Property(
  *         property="id",
  *         type="integer",
@@ -34,7 +35,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     )
  * )
  */
-class SpecificationResource extends JsonResource
+final class SpecificationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -47,7 +48,7 @@ class SpecificationResource extends JsonResource
             'id' => $this->when($this->id, $this->id),
             'name' => $this->when($this->name, $this->name),
             'description' => $this->when($this->description, $this->description),
-            'image' => MediaResource::make($this->getFirstMedia('specifications'))
+            'image' => MediaResource::make($this->getFirstMedia('specifications')),
         ];
     }
 }

@@ -7,7 +7,7 @@ use App\Models\Medicine;
 use App\Models\Record;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class MedicineRecordFactory extends Factory
+final class MedicineRecordFactory extends Factory
 {
     public function definition(): array
     {
@@ -19,4 +19,4 @@ class MedicineRecordFactory extends Factory
             'note' => fake()->optional()->paragraph(),
         ];
     }
-} 
+}

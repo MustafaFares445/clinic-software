@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Coupon extends Model
+final class Coupon extends Model
 {
     /** @use HasFactory<CopounFactory> */
-    use HasFactory , SoftDeletes , HasUuids;
+    use HasFactory , HasUuids , SoftDeletes;
 
     protected $fillable = [
         'code',
@@ -21,7 +21,7 @@ class Coupon extends Model
         'expire_at',
         'plan_id',
         'used_number',
-        'is_active'
+        'is_active',
     ];
 
     public function plan(): BelongsTo

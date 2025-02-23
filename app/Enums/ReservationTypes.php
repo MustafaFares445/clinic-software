@@ -2,9 +2,9 @@
 
 namespace App\Enums;
 
-enum ReservationTypes : string
+enum ReservationTypes: string
 {
-    CASE SURGERY = 'surgery';
-    CASE APPOINTMENT =  'appointment';
-    CASE INSPECTION = 'inspection';
+    case SURGERY = 'surgery';
+    case APPOINTMENT = 'appointment';
+    case INSPECTION = 'inspection';
 }

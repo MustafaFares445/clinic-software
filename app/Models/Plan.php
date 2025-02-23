@@ -11,18 +11,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 
-class Plan extends Model implements HasMedia
+final class Plan extends Model implements HasMedia
 {
     /** @use HasFactory<PlanFactory> */
-    use HasFactory , HasThumbnail , SoftDeletes , HasUuids;
+    use HasFactory , HasThumbnail , HasUuids , SoftDeletes;
 
     protected $fillable = [
-      'name',
-      'description',
-      'fixed_value',
-      'percent_value',
-      'users_count',
-      'duration'
+        'name',
+        'description',
+        'fixed_value',
+        'percent_value',
+        'users_count',
+        'duration',
     ];
 
     public function clinics(): BelongsToMany

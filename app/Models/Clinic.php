@@ -14,27 +14,28 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 
-class Clinic extends Model implements HasMedia
+final class Clinic extends Model implements HasMedia
 {
     /** @use HasFactory<ClinicFactory> */
-    use HasFactory , HasThumbnail , SoftDeletes , HasUuids;
+    use HasFactory , HasThumbnail , HasUuids , SoftDeletes;
 
     protected $fillable = [
-      'name',
-      'address',
-      'longitude',
-      'latitude',
-      'description',
-      'is_banned',
-      'type',
-      'start',
-      'end'
+        'name',
+        'address',
+        'longitude',
+        'latitude',
+        'description',
+        'is_banned',
+        'type',
+        'start',
+        'end',
     ];
 
     public function currentPlan(): ?Model
     {
         $currentPlan = $this->belongsToMany(Plan::class)->latest()->first();
-        return ( now() > (Carbon::parse($currentPlan?->created_at +  $currentPlan?->duration)) ) ? $currentPlan : null;
+
+        return (now() > (Carbon::parse($currentPlan?->created_at + $currentPlan?->duration))) ? $currentPlan : null;
     }
 
     public function plans(): BelongsToMany
@@ -59,6 +60,6 @@ class Clinic extends Model implements HasMedia
 
     public function transaction(): MorphMany
     {
-        return $this->morphMany(Transaction::class , 'relateable');
+        return $this->morphMany(Transaction::class, 'relateable');
     }
 }

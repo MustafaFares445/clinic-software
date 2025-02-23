@@ -15,8 +15,8 @@ return new class extends Migration
         Schema::create('ill_record', function (Blueprint $table) {
             $table->foreignUuid('ill_id')->constrained('ills');
             $table->foreignUuid('record_id')->constrained('records');
-            $table->enum('type' , array_column(RecordIllsTypes::cases(), 'value'))->default(RecordIllsTypes::DIAGNOSED->value)->index();
-            $table->unique(['ill_id' , 'record_id' , 'type']);
+            $table->enum('type', array_column(RecordIllsTypes::cases(), 'value'))->default(RecordIllsTypes::DIAGNOSED->value)->index();
+            $table->unique(['ill_id', 'record_id', 'type']);
         });
     }
 

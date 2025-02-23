@@ -26,19 +26,13 @@ return [
      */
     'queue_name' => env('MEDIA_QUEUE', ''),
 
-    /*
-     * By default all conversions will be performed on a queue.
-     */
+    // By default all conversions will be performed on a queue.
     'queue_conversions_by_default' => env('QUEUE_CONVERSIONS_BY_DEFAULT', true),
 
-    /*
-     * Should database transactions be run after database commits?
-     */
+    // Should database transactions be run after database commits?
     'queue_conversions_after_database_commit' => env('QUEUE_CONVERSIONS_AFTER_DB_COMMIT', true),
 
-    /*
-     * The fully qualified class name of the media model.
-     */
+    // The fully qualified class name of the media model.
     'media_model' => Spatie\MediaLibrary\MediaCollections\Models\Media::class,
 
     /*
@@ -63,29 +57,19 @@ return [
      */
     'enable_temporary_uploads_session_affinity' => true,
 
-    /*
-     * When enabled, Media Library pro will generate thumbnails for uploaded file.
-     */
+    // When enabled, Media Library pro will generate thumbnails for uploaded file.
     'generate_thumbnails_for_temporary_uploads' => true,
 
-    /*
-     * This is the class that is responsible for naming generated files.
-     */
+    // This is the class that is responsible for naming generated files.
     'file_namer' => Spatie\MediaLibrary\Support\FileNamer\DefaultFileNamer::class,
 
-    /*
-     * The class that contains the strategy for determining a media file's path.
-     */
+    // The class that contains the strategy for determining a media file's path.
     'path_generator' => Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator::class,
 
-    /*
-     * The class that contains the strategy for determining how to remove files.
-     */
+    // The class that contains the strategy for determining how to remove files.
     'file_remover_class' => Spatie\MediaLibrary\Support\FileRemover\DefaultFileRemover::class,
 
-    /*
-     * Here you can specify which path generator should be used for the given class.
-     */
+    // Here you can specify which path generator should be used for the given class.
     'custom_path_generators' => [
         // Model::class => PathGenerator::class
         // or
@@ -141,7 +125,7 @@ return [
             '-m 6', // for the slowest compression method in order to get the best compression.
             '-pass 10', // for maximizing the amount of analysis pass.
             '-mt', // multithreading for some speed improvements.
-            '-q 90', //quality factor that brings the least noticeable changes.
+            '-q 90', // quality factor that brings the least noticeable changes.
         ],
         Spatie\ImageOptimizer\Optimizers\Avifenc::class => [
             '-a cq-level=23', // constant quality level, lower values mean better quality and greater file size (0-63).
@@ -155,9 +139,7 @@ return [
         ],
     ],
 
-    /*
-     * These generators will be used to create an image of media files.
-     */
+    // These generators will be used to create an image of media files.
     'image_generators' => [
         Spatie\MediaLibrary\Conversions\ImageGenerators\Image::class,
         Spatie\MediaLibrary\Conversions\ImageGenerators\Webp::class,

@@ -2,10 +2,10 @@
 
 namespace App\Enums;
 
-enum ReservationStatuses : string
+enum ReservationStatuses: string
 {
-    CASE INCOME = 'income';
-    CASE CHECK = 'check';
-    CASE DISMISS = 'dismiss';
-    CASE CANCELLED = 'cancelled';
+    case INCOME = 'income';
+    case CHECK = 'check';
+    case DISMISS = 'dismiss';
+    case CANCELLED = 'cancelled';
 }

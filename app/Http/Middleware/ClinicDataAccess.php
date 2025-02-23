@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class ClinicDataAccess
+final class ClinicDataAccess
 {
     /**
      * Handle an incoming request.
@@ -16,8 +16,9 @@ class ClinicDataAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::user()->hasRole('admin'))
-            return response()->json(['message' => 'not Allowed.'] , Response::HTTP_FORBIDDEN);
+        if (! Auth::user()->hasRole('admin')) {
+            return response()->json(['message' => 'not Allowed.'], Response::HTTP_FORBIDDEN);
+        }
 
         return $next($request);
     }

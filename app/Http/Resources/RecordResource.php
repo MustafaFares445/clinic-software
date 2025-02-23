@@ -13,6 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     type="object",
  *     title="Record Resource",
  *     description="Record resource representation",
+ *
  *     @OA\Property(
  *         property="id",
  *         type="integer",
@@ -46,42 +47,53 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="doctors",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/DoctorResource"),
  *         description="List of doctors associated with the record"
  *     ),
+ *
  *     @OA\Property(
  *         property="ills",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/IllResource"),
  *         description="List of illnesses associated with the record"
  *     ),
+ *
  *     @OA\Property(
  *         property="transientIlls",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/IllResource"),
  *         description="List of transient illnesses associated with the record"
  *     ),
+ *
  *     @OA\Property(
  *         property="medicines",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/MedicineResource"),
  *         description="List of medicines associated with the record"
  *     ),
+ *
  *     @OA\Property(
  *         property="transientMedicines",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/MedicineResource"),
  *         description="List of transient medicines associated with the record"
  *     ),
+ *
  *     @OA\Property(
  *         property="media",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/MediaResource"),
  *         description="List of media files associated with the record"
  *     )
  * )
  */
-class RecordResource extends JsonResource
+final class RecordResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -91,10 +103,10 @@ class RecordResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->when($this->id , $this->id),
-            'description' => $this->when($this->description , $this->description),
-            'type' => $this->when($this->type , $this->type),
-            'date' => $this->when($this->date , Carbon::parse($this->date)->toDateTimeString()),
+            'id' => $this->when($this->id, $this->id),
+            'description' => $this->when($this->description, $this->description),
+            'type' => $this->when($this->type, $this->type),
+            'date' => $this->when($this->date, Carbon::parse($this->date)->toDateTimeString()),
             'reservation' => ReservationResource::make($this->whenLoaded('reservation')),
             'doctors' => DoctorResource::collection($this->whenLoaded('doctors')),
             'ills' => IllResource::collection($this->whenLoaded('ills', function () {
@@ -109,7 +121,7 @@ class RecordResource extends JsonResource
             'transientMedicines' => MedicineResource::collection($this->whenLoaded('medicines', function () {
                 return $this->medicines->where('pivot.type', RecordIllsTypes::TRANSIENT);
             })),
-           'media' => MediaResource::collection($this->whenLoaded('media'))
+            'media' => MediaResource::collection($this->whenLoaded('media')),
         ];
     }
 }

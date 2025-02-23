@@ -12,7 +12,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *     description="Request validation rules for various types of medical media uploads"
  * )
  */
-class MediaRequest extends FormRequest
+final class MediaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,97 +30,124 @@ class MediaRequest extends FormRequest
      * @OA\Property(
      *     property="files",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="General media files (max 10 files, 50MB each)",
      *     maxItems=10
      * )
+     *
      * @OA\Property(
      *     property="images",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="Image files (jpeg, png, jpg, gif - max 20 files, 5MB each)",
      *     maxItems=20
      * )
+     *
      * @OA\Property(
      *     property="audios",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="Audio files (mp3, wav, ogg - max 5 files, 10MB each)",
      *     maxItems=5
      * )
+     *
      * @OA\Property(
      *     property="videos",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="Video files (mp4, mov, avi, wmv - max 3 files, 50MB each)",
      *     maxItems=3
      * )
+     *
      * @OA\Property(
      *     property="x-ray",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="X-ray files (dicom, dcm, jpeg, png - max 10 files, 20MB each)",
      *     maxItems=10
      * )
+     *
      * @OA\Property(
      *     property="mri-scans",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="MRI scan files (dicom, dcm, nii, nii.gz - max 15 files, 50MB each)",
      *     maxItems=15
      * )
+     *
      * @OA\Property(
      *     property="ct-scans",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="CT scan files (dicom, dcm, nii, nii.gz - max 15 files, 50MB each)",
      *     maxItems=15
      * )
+     *
      * @OA\Property(
      *     property="ultrasound",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="Ultrasound files (dicom, dcm, mp4, avi - max 10 files, 30MB each)",
      *     maxItems=10
      * )
+     *
      * @OA\Property(
      *     property="tests",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="Test documents (pdf, doc, docx - max 15 files, 5MB each)",
      *     maxItems=15
      * )
+     *
      * @OA\Property(
      *     property="lab-reports",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="Lab reports (pdf, doc, docx, xlsx, csv - max 20 files, 10MB each)",
      *     maxItems=20
      * )
+     *
      * @OA\Property(
      *     property="prescriptions",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="Prescriptions (pdf, jpg, png - max 10 files, 2MB each)",
      *     maxItems=10
      * )
+     *
      * @OA\Property(
      *     property="medical-reports",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="Medical reports (pdf, doc, docx - max 20 files, 15MB each)",
      *     maxItems=20
      * )
+     *
      * @OA\Property(
      *     property="patient-history",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="Patient history files (pdf, doc, docx - max 5 files, 20MB each)",
      *     maxItems=5
      * )
+     *
      * @OA\Property(
      *     property="ecg-records",
      *     type="array",
+     *
      *     @OA\Items(type="string", format="binary"),
      *     description="ECG records (pdf, dcm, xml, json - max 10 files, 10MB each)",
      *     maxItems=10
@@ -182,8 +209,6 @@ class MediaRequest extends FormRequest
 
     /**
      * Get custom messages for validator errors.
-     *
-     * @return array
      */
     public function messages(): array
     {
@@ -205,5 +230,4 @@ class MediaRequest extends FormRequest
             '*.*.mimes' => 'The file must be of type: :values',
         ];
     }
-
 }

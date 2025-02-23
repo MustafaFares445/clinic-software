@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
-class RoleSeeder extends Seeder
+final class RoleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,19 +13,19 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         Role::query()->firstOrCreate([
-           'name' => 'super admin'
+            'name' => 'super admin',
         ]);
 
         Role::query()->firstOrCreate([
-            'name' => 'admin'
+            'name' => 'admin',
         ]);
 
         Role::query()->firstOrCreate([
-            'name' => 'doctor'
+            'name' => 'doctor',
         ]);
 
         Role::query()->firstOrCreate([
-            'name' => 'secreter'
+            'name' => 'secreter',
         ]);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Enums;
 
-enum ClinicTypes : string
+enum ClinicTypes: string
 {
-    CASE HOSPITAL = 'hospital';
-    CASE CLINIC = 'clinic';
-    CASE HEALTH_CENTER = 'health center';
+    case HOSPITAL = 'hospital';
+    case CLINIC = 'clinic';
+    case HEALTH_CENTER = 'health center';
 }

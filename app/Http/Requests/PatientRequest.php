@@ -7,7 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-
 /**
  * @OA\Schema(
  *     schema="PatientRequest",
@@ -15,6 +14,7 @@ use Illuminate\Validation\Rule;
  *     title="Patient Request",
  *     description="Request body data for creating or updating a patient",
  *     required={"firstName", "lastName"},
+ *
  *     @OA\Property(
  *         property="firstName",
  *         type="string",
@@ -89,7 +89,7 @@ use Illuminate\Validation\Rule;
  *     )
  * )
  */
-class PatientRequest extends FormRequest
+final class PatientRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -106,26 +106,33 @@ class PatientRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'firstName' => ['required' , 'string'],
-            'lastName' => ['required' , 'string'],
-            'phone' => ['nullable' , 'string'],
-            'age' => ['nullable' , 'numeric'],
-            'fatherName' => ['nullable' , 'string'],
-            'motherName' => ['nullable' , 'string'],
-            'nationalNumber' => ['nullable' , 'string'],
-            'address' => ['nullable' , 'string'],
-            'notes' => ['nullable' , 'string'],
-            'birth' => ['nullable' , 'string'],
-            'gender' => ['nullable' , 'string' , Rule::in(['female' , 'male'])],
-            'clinicId' => ['nullable' , 'string' , Rule::in('clinics' , 'id')]
+        $rules = [
+            'firstName' => ['sometimes', 'string'],
+            'lastName' => ['sometimes', 'string'],
+            'phone' => ['sometimes', 'nullable', 'string'],
+            'age' => ['sometimes', 'nullable', 'numeric'],
+            'fatherName' => ['sometimes', 'nullable', 'string'],
+            'motherName' => ['sometimes', 'nullable', 'string'],
+            'nationalNumber' => ['sometimes', 'nullable', 'string'],
+            'address' => ['sometimes', 'nullable', 'string'],
+            'notes' => ['sometimes', 'nullable', 'string'],
+            'birth' => ['sometimes', 'nullable', 'string'],
+            'gender' => ['sometimes', 'nullable', 'string', Rule::in(['female', 'male'])],
+            'clinicId' => ['sometimes', 'nullable', 'string', Rule::exists('clinics', 'id')],
         ];
+
+        if ($this->isMethod('POST')) {
+            $rules['firstName'] = ['required', 'string'];
+            $rules['lastName'] = ['required', 'string'];
+        }
+
+        return $rules;
     }
 
     public function validated($key = null, $default = null)
     {
-        return array_merge(parent::validated($key, $default) , [
-            'clinic_id' => $this->input('clinicId') ?? Auth::user()->clinic_id
+        return array_merge(parent::validated($key, $default), [
+            'clinic_id' => $this->input('clinicId') ?? Auth::user()->clinic_id,
         ]);
     }
 }

@@ -5,15 +5,13 @@ namespace Database\Seeders;
 use App\Enums\ReservationStatuses;
 use App\Enums\ReservationTypes;
 use App\Models\Clinic;
-use App\Models\Medicine;
 use App\Models\Patient;
 use App\Models\Reservation;
 use App\Models\Specification;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ReservationSeeder extends Seeder
+final class ReservationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -59,7 +57,7 @@ class ReservationSeeder extends Seeder
             'clinic_id' => Clinic::query()->first()->id,
             'doctor_id' => User::query()->inRandomOrder()->first()->id,
             'specification_id' => Specification::query()->inRandomOrder()->first()->id,
-            'type' =>  ReservationTypes::APPOINTMENT,
+            'type' => ReservationTypes::APPOINTMENT,
             'status' => ReservationStatuses::CANCELLED,
         ]);
     }

@@ -11,17 +11,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Offer extends Model implements HasMedia
+final class Offer extends Model implements HasMedia
 {
     /** @use HasFactory<OfferFactory> */
-    use HasFactory , InteractsWithMedia , SoftDeletes , HasUuids;
+    use HasFactory , HasUuids , InteractsWithMedia , SoftDeletes;
 
     protected $fillable = [
-      'name',
-      'start',
-      'end',
-      'fixed_value',
-      'percent_value'
+        'name',
+        'start',
+        'end',
+        'fixed_value',
+        'percent_value',
     ];
 
     public function plans(): BelongsToMany

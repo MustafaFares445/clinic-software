@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Enums\TransactionFromTypes;
 use App\Models\Clinic;
 use App\Models\Medicine;
 use App\Models\Specification;
-use Illuminate\Database\Seeder;
-use App\Enums\TransactionFromTypes;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 
-class MedicineSeeder extends Seeder
+final class MedicineSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -36,7 +36,7 @@ class MedicineSeeder extends Seeder
         ]);
         $medicine->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
-        //**************************************//
+        // **************************************//
         $medicine2 = Medicine::query()->create([
             'name' => 'سيتامول',
             'description' => null,
@@ -59,7 +59,7 @@ class MedicineSeeder extends Seeder
         ]);
         $medicine2->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
-        //**************************************//
+        // **************************************//
         $medicine3 = Medicine::query()->create([
             'name' => 'اوراكورت',
             'description' => null,
@@ -83,8 +83,8 @@ class MedicineSeeder extends Seeder
         ]);
         $medicine3->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
-        //**************************************//
-        $medicine4 =  Medicine::query()->create([
+        // **************************************//
+        $medicine4 = Medicine::query()->create([
             'name' => 'بروفين',
             'description' => null,
         ]);
@@ -106,7 +106,7 @@ class MedicineSeeder extends Seeder
         ]);
         $medicine4->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
-        //**************************************//
+        // **************************************//
         $medicine5 = Medicine::query()->create([
             'name' => 'رسيف',
             'description' => null,

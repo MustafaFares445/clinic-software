@@ -74,11 +74,9 @@ return [
     ],
 
     'column_names' => [
-        /*
-         * Change this if you want to name the related pivots other than defaults
-         */
-        'role_pivot_key' => null, //default 'role_id',
-        'permission_pivot_key' => null, //default 'permission_id',
+        // Change this if you want to name the related pivots other than defaults
+        'role_pivot_key' => null, // default 'role_id',
+        'permission_pivot_key' => null, // default 'permission_id',
 
         /*
          * Change this if you want to name the related model primary key other than
@@ -160,7 +158,7 @@ return [
      */
     // 'permission.wildcard_permission' => Spatie\Permission\WildcardPermission::class,
 
-    /* Cache-specific settings */
+    // Cache-specific settings
 
     'cache' => [
 
@@ -169,11 +167,9 @@ return [
          * When permissions or roles are updated the cache is flushed automatically.
          */
 
-        'expiration_time' => \DateInterval::createFromDateString('24 hours'),
+        'expiration_time' => DateInterval::createFromDateString('24 hours'),
 
-        /*
-         * The cache key used to store all permissions.
-         */
+        // The cache key used to store all permissions.
 
         'key' => 'spatie.permission.cache',
 

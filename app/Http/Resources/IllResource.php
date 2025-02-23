@@ -11,6 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     type="object",
  *     title="Ill Resource",
  *     description="Ill resource representation",
+ *
  *     @OA\Property(
  *         property="id",
  *         type="string",
@@ -32,9 +33,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="specifications",
  *         type="array",
+ *
  *         @OA\Items(ref="#/components/schemas/SpecificationResource"),
  *         description="List of specifications associated with the ill"
  *     ),
+ *
  *     @OA\Property(
  *         property="image",
  *         ref="#/components/schemas/MediaResource",
@@ -42,7 +45,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     )
  * )
  */
-class IllResource extends JsonResource
+final class IllResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -56,7 +59,7 @@ class IllResource extends JsonResource
             'name' => $this->when($this->name, $this->name),
             'description' => $this->when($this->description, $this->description),
             'specifications' => SpecificationResource::collection($this->whenLoaded('specifications')),
-            'image' => $this->getFirstMedia('ills') // Assuming 'ills' is the correct collection name
+            'image' => $this->getFirstMedia('ills'), // Assuming 'ills' is the correct collection name
         ];
     }
 }

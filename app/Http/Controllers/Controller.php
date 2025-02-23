@@ -10,13 +10,11 @@ use OpenApi\Annotations as OA;
  *     version="1.0.0",
  *     description="API Description"
  * )
+ *
  * @OA\SecurityScheme(
  *    securityScheme="bearerAuth",
  *    type="http",
  *    scheme="bearer"
  * )
  */
-abstract class Controller
-{
-    //
-}
+abstract class Controller {}

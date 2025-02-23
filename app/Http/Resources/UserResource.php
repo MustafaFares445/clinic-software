@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @OA\Schema(
  *     title="UserResource",
  *     description="User resource representation",
+ *
  *     @OA\Property(
  *         property="id",
  *         type="integer",
@@ -40,7 +41,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     )
  * )
  */
-class UserResource extends JsonResource
+final class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -50,11 +51,11 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->when($this->id , $this->id),
-            'fullName' => $this->when($this->fullName , $this->fullName),
-            'email' => $this->when($this->email , $this->email),
-            'username' => $this->when($this->username , $this->username),
-            'avatar' => MediaResource::make($this->getFirstMedia('users'))
+            'id' => $this->when($this->id, $this->id),
+            'fullName' => $this->when($this->fullName, $this->fullName),
+            'email' => $this->when($this->email, $this->email),
+            'username' => $this->when($this->username, $this->username),
+            'avatar' => MediaResource::make($this->getFirstMedia('users')),
         ];
     }
 }

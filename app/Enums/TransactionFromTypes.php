@@ -2,9 +2,9 @@
 
 namespace App\Enums;
 
-enum TransactionFromTypes : string
+enum TransactionFromTypes: string
 {
-    CASE MEDICINE = 'medicine';
-    CASE RECORD = 'record';
-    CASE EQUIPMENT = 'equipment';
+    case MEDICINE = 'medicine';
+    case RECORD = 'record';
+    case EQUIPMENT = 'equipment';
 }

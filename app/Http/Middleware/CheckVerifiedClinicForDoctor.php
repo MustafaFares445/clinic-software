@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class CheckVerifiedClinicForDoctor
+final class CheckVerifiedClinicForDoctor
 {
     /**
      * Handle an incoming request.
@@ -19,7 +19,7 @@ class CheckVerifiedClinicForDoctor
     public function handle(Request $request, Closure $next): Response
     {
         $request->validate([
-            'clinicId' => ['nullable' , 'string' , Rule::exists('clinics' , 'id')]
+            'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
         ]);
 
         // Validate clinic access for the authenticated user

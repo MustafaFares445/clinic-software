@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
  *     description="Record request body for creating or updating records"
  * )
  */
-class RecordRequest extends FormRequest
+final class RecordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -74,20 +74,21 @@ class RecordRequest extends FormRequest
      *     type="array",
      *     nullable=true,
      *     description="Array of doctor IDs",
+     *
      *     @OA\Items(type="string", example="doc_123456789")
      * )
      */
     public function rules(): array
     {
         return [
-            'patientId' => ['required' , 'string' , Rule::exists('patients' , 'id')],
-            'clinicId' => ['nullable' , 'string' , Rule::exists('clinics' , 'id')],
-            'reservationId' => ['nullable' , 'string' , Rule::exists('reservations' , 'id')],
-            'description' => ['nullable' , 'text'],
-            'type' => ['required' , 'string' , Rule::in(RecordTypes::values())],
-            'price' => ['nullable' , 'integer'],
-            'doctorsIds' => ['nullable' , 'array' , 'min:1' , Rule::exists('doctors' , 'id')],
-            'doctorsIds.*' => ['required' , 'string' , Rule::exists('doctors' , 'id')],
+            'patientId' => ['required', 'string', Rule::exists('patients', 'id')],
+            'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
+            'reservationId' => ['nullable', 'string', Rule::exists('reservations', 'id')],
+            'description' => ['nullable', 'text'],
+            'type' => ['required', 'string', Rule::in(RecordTypes::values())],
+            'price' => ['nullable', 'integer'],
+            'doctorsIds' => ['nullable', 'array', 'min:1', Rule::exists('doctors', 'id')],
+            'doctorsIds.*' => ['required', 'string', Rule::exists('doctors', 'id')],
         ];
     }
 }

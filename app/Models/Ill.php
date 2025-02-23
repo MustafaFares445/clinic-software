@@ -9,15 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Ill extends Model implements HasMedia
+final class Ill extends Model implements HasMedia
 {
-    use HasFactory , HasThumbnail , SoftDeletes , HasUuids;
+    use HasFactory , HasThumbnail , HasUuids , SoftDeletes;
 
     protected $fillable = [
-      'name',
-      'description'
+        'name',
+        'description',
     ];
 
     public function specifications(): BelongsToMany
@@ -27,6 +26,6 @@ class Ill extends Model implements HasMedia
 
     public function records(): BelongsToMany
     {
-       return $this->belongsToMany(Record::class);
+        return $this->belongsToMany(Record::class);
     }
 }

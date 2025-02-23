@@ -2,16 +2,18 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use App\Models\User;
 use App\Models\Clinic;
-use Laravel\Sanctum\Sanctum;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
+use Tests\TestCase;
 
-class AuthTest extends TestCase
+final class AuthTest extends TestCase
 {
     use RefreshDatabase;
+
     private Clinic $clinic;
+
     private User $authUser;
 
     protected function setUp(): void
@@ -21,11 +23,11 @@ class AuthTest extends TestCase
         // Create a clinic and authenticated user for tests
         $this->clinic = Clinic::factory()->create();
         $this->authUser = User::factory()->create([
-            'clinic_id' => $this->clinic->id
+            'clinic_id' => $this->clinic->id,
         ]);
     }
 
-    public function test_authenticated_user_can_register_new_user(): void
+    public function testAuthenticatedUserCanRegisterNewUser(): void
     {
         Sanctum::actingAs($this->authUser);
 
@@ -35,7 +37,7 @@ class AuthTest extends TestCase
             'password' => 'password123',
             'username' => 'mustafa.fares',
             'clinic_id' => $this->clinic->id,
-            'role' => 'user'
+            'role' => 'user',
         ];
 
         $response = $this->postJson('/api/auth/register', $userData);
@@ -48,24 +50,24 @@ class AuthTest extends TestCase
                     'id',
                     'fullName',
                     'email',
-                    'username'
-                ]
+                    'username',
+                ],
             ]);
 
         $this->assertDatabaseHas('users', [
             'email' => $userData['email'],
             'username' => $userData['username'],
-            'clinic_id' => $this->clinic->id
+            'clinic_id' => $this->clinic->id,
         ]);
     }
 
-    public function test_unauthenticated_user_cannot_register(): void
+    public function testUnauthenticatedUserCannotRegister(): void
     {
         $userData = [
             'fullName' => 'John Doe',
             'email' => 'john.doe@gmail.com',
             'password' => 'password123',
-            'username' => 'johndoe'
+            'username' => 'johndoe',
         ];
 
         $response = $this->postJson('/api/auth/register', $userData);
@@ -73,7 +75,7 @@ class AuthTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function test_authenticated_user_cannot_register_with_existing_email(): void
+    public function testAuthenticatedUserCannotRegisterWithExistingEmail(): void
     {
         Sanctum::actingAs($this->authUser);
 
@@ -81,7 +83,7 @@ class AuthTest extends TestCase
         User::factory()->create([
             'email' => 'john.doe@example.com',
             'username' => 'existinguser',
-            'clinic_id' => $this->clinic->id
+            'clinic_id' => $this->clinic->id,
         ]);
 
         $userData = [
@@ -89,7 +91,7 @@ class AuthTest extends TestCase
             'lastName' => 'Doe',
             'email' => 'john.doe@example.com',
             'password' => 'password123',
-            'username' => 'johndoe'
+            'username' => 'johndoe',
         ];
 
         $response = $this->postJson('/api/auth/register', $userData);
@@ -98,56 +100,56 @@ class AuthTest extends TestCase
             ->assertJsonValidationErrors(['email']);
     }
 
-    public function test_user_can_login(): void
+    public function testUserCanLogin(): void
     {
         User::factory()->create([
             'username' => 'testuser',
             'password' => bcrypt('password123'),
-            'is_banned' => false
+            'is_banned' => false,
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'username' => 'testuser',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'accessToken',
                 'tokenType',
-                'user'
+                'user',
             ]);
     }
 
-    public function test_user_cannot_login_with_invalid_credentials(): void
+    public function testUserCannotLoginWithInvalidCredentials(): void
     {
         $response = $this->postJson('/api/auth/login', [
             'username' => 'nonexistent',
-            'password' => 'wrongpassword'
+            'password' => 'wrongpassword',
         ]);
 
         $response->assertStatus(401)
             ->assertJson(['message' => 'Unauthorized']);
     }
 
-    public function test_banned_user_cannot_login(): void
+    public function testBannedUserCannotLogin(): void
     {
         User::factory()->create([
             'username' => 'banneduser',
             'password' => bcrypt('password123'),
-            'is_banned' => true
+            'is_banned' => true,
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'username' => 'banneduser',
-            'password' => 'password123'
+            'password' => 'password123',
         ]);
 
         $response->assertStatus(403)
             ->assertJson(['error' => 'Your account is banned. Please contact your administrator.']);
     }
 
-    public function test_user_can_logout(): void
+    public function testUserCanLogout(): void
     {
         $user = User::factory()->create();
         $token = $user->createToken('auth_token')->plainTextToken;

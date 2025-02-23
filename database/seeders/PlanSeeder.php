@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Plan;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class PlanSeeder extends Seeder
+final class PlanSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -19,7 +18,7 @@ class PlanSeeder extends Seeder
             'fixed_value' => null,
             'percent_value' => 70,
             'users_count' => 2,
-            'duration' => '10:00:00'
+            'duration' => '10:00:00',
         ]);
 
         Plan::query()->create([
@@ -27,7 +26,7 @@ class PlanSeeder extends Seeder
             'description' => 'وصف موجز',
             'fixed_value' => 100,
             'users_count' => 10,
-            'duration' => '10:00:00'
+            'duration' => '10:00:00',
         ]);
 
         Plan::query()->create([
@@ -35,7 +34,7 @@ class PlanSeeder extends Seeder
             'description' => 'وصف موجز',
             'fixed_value' => 200,
             'users_count' => 20,
-            'duration' => '10:00:00'
+            'duration' => '10:00:00',
         ]);
     }
 }

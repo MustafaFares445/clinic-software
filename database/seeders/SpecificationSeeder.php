@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Specification;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class SpecificationSeeder extends Seeder
+final class SpecificationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,15 +13,15 @@ class SpecificationSeeder extends Seeder
     public function run(): void
     {
         Specification::query()->create([
-           'name' => 'سنية',
+            'name' => 'سنية',
         ]);
 
         Specification::query()->create([
-            'name' => 'جراحة سنية'
+            'name' => 'جراحة سنية',
         ]);
 
         Specification::query()->create([
-            'name' => 'تقويم'
+            'name' => 'تقويم',
         ]);
     }
 }

@@ -12,6 +12,7 @@ use Illuminate\Validation\Rule;
  *     schema="ClinicSubscriptionRequest",
  *     type="object",
  *     required={"fullName", "email", "password", "username", "clinicName", "clinicAddress", "clinicType"},
+ *
  *     @OA\Property(
  *         property="fullName",
  *         type="string",
@@ -117,7 +118,7 @@ use Illuminate\Validation\Rule;
  *     )
  * )
  */
-class ClinicSubscriptionRequest extends FormRequest
+final class ClinicSubscriptionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -148,7 +149,7 @@ class ClinicSubscriptionRequest extends FormRequest
             'clinicEndTime' => ['nullable', 'date_format:H:i'],
             'clinicDescription' => ['nullable', 'string'],
             'clinicType' => ['required', 'string', Rule::in(array_values(ClinicTypes::cases()))],
-            'planId' => ['nullable', 'integer', Rule::exists('plans', 'id')]
+            'planId' => ['nullable', 'integer', Rule::exists('plans', 'id')],
         ];
     }
 
