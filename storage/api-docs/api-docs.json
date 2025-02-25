@@ -476,6 +476,132 @@
                 ]
             }
         },
+        "/api/overview/general-statistics": {
+            "get": {
+                "tags": [
+                    "Overview"
+                ],
+                "summary": "Get general statistics",
+                "operationId": "e27b17f1b26ef5563cf83369960981ce",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "reservationsCount": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "surgeryCount": {
+                                            "type": "integer",
+                                            "example": 30
+                                        },
+                                        "appointmentCount": {
+                                            "type": "integer",
+                                            "example": 50
+                                        },
+                                        "inspectionCount": {
+                                            "type": "integer",
+                                            "example": 20
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/overview/top-ills": {
+            "get": {
+                "tags": [
+                    "Overview"
+                ],
+                "summary": "Get top 5 illnesses",
+                "operationId": "849dbe089e1efd0dc34b9e9ff152c492",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "records_count": {
+                                                        "type": "integer"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/overview/patients/count": {
+            "get": {
+                "tags": [
+                    "Overview"
+                ],
+                "summary": "Get patients count",
+                "operationId": "63968957b88649e967bbb6981cbe3fd6",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "currentMonth": {
+                                            "type": "integer",
+                                            "example": 50
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/patients": {
             "get": {
                 "tags": [
@@ -890,49 +1016,6 @@
                                         }
                                     },
                                     "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Patient not found"
-                    },
-                    "422": {
-                        "description": "Validation error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/patients/{patient}/notes": {
-            "patch": {
-                "tags": [
-                    "Patients"
-                ],
-                "summary": "Update a patient",
-                "operationId": "e3a7300bdd0392d4ccdec8386fd024ee",
-                "parameters": [
-                    {
-                        "name": "patient",
-                        "in": "path",
-                        "description": "ID of the patient to update",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Patient updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PatientResource"
                                 }
                             }
                         }
@@ -1710,64 +1793,6 @@
                     }
                 ]
             }
-        },
-        "/api/reservations/{reservation}/change-status": {
-            "patch": {
-                "tags": [
-                    "Reservation"
-                ],
-                "summary": "Change the status of the specified reservation",
-                "operationId": "7a1c1fa9d7f6f73e232dd55187171795",
-                "parameters": [
-                    {
-                        "name": "reservation",
-                        "in": "path",
-                        "description": "Reservation ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "status": {
-                                        "type": "string",
-                                        "enum": [
-                                            "income",
-                                            "check",
-                                            "dismiss",
-                                            "cancelled"
-                                        ]
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Status changed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ReservationResource"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
         }
     },
     "components": {
@@ -2208,12 +2233,6 @@
                 "type": "object"
             },
             "ReservationRequest": {
-                "required": [
-                    "start",
-                    "end",
-                    "patientId",
-                    "type"
-                ],
                 "properties": {
                     "start": {
                         "description": "Reservation start time",
@@ -2228,9 +2247,10 @@
                         "example": "2024-12-12T03:30:00Z"
                     },
                     "patientId": {
-                        "description": "Patient ID",
+                        "description": "Patient UUID",
                         "type": "string",
-                        "example": 1
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
                     },
                     "type": {
                         "description": "Reservation type",
@@ -2240,7 +2260,7 @@
                             "appointment",
                             "inspection"
                         ],
-                        "example": "appointment"
+                        "example": "surgery"
                     },
                     "status": {
                         "description": "Reservation status",
@@ -2255,19 +2275,22 @@
                         "example": "income"
                     },
                     "doctorId": {
-                        "description": "Doctor ID",
+                        "description": "Doctor UUID",
                         "type": "string",
-                        "example": 2
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440001"
                     },
                     "specificationId": {
-                        "description": "Specification ID",
+                        "description": "Specification UUID",
                         "type": "string",
-                        "example": 2
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440002"
                     },
                     "clinicId": {
-                        "description": "Clinic ID",
+                        "description": "Clinic UUID",
                         "type": "string",
-                        "example": 3
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440003"
                     }
                 },
                 "type": "object"

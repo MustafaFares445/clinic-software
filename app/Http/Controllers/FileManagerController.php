@@ -61,6 +61,7 @@ final class FileManagerController extends Controller
         return MediaResource::collection(
             Media::query()
                 ->when($request->has('collection'), fn ($query) => $query->where('collection_name', $request->input('collection')))
+                ->orderBy('created_at', 'desc')
                 ->cursorPaginate()
         );
     }
@@ -163,7 +164,7 @@ final class FileManagerController extends Controller
      *     )
      * )
      */
-    public function delete(Media $media): Response
+    public function destroy(Media $media): Response
     {
         $media->delete();
 

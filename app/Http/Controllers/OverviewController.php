@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RecordTypes;
+use App\Http\Resources\IllResource;
 use App\Models\Ill;
 use App\Models\Patient;
 use App\Models\Record;
+use App\Models\Reservation;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 use OpenApi\Annotations as OA;
 
@@ -135,6 +140,107 @@ final class OverviewController extends Controller
 
         return response()->json([
             'count' => $count,
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/overview/general-statistics",
+     *     summary="Get general statistics",
+     *     tags={"Overview"},
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="reservationsCount", type="integer", example=100),
+     *             @OA\Property(property="surgeryCount", type="integer", example=30),
+     *             @OA\Property(property="appointmentCount", type="integer", example=50),
+     *             @OA\Property(property="inspectionCount", type="integer", example=20)
+     *         )
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
+    public function generalStatistics(): JsonResponse
+    {
+        $recordQuery = Record::query();
+
+        return response()->json([
+            'reservationsCount' => Reservation::query()->count(),
+            'surgeryCount' => $recordQuery->clone()->where('type', RecordTypes::SURGERY)->count(),
+            'appointmentCount' => $recordQuery->clone()->where('type', RecordTypes::APPOINTMENT)->count(),
+            'inspectionCount' => $recordQuery->clone()->where('type', RecordTypes::INSPECTION)->count(),
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/overview/top-ills",
+     *     summary="Get top 5 illnesses",
+     *     tags={"Overview"},
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="data", type="array",
+     *
+     *                 @OA\Items(
+     *
+     *                     @OA\Property(property="id", type="string", format="uuid"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="records_count", type="integer")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
+    public function topIlls(): AnonymousResourceCollection
+    {
+        $ills = Ill::query()
+            ->whereRelation('records', 'clinic_id', Auth::user()->clinic_id)
+            ->select('id', 'name')
+            ->withCount('records')
+            ->orderBy('records_count', 'desc')
+            ->limit(5)
+            ->get();
+
+        return IllResource::collection($ills);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/overview/patients/count",
+     *     summary="Get patients count",
+     *     tags={"Overview"},
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="count", type="integer", example=500),
+     *             @OA\Property(property="currentMonth", type="integer", example=50)
+     *         )
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
+    public function patientsCount(): JsonResponse
+    {
+        $patientsQuery = Patient::query();
+
+        return response()->json([
+            'count' => $patientsQuery->clone()->count(),
+            'currentMonth' => $patientsQuery->clone()->whereMonth('created_at', Carbon::now()->month)->count(),
         ]);
     }
 }

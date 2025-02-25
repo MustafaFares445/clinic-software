@@ -592,7 +592,7 @@ final class PatientController extends Controller
         $profileImage = $patient->getFirstMedia('profile');
 
         return MediaResource::collection(
-            $patient->media()->get()->when($profileImage, function ($collection) use ($profileImage) {
+            $patient->media()->orderBy('created_at', 'desc')->get()->when($profileImage, function ($collection) use ($profileImage) {
                 $collection->reject(function ($media) use ($profileImage) {
                     return $media->id === $profileImage->id;
                 });

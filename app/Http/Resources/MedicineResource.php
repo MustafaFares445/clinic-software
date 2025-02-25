@@ -58,7 +58,7 @@ final class MedicineResource extends JsonResource
             'id' => $this->when($this->id, $this->id),
             'name' => $this->when($this->name, $this->name),
             'specifications' => SpecificationResource::collection($this->whenLoaded('specifications')),
-            'image' => $this->getFirstMedia('medicines'),
+            'image' => $this->whenLoaded('media' , $this->getFirstMedia('images')),
             'note' => $this->whenPivotLoaded('medicine_record', $this->pivot->note),
         ];
     }

@@ -59,7 +59,7 @@ final class IllResource extends JsonResource
             'name' => $this->when($this->name, $this->name),
             'description' => $this->when($this->description, $this->description),
             'specifications' => SpecificationResource::collection($this->whenLoaded('specifications')),
-            'image' => $this->getFirstMedia('ills'), // Assuming 'ills' is the correct collection name
+            'recordsCount' => $this->when($this->records_count , $this->records_count)
         ];
     }
 }
