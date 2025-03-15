@@ -142,6 +142,163 @@
                 ]
             }
         },
+        "/api/transactions/billing": {
+            "get": {
+                "tags": [
+                    "Billing Transactions"
+                ],
+                "summary": "List all billing transactions",
+                "operationId": "d667712155aae0eb30ab8ee4bad6dc36",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BillingTransactionResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Billing Transactions"
+                ],
+                "summary": "Create a new billing transaction",
+                "operationId": "b95951e31556018a8a3c39bb420ca8f0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BillingTransactionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Billing transaction created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BillingTransactionResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transactions/billing/{billingTransaction}": {
+            "get": {
+                "tags": [
+                    "Billing Transactions"
+                ],
+                "summary": "Get a specific billing transaction",
+                "operationId": "1e96d1128d211ab3c70942c3a2745231",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "UUID of the billing transaction",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BillingTransactionResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Billing transaction not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Billing Transactions"
+                ],
+                "summary": "Update a billing transaction",
+                "operationId": "393e3bc8876fb92ca965f3654a954d5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "UUID of the billing transaction",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BillingTransactionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Billing transaction updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BillingTransactionResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Billing transaction not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Billing Transactions"
+                ],
+                "summary": "Delete a billing transaction",
+                "operationId": "505710ad7053dec9bb8d507035984a15",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "UUID of the billing transaction",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "description": "Billing transaction not found"
+                    }
+                }
+            }
+        },
         "/api/file-manager": {
             "get": {
                 "tags": [
@@ -263,7 +420,7 @@
                     "File Manager"
                 ],
                 "summary": "Delete a media file",
-                "operationId": "5d76f7bc53669bac2295a0221aa40717",
+                "operationId": "1c1274a0f56df9930510fd85a09efd6b",
                 "parameters": [
                     {
                         "name": "media",
@@ -335,6 +492,163 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/transactions/medical": {
+            "get": {
+                "tags": [
+                    "Medical Transactions"
+                ],
+                "summary": "List all medical transactions",
+                "operationId": "a44e81b88887f2dca1c9db87b9fff158",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MedicalTransactionResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Medical Transactions"
+                ],
+                "summary": "Create a new medical transaction",
+                "operationId": "c6ed9c4ba6deccdaca03ef51bfd1d939",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MedicalTransactionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Medical transaction created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicalTransactionResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/transactions/medical/{medicalTransaction}": {
+            "get": {
+                "tags": [
+                    "Medical Transactions"
+                ],
+                "summary": "Get a specific medical transaction",
+                "operationId": "86416adb83422542ca906b343c09b944",
+                "parameters": [
+                    {
+                        "name": "medicalTransaction",
+                        "in": "path",
+                        "description": "ID of the medical transaction",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicalTransactionResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Medical transaction not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Medical Transactions"
+                ],
+                "summary": "Update a medical transaction",
+                "operationId": "23e88e2aded77b6623eb8d61fe16415a",
+                "parameters": [
+                    {
+                        "name": "medicalTransaction",
+                        "in": "path",
+                        "description": "ID of the medical transaction",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MedicalTransactionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Medical transaction updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicalTransactionResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Medical transaction not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Medical Transactions"
+                ],
+                "summary": "Delete a medical transaction",
+                "operationId": "916fa96cf72a1ccfb03e41fa6381d059",
+                "parameters": [
+                    {
+                        "name": "medicalTransaction",
+                        "in": "path",
+                        "description": "ID of the medical transaction",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "description": "Medical transaction not found"
+                    }
+                }
             }
         },
         "/api/overview/patients/gender/count": {
@@ -1830,6 +2144,33 @@
                 },
                 "type": "object"
             },
+            "BillingTransactionRequest": {
+                "required": [
+                    "type",
+                    "amount"
+                ],
+                "properties": {
+                    "clinicId": {
+                        "description": "UUID of the clinic associated with the transaction",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Type of the transaction (e.g., in, out)",
+                        "type": "string"
+                    },
+                    "amount": {
+                        "description": "Transaction amount",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "description": {
+                        "description": "Optional description of the transaction",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "ClinicSubscriptionRequest": {
                 "required": [
                     "fullName",
@@ -1841,12 +2182,19 @@
                     "clinicType"
                 ],
                 "properties": {
-                    "fullName": {
+                    "firstName": {
                         "description": "The name of the user",
                         "type": "string",
                         "maxLength": 255,
                         "minLength": 2,
-                        "example": "Mustafa Fares"
+                        "example": "Mustafa"
+                    },
+                    "lastName": {
+                        "description": "The name of the user",
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 2,
+                        "example": "Fares"
                     },
                     "email": {
                         "description": "Email address of the user (must be unique)",
@@ -1929,10 +2277,18 @@
                             "health_center"
                         ]
                     },
-                    "planId": {
-                        "description": "UUID of the plan (must exist in plans table)",
-                        "type": "string",
-                        "format": "uuid",
+                    "numberOfDoctors": {
+                        "description": "Number of doctors in the clinic",
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 5,
+                        "nullable": true
+                    },
+                    "numberOfSecretariat": {
+                        "description": "Number of secretariat staff in the clinic",
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 2,
                         "nullable": true
                     }
                 },
@@ -2067,6 +2423,49 @@
                             "format": "binary"
                         },
                         "maxItems": 10
+                    }
+                },
+                "type": "object"
+            },
+            "MedicalTransactionRequest": {
+                "required": [
+                    "transaction_date",
+                    "amount",
+                    "status"
+                ],
+                "properties": {
+                    "clinicId": {
+                        "description": "ID of the clinic",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "transaction_date": {
+                        "description": "Date of the transaction",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-01-01"
+                    },
+                    "amount": {
+                        "description": "Transaction amount",
+                        "type": "number",
+                        "format": "float",
+                        "example": 100.5
+                    },
+                    "notes": {
+                        "description": "Additional notes",
+                        "type": "string",
+                        "maxLength": 500,
+                        "example": "Sample notes"
+                    },
+                    "status": {
+                        "description": "Transaction status",
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "completed",
+                            "cancelled"
+                        ],
+                        "example": "pending"
                     }
                 },
                 "type": "object"
@@ -2295,6 +2694,48 @@
                 },
                 "type": "object"
             },
+            "BillingTransactionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "payment"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100.5
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Monthly subscription"
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01 12:00:00"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01 12:00:00"
+                    },
+                    "deleted_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01 12:00:00",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "DoctorResource": {
                 "title": "Doctor Resource",
                 "description": "Doctor resource representation",
@@ -2433,6 +2874,53 @@
                         "type": "string",
                         "format": "uri",
                         "example": "https://example.com/storage/media/conversions/nature_photo-thumb.jpg",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "MedicalTransactionResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "medication"
+                    },
+                    "patient_id": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "clinic_id": {
+                        "type": "integer",
+                        "example": 456
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Prescription for pain relief"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01 12:00:00"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01 12:00:00"
+                    },
+                    "doctor": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/UserResource"
+                            }
+                        ],
                         "nullable": true
                     }
                 },
@@ -2739,13 +3227,18 @@
                 "properties": {
                     "id": {
                         "description": "Unique identifier for the user",
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "fullName": {
-                        "description": "Full name of the user",
                         "type": "string",
-                        "example": "John Doe"
+                        "example": 1232132432
+                    },
+                    "firstName": {
+                        "description": "First name of the user",
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "lastName": {
+                        "description": "Last name of the user",
+                        "type": "string",
+                        "example": "Doe"
                     },
                     "email": {
                         "description": "Email address of the user",
@@ -2755,7 +3248,7 @@
                     "username": {
                         "description": "Username of the user",
                         "type": "string",
-                        "example": "johndoe"
+                        "example": "john"
                     },
                     "avatar": {
                         "$ref": "#/components/schemas/MediaResource"
@@ -2773,8 +3266,16 @@
     },
     "tags": [
         {
+            "name": "Billing Transactions",
+            "description": "Operations related to billing transactions"
+        },
+        {
             "name": "File Manager",
             "description": "API Endpoints for file management operations"
+        },
+        {
+            "name": "Medical Transactions",
+            "description": "Operations related to medical transactions"
         },
         {
             "name": "Overview",

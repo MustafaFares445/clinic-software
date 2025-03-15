@@ -3,9 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Enums\RecordTypes;
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 
 /**
  * @OA\Schema(
@@ -85,10 +86,19 @@ final class RecordRequest extends FormRequest
             'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
             'reservationId' => ['nullable', 'string', Rule::exists('reservations', 'id')],
             'description' => ['nullable', 'text'],
-            'type' => ['required', 'string', Rule::in(RecordTypes::values())],
+            'type' => ['required', 'string', Rule::in(array_values(RecordTypes::cases()))],
             'price' => ['nullable', 'integer'],
             'doctorsIds' => ['nullable', 'array', 'min:1', Rule::exists('doctors', 'id')],
             'doctorsIds.*' => ['required', 'string', Rule::exists('doctors', 'id')],
         ];
+    }
+
+    public function validated($key = null, $default = null)
+    {
+        return array_merge(parent::validated($key, $default), [
+            'clinic_id' => $this->safe()->clinicId ?? Auth::user()->clinic_id,
+            'patientId' => $this->safe()->patientId,
+            'reservationId' => $this->safe()->reservationId,
+        ]);
     }
 }

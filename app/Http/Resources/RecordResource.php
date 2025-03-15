@@ -106,7 +106,7 @@ final class RecordResource extends JsonResource
             'id' => $this->when($this->id, $this->id),
             'description' => $this->when($this->description, $this->description),
             'type' => $this->when($this->type, $this->type),
-            'date' => $this->when($this->date, Carbon::parse($this->date)->toDateTimeString()),
+            'date' => $this->when($this->date, $this->date->toDateTimeString()),
             'reservation' => ReservationResource::make($this->whenLoaded('reservation')),
             'doctors' => DoctorResource::collection($this->whenLoaded('doctors')),
             'ills' => IllResource::collection($this->whenLoaded('ills', function () {
@@ -122,6 +122,7 @@ final class RecordResource extends JsonResource
                 return $this->medicines->where('pivot.type', RecordIllsTypes::TRANSIENT);
             })),
             'media' => MediaResource::collection($this->whenLoaded('media')),
+            'patient' => PatientResource::make($this->whenLoaded('patient')),
         ];
     }
 }

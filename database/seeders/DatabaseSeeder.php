@@ -24,6 +24,7 @@ final class DatabaseSeeder extends Seeder
             ReservationSeeder::class,
             RecordSeeder::class,
             OfferSeeder::class,
+            BillingTransactionSeeder::class
         ]);
     }
 }

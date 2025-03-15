@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('medicine_record', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('medicine_id')->constrained('medicines');
+            $table->foreignUuid('medicine_id')->nullable()->constrained('medicines');
             $table->foreignUuid('record_id')->constrained('records');
             $table->enum('type', array_column(RecordMedicinesTypes::cases(), 'value'))->default(RecordMedicinesTypes::DIAGNOSED->value)->index();
             $table->text('note')->nullable();

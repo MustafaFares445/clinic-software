@@ -50,12 +50,13 @@ final class RecordSeeder extends Seeder
 
         $record->doctors()->sync(User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray());
 
-        $record->transaction()->create([
-            'type' => 'in',
-            'amount' => 5,
+        $record->transactions()->create([
+            'medicine_id' => Medicine::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'user_id' => User::query()->inRandomOrder()->first()->id,
-            'finance' => true,
+            'type' => 'out',
+            'quantity' => 5,
+            'description' => null,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
 
         $record2 = Record::query()->create([
@@ -77,12 +78,13 @@ final class RecordSeeder extends Seeder
 
         $record2->doctors()->sync(User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray());
 
-        $record2->transaction()->create([
-            'type' => 'in',
-            'finance' => true,
-            'amount' => 50,
+        $record2->transactions()->create([
+            'medicine_id' => Medicine::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'type' => 'out',
+            'quantity' => 5,
+            'description' => null,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
 
         $record3 = Record::query()->create([
@@ -105,12 +107,13 @@ final class RecordSeeder extends Seeder
 
         $record3->doctors()->sync(User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray());
 
-        $record3->transaction()->create([
-            'type' => 'in',
-            'amount' => 10,
+        $record3->transactions()->create([
+            'medicine_id' => Medicine::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'user_id' => User::query()->inRandomOrder()->first()->id,
-            'finance' => true,
+            'type' => 'out',
+            'quantity' => 5,
+            'description' => null,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
     }
 }

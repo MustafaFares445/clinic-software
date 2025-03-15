@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
@@ -75,8 +76,8 @@ final class Record extends Model implements HasMedia
         return $this->belongsToMany(User::class, 'doctor_record', 'record_id', 'doctor_id');
     }
 
-    public function transaction(): MorphMany
+    public function transactions(): HasMany
     {
-        return $this->morphMany(Transaction::class, 'relateable');
+        return $this->hasMany(MedicalTransactions::class);
     }
 }

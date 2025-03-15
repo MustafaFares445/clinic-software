@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->dateTime('start');
-            $table->dateTime('end');
+            $table->timestamp('start');
+            $table->timestamp('end');
             $table->foreignUuid('patient_id')->constrained('patients');
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->foreignUuid('doctor_id')->nullable()->constrained('users');

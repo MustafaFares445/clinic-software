@@ -12,15 +12,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  *     @OA\Property(
  *         property="id",
- *         type="integer",
+ *         type="string",
  *         description="Unique identifier for the user",
- *         example=1
+ *         example=1232132432
  *     ),
  *     @OA\Property(
- *         property="fullName",
+ *         property="firstName",
  *         type="string",
- *         description="Full name of the user",
- *         example="John Doe"
+ *         description="First name of the user",
+ *         example="John"
+ *     ),
+ *    @OA\Property(
+ *         property="lastName",
+ *         type="string",
+ *         description="Last name of the user",
+ *         example="Doe"
  *     ),
  *     @OA\Property(
  *         property="email",
@@ -32,7 +38,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         property="username",
  *         type="string",
  *         description="Username of the user",
- *         example="johndoe"
+ *         example="john"
  *     ),
  *     @OA\Property(
  *         property="avatar",
@@ -52,10 +58,12 @@ final class UserResource extends JsonResource
     {
         return [
             'id' => $this->when($this->id, $this->id),
-            'fullName' => $this->when($this->fullName, $this->fullName),
+            'firstName' => $this->when($this->firstName, $this->firstName),
+            'lastName' => $this->when($this->lastName, $this->lastName),
             'email' => $this->when($this->email, $this->email),
             'username' => $this->when($this->username, $this->username),
             'avatar' => MediaResource::make($this->getFirstMedia('users')),
+            'roles' => $this->whenLoaded('roles' , $this->getRoleNames()),
         ];
     }
 }

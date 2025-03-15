@@ -23,6 +23,8 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->boolean('is_banned')->default(false);
             $table->boolean('is_active')->default(true);
+            $table->unsignedSmallInteger('number_of_doctors')->default(1);
+            $table->unsignedSmallInteger('number_of_secretariat')->default(1);
             $table->enum('type', array_column(ClinicTypes::cases(), 'value'))->default(ClinicTypes::CLINIC->value);
             $table->timestamps();
             $table->softDeletes();

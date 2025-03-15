@@ -16,7 +16,8 @@ final class UserSeeder extends Seeder
     public function run(): void
     {
         User::query()->firstOrCreate([
-            'fullName' => 'super admin',
+            'firstName' => 'super admin',
+            'lastName' => 'user',
             'email' => 'super.admin@gmail.com',
             'username' => 'super-admin',
             // 'email_verified_at' => now(),
@@ -26,7 +27,8 @@ final class UserSeeder extends Seeder
         ])->assignRole('super admin');
 
         User::query()->firstOrCreate([
-            'fullName' => 'admin',
+            'firstName' => 'admin',
+            'lastName' => 'user',
             'email' => 'admin@gmail.com',
             'username' => 'admin',
             // 'email_verified_at' => now(),
@@ -36,7 +38,8 @@ final class UserSeeder extends Seeder
         ])->assignRole('admin');
 
         User::query()->firstOrCreate([
-            'fullName' => 'doctor',
+            'firstName' => 'doctor',
+            'lastName' => 'user',
             'email' => 'doctor@gmail.com',
             'username' => 'doctor',
             // 'email_verified_at' => now(),
@@ -46,7 +49,8 @@ final class UserSeeder extends Seeder
         ])->assignRole('doctor');
 
         User::query()->firstOrCreate([
-            'fullName' => 'secreter',
+            'firstName' => 'secreter',
+            'lastName' => 'user',
             'email' => 'secreter@gmail.com',
             'username' => 'secreter',
             // 'email_verified_at' => now(),
@@ -56,7 +60,8 @@ final class UserSeeder extends Seeder
         ])->assignRole('secreter');
 
         User::query()->firstOrCreate([
-            'fullName' => 'doctor admin',
+            'firstName' => 'doctor admin',
+            'lastName' => 'user',
             'email' => 'doctor.admin@gmail.com',
             'username' => 'doctor-admin',
             //            'email_verified_at' => now(),

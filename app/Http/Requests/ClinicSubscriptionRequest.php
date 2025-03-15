@@ -14,9 +14,17 @@ use Illuminate\Validation\Rule;
  *     required={"fullName", "email", "password", "username", "clinicName", "clinicAddress", "clinicType"},
  *
  *     @OA\Property(
- *         property="fullName",
+ *         property="firstName",
  *         type="string",
- *         example="Mustafa Fares",
+ *         example="Mustafa",
+ *         description="The name of the user",
+ *         minLength=2,
+ *         maxLength=255
+ *     ),
+ *     @OA\Property(
+ *         property="lastName",
+ *         type="string",
+ *         example="Fares",
  *         description="The name of the user",
  *         minLength=2,
  *         maxLength=255
@@ -110,11 +118,20 @@ use Illuminate\Validation\Rule;
  *         description="Type of the clinic"
  *     ),
  *     @OA\Property(
- *         property="planId",
- *         type="string",
- *         format="uuid",
+ *         property="numberOfDoctors",
+ *         type="integer",
+ *         example=5,
+ *         description="Number of doctors in the clinic",
  *         nullable=true,
- *         description="UUID of the plan (must exist in plans table)"
+ *         minimum=0
+ *     ),
+ *     @OA\Property(
+ *         property="numberOfSecretariat",
+ *         type="integer",
+ *         example=2,
+ *         description="Number of secretariat staff in the clinic",
+ *         nullable=true,
+ *         minimum=0
  *     )
  * )
  */
@@ -136,7 +153,8 @@ final class ClinicSubscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fullName' => ['required', 'string', 'min:2', 'max:255'],
+            'firstName' => ['required', 'string', 'min:2', 'max:255'],
+            'lastName' => ['required', 'string', 'min:2', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'max:255'],
             'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users,username'],
@@ -147,9 +165,10 @@ final class ClinicSubscriptionRequest extends FormRequest
             'clinicLatitude' => ['nullable', 'numeric', 'between:-90,90'],
             'clinicStartTime' => ['nullable', 'date_format:H:i'],
             'clinicEndTime' => ['nullable', 'date_format:H:i'],
-            'clinicDescription' => ['nullable', 'string'],
+            'clinicDescription' => ['nullable', 'string' , 'max:1000'],
             'clinicType' => ['required', 'string', Rule::in(array_values(ClinicTypes::cases()))],
-            'planId' => ['nullable', 'integer', Rule::exists('plans', 'id')],
+            'numberOfDoctors' => ['nullable' , 'integer' , 'min:0'],
+            'numberOfSecretariat' => ['nullable' , 'integer' , 'min:0'],
         ];
     }
 
@@ -175,6 +194,8 @@ final class ClinicSubscriptionRequest extends FormRequest
             'end' => $this->safe()->clinicEndTime,
             'description' => $this->safe()->clinicDescription,
             'type' => $this->safe()->clinicType,
+            'number_of_doctors' => $this->safe()->numberOfDoctors,
+            'number_of_secretariat' => $this->safe()->numberOfSecretariat,
             'plan_id' => $this->safe()->planId,
         ];
     }

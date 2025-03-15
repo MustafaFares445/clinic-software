@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 final class ClinicController extends Controller
 {
@@ -21,18 +22,20 @@ final class ClinicController extends Controller
 
     public function store(ClinicSubscriptionRequest $request): JsonResponse
     {
-        $clinic = Clinic::query()->create($request->clinicValidated());
-        $user = User::query()->create(array_merge($request->userValidated(), [
-            'clinic_id' => $clinic->id,
-        ]));
+        return DB::transaction(function () use ($request) {
+            $clinic = Clinic::query()->create($request->clinicValidated());
+            $user = User::query()->create(array_merge($request->userValidated(), [
+                'clinic_id' => $clinic->id,
+            ]));
 
-        $user->assignRole('admin');
+            $user->assignRole('admin');
 
-        return response()->json([
-            'accessToken' => $user->createToken('auth_token')->plainTextToken,
-            'tokenType' => 'Bearer',
-            'user' => UserResource::make($user),
-        ]);
+            return response()->json([
+                'accessToken' => $user->createToken('auth_token')->plainTextToken,
+                'tokenType' => 'Bearer',
+                'user' => UserResource::make($user->load('roles')),
+            ]);
+        });
     }
 
     public function update(ClinicRequest $request): ClinicResource

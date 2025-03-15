@@ -28,4 +28,9 @@ final class Ill extends Model implements HasMedia
     {
         return $this->belongsToMany(Record::class);
     }
+
+    public function medicalTransactions()
+    {
+        return $this->morphMany(MedicalTransactions::class , 'model');
+    }
 }

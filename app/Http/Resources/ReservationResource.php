@@ -84,14 +84,14 @@ final class ReservationResource extends JsonResource
     {
         return [
             'id' => $this->when($this->id, $this->id),
-            'start' => $this->when($this->start, Carbon::parse($this->start)->toDateTimeString()),
-            'end' => $this->when($this->end, Carbon::parse($this->end)->toDateTimeString()),
+            // 'start' => $this->when($this->start, $this->start->toDateTimeString()),
+            // 'end' => $this->when($this->end, $this->end->toDateTimeString()),
             'type' => $this->when($this->type, $this->type),
             'status' => $this->when($this->status, $this->status),
             'patient' => PatientResource::make($this->whenLoaded('patient')),
             'doctor' => $this->when($this->doctor_id, DoctorResource::make($this->whenLoaded('doctor'))),
             'specification' => $this->when($this->specification_id, SpecificationResource::make($this->whenLoaded('specification'))),
-            'createdAt' => Carbon::parse($this->created_at)->toDateTimeString(),
+            'createdAt' => $this->when($this->created_at , $this->created_at->toDateTimeString()),
             'pastReservationsCount' => $this->when($this->pastReservationsCount, $this->pastReservationsCount),
             'upComingReservationCount' => $this->when($this->upComingReservationCount, $this->upComingReservationCount),
         ];

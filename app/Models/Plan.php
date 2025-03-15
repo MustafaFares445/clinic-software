@@ -23,6 +23,7 @@ final class Plan extends Model implements HasMedia
         'percent_value',
         'users_count',
         'duration',
+        'clinicUsers'
     ];
 
     public function clinics(): BelongsToMany

@@ -1,13 +1,16 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BillingTransactionController;
 use App\Http\Controllers\ClinicController;
 use App\Http\Controllers\FileManagerController;
+use App\Http\Controllers\MedicalTransactionController;
 use App\Http\Controllers\OverviewController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\RecordController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Resources\UserResource;
+use App\Models\BillingTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,8 +19,12 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/clinics/subscription', [ClinicController::class , 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::apiResource('/transactions/medical' , MedicalTransactionController::class);
+    Route::apiResource('transactions/billing' , BillingTransactionController::class);
 
     Route::prefix('overview')->group(function () {
         Route::get('/patients/gender/count', [OverviewController::class, 'patientsGenderCount']);
@@ -57,4 +64,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('/clinics', ClinicController::class)->except(['index']);
+
+    // Route::prefix('/transactions' , function(){
+    //     Route::apiResource('/billing' , BillingTransactionController::class);
+    //     Route::apiResource('/medical' , MedicalTransactionController::class);
+    // });
+
 });
+
+

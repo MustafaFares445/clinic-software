@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\TransactionFromTypes;
 use App\Models\Clinic;
 use App\Models\Medicine;
 use App\Models\Specification;
@@ -23,16 +22,19 @@ final class MedicineSeeder extends Seeder
 
         $medicine->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'amount' => 10,
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'quantity' => 10,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
+            'type' => 'in'
         ]);
+
+
         $medicine->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'type' => 'outcome',
-            'amount' => 10,
+            'quantity' => 10,
             'description' => null,
             'type' => 'in',
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
         $medicine->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
@@ -44,19 +46,19 @@ final class MedicineSeeder extends Seeder
 
         $medicine2->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'amount' => 5,
-            'from' => TransactionFromTypes::MEDICINE,
+            'quantity' => 5,
             'type' => 'in',
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
+
         $medicine2->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'type' => 'out',
-            'amount' => 5,
-            'from' => TransactionFromTypes::MEDICINE,
+            'quantity' => 5,
             'description' => null,
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
+
         $medicine2->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
         // **************************************//
@@ -67,19 +69,17 @@ final class MedicineSeeder extends Seeder
 
         $medicine3->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'amount' => 3,
-            'from' => TransactionFromTypes::MEDICINE,
+            'quantity' => 3,
             'type' => 'out',
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
         $medicine3->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'type' => 'outcome',
-            'amount' => 3,
+            'quantity' => 3,
             'description' => null,
-            'from' => TransactionFromTypes::MEDICINE,
             'type' => 'out',
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
         $medicine3->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
@@ -91,18 +91,16 @@ final class MedicineSeeder extends Seeder
 
         $medicine4->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'amount' => 2,
-            'from' => TransactionFromTypes::MEDICINE,
+            'quantity' => 2,
             'type' => 'out',
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
         $medicine4->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'type' => 'out',
-            'amount' => 2,
+            'quantity' => 2,
             'description' => null,
-            'from' => TransactionFromTypes::MEDICINE,
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
         $medicine4->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
 
@@ -114,18 +112,16 @@ final class MedicineSeeder extends Seeder
 
         $medicine5->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'amount' => 8,
-            'type' => 'in',
-            'from' => TransactionFromTypes::MEDICINE,
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'quantity' => 8,
+            'type' => 'out',
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
         $medicine5->transactions()->create([
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'type' => 'in',
-            'amount' => 8,
+            'type' => 'out',
+            'quantity' => 8,
             'description' => null,
-            'from' => TransactionFromTypes::MEDICINE,
-            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'doctor_id' => User::query()->inRandomOrder()->first()->id,
         ]);
         $medicine5->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
     }
