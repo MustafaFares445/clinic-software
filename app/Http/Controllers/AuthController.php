@@ -44,9 +44,11 @@ final class AuthController extends Controller
     {
         $user = User::query()->create($request->validated());
 
+        $token = $user->createToken('auth_token');
         return response()->json([
-            'accessToken' => $user->createToken('auth_token')->plainTextToken,
+            'accessToken' => $token->plainTextToken,
             'tokenType' => 'Bearer',
+            'expiresAt' => $token->accessToken->expires_at,
             'user' => UserResource::make($user),
         ]);
     }

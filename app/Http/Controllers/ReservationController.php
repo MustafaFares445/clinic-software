@@ -87,7 +87,7 @@ final class ReservationController extends Controller
                 $query->select(['id', 'firstName', 'lastName']);
             }])
             ->with(['doctor' => function ($query) {
-                $query->select(['id', 'fullName']);
+                $query->select(['id', 'firstName' , 'lastName']);
             }])
             ->with(['specification' => function ($query) {
                 $query->select(['id', 'name']);
@@ -154,7 +154,6 @@ final class ReservationController extends Controller
      */
     public function show(Reservation $reservation): ReservationResource
     {
-
         return ReservationResource::make($reservation->load(['patient', 'doctor', 'specification']));
     }
 

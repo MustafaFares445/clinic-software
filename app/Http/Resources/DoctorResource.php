@@ -40,7 +40,8 @@ final class DoctorResource extends JsonResource
     {
         return [
             'id' => $this->when($this->id, $this->id),
-            'fullName' => $this->when($this->fullName, $this->fullName),
+            'firstName' => $this->when($this->firstName, $this->firstName),
+            'lastName' => $this->when($this->lastName, $this->lastName),
             'avatar' => MediaResource::make($this->getFirstMedia('users')),
         ];
     }
