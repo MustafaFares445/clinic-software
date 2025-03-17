@@ -24,7 +24,7 @@ final class ClinicController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/clinic",
+     *     path="/api/clinics",
      *     summary="Get current clinic details",
      *     tags={"Clinic"},
      *     security={{"bearerAuth": {}}},
@@ -42,7 +42,7 @@ final class ClinicController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/clinic",
+     *     path="/api/clinics/subscription",
      *     summary="Create a new clinic",
      *     tags={"Clinic"},
      *     @OA\RequestBody(
@@ -80,7 +80,7 @@ final class ClinicController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/clinic",
+     *     path="/api/clinics",
      *     summary="Update clinic details",
      *     tags={"Clinic"},
      *     security={{"bearerAuth": {}}},
@@ -105,7 +105,7 @@ final class ClinicController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/clinic",
+     *     path="/api/clinics",
      *     summary="Delete clinic and associated users",
      *     tags={"Clinic"},
      *     security={{"bearerAuth": {}}},

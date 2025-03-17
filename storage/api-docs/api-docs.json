@@ -358,12 +358,31 @@
                     }
                 ]
             },
+            "delete": {
+                "tags": [
+                    "Clinic"
+                ],
+                "summary": "Delete clinic and associated users",
+                "operationId": "22b2df336852790ecbc39de860d9f53a",
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/clinics/subscription": {
             "post": {
                 "tags": [
                     "Clinic"
                 ],
                 "summary": "Create a new clinic",
-                "operationId": "54be64fc5d0174f20f85da77290cc672",
+                "operationId": "7163d55f843d9c086cc0882e58c60e53",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -397,23 +416,6 @@
                         }
                     }
                 }
-            },
-            "delete": {
-                "tags": [
-                    "Clinic"
-                ],
-                "summary": "Delete clinic and associated users",
-                "operationId": "22b2df336852790ecbc39de860d9f53a",
-                "responses": {
-                    "204": {
-                        "description": "No content"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
         "/api/file-manager": {

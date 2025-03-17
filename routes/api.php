@@ -63,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/medical-collections', [FileManagerController::class, 'getMedicalCollections']);
     });
 
-    Route::apiResource('/clinics', ClinicController::class)->except(['index']);
+    Route::apiResource('/clinics', ClinicController::class)->except(['index' , 'store']);
 
     // Route::prefix('/transactions' , function(){
     //     Route::apiResource('/billing' , BillingTransactionController::class);
