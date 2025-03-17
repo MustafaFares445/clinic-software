@@ -299,6 +299,123 @@
                 }
             }
         },
+        "/api/clinic": {
+            "get": {
+                "tags": [
+                    "Clinic"
+                ],
+                "summary": "Get current clinic details",
+                "operationId": "5e925807a2d586366b2ec66a49a5543f",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClinicResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Clinic"
+                ],
+                "summary": "Update clinic details",
+                "operationId": "f91844a6730f6fb28a03d36e5a8370c6",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClinicRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClinicResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Clinic"
+                ],
+                "summary": "Create a new clinic",
+                "operationId": "54be64fc5d0174f20f85da77290cc672",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ClinicSubscriptionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "accessToken": {
+                                            "type": "string"
+                                        },
+                                        "tokenType": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Clinic"
+                ],
+                "summary": "Delete clinic and associated users",
+                "operationId": "22b2df336852790ecbc39de860d9f53a",
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/file-manager": {
             "get": {
                 "tags": [
@@ -2171,6 +2288,74 @@
                 },
                 "type": "object"
             },
+            "ClinicRequest": {
+                "required": [
+                    "name",
+                    "address",
+                    "longitude",
+                    "latitude",
+                    "type"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the clinic",
+                        "type": "string",
+                        "example": "City Clinic"
+                    },
+                    "address": {
+                        "description": "Physical address of the clinic",
+                        "type": "string",
+                        "example": "123 Main St"
+                    },
+                    "longitude": {
+                        "description": "Geographical longitude",
+                        "type": "number",
+                        "format": "float",
+                        "example": 12.345678
+                    },
+                    "latitude": {
+                        "description": "Geographical latitude",
+                        "type": "number",
+                        "format": "float",
+                        "example": 98.765432
+                    },
+                    "description": {
+                        "description": "Optional description of the clinic",
+                        "type": "string",
+                        "example": "A modern healthcare facility",
+                        "nullable": true
+                    },
+                    "is_banned": {
+                        "description": "Indicates if the clinic is banned",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "type": {
+                        "description": "Type of clinic",
+                        "type": "string",
+                        "enum": [
+                            "general",
+                            "specialized"
+                        ],
+                        "example": "general"
+                    },
+                    "start": {
+                        "description": "Opening time",
+                        "type": "string",
+                        "format": "time",
+                        "example": "08:00",
+                        "nullable": true
+                    },
+                    "end": {
+                        "description": "Closing time",
+                        "type": "string",
+                        "format": "time",
+                        "example": "18:00",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "ClinicSubscriptionRequest": {
                 "required": [
                     "fullName",
@@ -2736,6 +2921,53 @@
                 },
                 "type": "object"
             },
+            "ClinicResource": {
+                "title": "Clinic Resource",
+                "description": "Clinic resource representation",
+                "properties": {
+                    "name": {
+                        "description": "Name of the clinic",
+                        "type": "string"
+                    },
+                    "address": {
+                        "description": "Address of the clinic",
+                        "type": "string"
+                    },
+                    "longitude": {
+                        "description": "Longitude coordinate of the clinic",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "latitude": {
+                        "description": "Latitude coordinate of the clinic",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "description": {
+                        "description": "Description of the clinic",
+                        "type": "string"
+                    },
+                    "isBanned": {
+                        "description": "Indicates if the clinic is banned",
+                        "type": "boolean"
+                    },
+                    "type": {
+                        "description": "Type of the clinic",
+                        "type": "string"
+                    },
+                    "start": {
+                        "description": "Opening time of the clinic",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "end": {
+                        "description": "Closing time of the clinic",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "DoctorResource": {
                 "title": "Doctor Resource",
                 "description": "Doctor resource representation",
@@ -3288,6 +3520,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Clinic",
+            "description": "Clinic"
         },
         {
             "name": "Patients",

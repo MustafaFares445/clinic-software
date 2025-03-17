@@ -13,13 +13,53 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
+
+/**
+ * @OA\Tag(
+ *     name="Clinics",
+ *     description="Operations related to Clinics"
+ * )
+ */
 final class ClinicController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/clinic",
+     *     summary="Get current clinic details",
+     *     tags={"Clinic"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/ClinicResource")
+     *     )
+     * )
+     */
     public function show(): ClinicResource
     {
         return ClinicResource::make(Auth::user()->clinic);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/clinic",
+     *     summary="Create a new clinic",
+     *     tags={"Clinic"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ClinicSubscriptionRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="accessToken", type="string"),
+     *             @OA\Property(property="tokenType", type="string"),
+     *             @OA\Property(property="user", ref="#/components/schemas/UserResource")
+     *         )
+     *     )
+     * )
+     */
     public function store(ClinicSubscriptionRequest $request): JsonResponse
     {
         return DB::transaction(function () use ($request) {
@@ -38,6 +78,23 @@ final class ClinicController extends Controller
         });
     }
 
+    /**
+     * @OA\Put(
+     *     path="/api/clinic",
+     *     summary="Update clinic details",
+     *     tags={"Clinic"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/ClinicRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/ClinicResource")
+     *     )
+     * )
+     */
     public function update(ClinicRequest $request): ClinicResource
     {
         $clinic = Auth::user()->clinic;
@@ -46,6 +103,18 @@ final class ClinicController extends Controller
         return ClinicResource::make($clinic);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/clinic",
+     *     summary="Delete clinic and associated users",
+     *     tags={"Clinic"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=204,
+     *         description="No content"
+     *     )
+     * )
+     */
     public function destroy(): Response
     {
         $clinic = Auth::user()->clinic;
