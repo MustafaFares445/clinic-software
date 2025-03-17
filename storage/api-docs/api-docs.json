@@ -299,13 +299,13 @@
                 }
             }
         },
-        "/api/clinic": {
+        "/api/clinics": {
             "get": {
                 "tags": [
                     "Clinic"
                 ],
                 "summary": "Get current clinic details",
-                "operationId": "5e925807a2d586366b2ec66a49a5543f",
+                "operationId": "4058b20e8a7a890693e2ebb8ee82c9da",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -329,7 +329,7 @@
                     "Clinic"
                 ],
                 "summary": "Update clinic details",
-                "operationId": "f91844a6730f6fb28a03d36e5a8370c6",
+                "operationId": "dd25c7ce5c163cc2083b86f0c008f38c",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -363,7 +363,7 @@
                     "Clinic"
                 ],
                 "summary": "Delete clinic and associated users",
-                "operationId": "22b2df336852790ecbc39de860d9f53a",
+                "operationId": "c26fb56dd9d19552e8f3bc06416f45b6",
                 "responses": {
                     "204": {
                         "description": "No content"

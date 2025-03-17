@@ -161,7 +161,7 @@ final class PatientResource extends JsonResource
             'notes' => $this->when($this->note, $this->note),
             'nationalNumber' => $this->when($this->nationalNumber, $this->nationalNumber),
             'address' => $this->when($this->address, $this->address),
-            'createdAt' => $this->when($this->created_at, $this->created_at->toDateTimeString()),
+            'createdAt' => $this->when($this->created_at, Carbon::parse($this->created_at)->toDateTimeString()),
 
             'nextReservation' => $this->when($this->next_reservation_date, Carbon::parse($this->next_reservation_date)->toDateTimeString()),
             'lastReservation' => $this->when($this->last_reservation_date, Carbon::parse($this->last_reservation_date)->toDateTimeString()),
