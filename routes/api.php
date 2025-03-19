@@ -22,7 +22,7 @@ Route::post('/clinics/subscription', [ClinicController::class , 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::apiResource('/clinics', ClinicController::class)->except(['index' , 'store']);
+    Route::apiResource('/clinics', ClinicController::class)->except(['store']);
     Route::apiResource('/transactions/medical' , MedicalTransactionController::class);
     Route::apiResource('transactions/billing' , BillingTransactionController::class);
 
