@@ -10,7 +10,6 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\RecordController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Resources\UserResource;
-use App\Models\BillingTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +22,7 @@ Route::post('/clinics/subscription', [ClinicController::class , 'store']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    Route::apiResource('/clinics', ClinicController::class)->except(['index' , 'store']);
     Route::apiResource('/transactions/medical' , MedicalTransactionController::class);
     Route::apiResource('transactions/billing' , BillingTransactionController::class);
 
@@ -63,7 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/medical-collections', [FileManagerController::class, 'getMedicalCollections']);
     });
 
-    Route::apiResource('/clinics', ClinicController::class)->except(['index' , 'store']);
 
     // Route::prefix('/transactions' , function(){
     //     Route::apiResource('/billing' , BillingTransactionController::class);
