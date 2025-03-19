@@ -330,7 +330,7 @@
                     "Clinic"
                 ],
                 "summary": "Get current clinic details",
-                "operationId": "4058b20e8a7a890693e2ebb8ee82c9da",
+                "operationId": "dab93c930a17b3b823e8febfca5512f4",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -659,7 +659,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -688,7 +693,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/transactions/medical/{medicalTransaction}": {
@@ -723,7 +733,12 @@
                     "404": {
                         "description": "Medical transaction not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "put": {
                 "tags": [
@@ -766,7 +781,12 @@
                     "404": {
                         "description": "Medical transaction not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -792,7 +812,12 @@
                     "404": {
                         "description": "Medical transaction not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/overview/patients/gender/count": {

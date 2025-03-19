@@ -21,6 +21,7 @@ class MedicalTransactionController extends Controller
      *     path="/api/transactions/medical",
      *     summary="List all medical transactions",
      *     tags={"Medical Transactions"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -49,6 +50,7 @@ class MedicalTransactionController extends Controller
      *     path="/api/transactions/medical",
      *     summary="Create a new medical transaction",
      *     tags={"Medical Transactions"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/MedicalTransactionRequest")
@@ -72,6 +74,7 @@ class MedicalTransactionController extends Controller
      *     path="/api/transactions/medical/{medicalTransaction}",
      *     summary="Get a specific medical transaction",
      *     tags={"Medical Transactions"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="medicalTransaction",
      *         in="path",
@@ -100,6 +103,7 @@ class MedicalTransactionController extends Controller
      *     path="/api/transactions/medical/{medicalTransaction}",
      *     summary="Update a medical transaction",
      *     tags={"Medical Transactions"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="medicalTransaction",
      *         in="path",
@@ -134,6 +138,7 @@ class MedicalTransactionController extends Controller
      *     path="/api/transactions/medical/{medicalTransaction}",
      *     summary="Delete a medical transaction",
      *     tags={"Medical Transactions"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="medicalTransaction",
      *         in="path",
