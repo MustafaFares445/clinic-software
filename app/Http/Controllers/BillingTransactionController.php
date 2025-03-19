@@ -19,6 +19,7 @@ class BillingTransactionController extends Controller
      *     path="/api/transactions/billing",
      *     summary="List all billing transactions",
      *     tags={"Billing Transactions"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -44,6 +45,7 @@ class BillingTransactionController extends Controller
      *     path="/api/transactions/billing",
      *     summary="Create a new billing transaction",
      *     tags={"Billing Transactions"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/BillingTransactionRequest")
@@ -67,6 +69,7 @@ class BillingTransactionController extends Controller
      *     path="/api/transactions/billing/{billingTransaction}",
      *     summary="Get a specific billing transaction",
      *     tags={"Billing Transactions"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -95,6 +98,7 @@ class BillingTransactionController extends Controller
      *     path="/api/transactions/billing/{billingTransaction}",
      *     summary="Update a billing transaction",
      *     tags={"Billing Transactions"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -129,6 +133,7 @@ class BillingTransactionController extends Controller
      *     path="/api/transactions/billing/{billingTransaction}",
      *     summary="Delete a billing transaction",
      *     tags={"Billing Transactions"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
