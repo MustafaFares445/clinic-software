@@ -32,7 +32,8 @@ final class AuthTest extends TestCase
         Sanctum::actingAs($this->authUser);
 
         $userData = [
-            'fullName' => 'Musatafa Fares',
+            'firstName' => 'Musatafa',
+            'lastName' => 'Fares',
             'email' => 'mustafa.fares@gmail.com',
             'password' => 'password123',
             'username' => 'mustafa.fares',
@@ -48,7 +49,8 @@ final class AuthTest extends TestCase
                 'tokenType',
                 'user' => [
                     'id',
-                    'fullName',
+                    'firstName',
+                    'lastName',
                     'email',
                     'username',
                 ],
@@ -64,7 +66,8 @@ final class AuthTest extends TestCase
     public function testUnauthenticatedUserCannotRegister(): void
     {
         $userData = [
-            'fullName' => 'John Doe',
+            'firstName' => 'John',
+            'lastName' => 'Doe',
             'email' => 'john.doe@gmail.com',
             'password' => 'password123',
             'username' => 'johndoe',
@@ -102,7 +105,9 @@ final class AuthTest extends TestCase
 
     public function testUserCanLogin(): void
     {
-        User::factory()->create([
+        $user = User::factory()->create([
+            'firstName' => 'Test',
+            'lastName' => 'User',
             'username' => 'testuser',
             'password' => bcrypt('password123'),
             'is_banned' => false,
@@ -117,7 +122,13 @@ final class AuthTest extends TestCase
             ->assertJsonStructure([
                 'accessToken',
                 'tokenType',
-                'user',
+                'user' => [
+                    'id',
+                    'firstName',
+                    'lastName',
+                    'email',
+                    'username',
+                ],
             ]);
     }
 
@@ -135,6 +146,8 @@ final class AuthTest extends TestCase
     public function testBannedUserCannotLogin(): void
     {
         User::factory()->create([
+            'firstName' => 'Banned',
+            'lastName' => 'User',
             'username' => 'banneduser',
             'password' => bcrypt('password123'),
             'is_banned' => true,

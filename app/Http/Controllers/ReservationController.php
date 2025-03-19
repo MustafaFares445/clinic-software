@@ -92,6 +92,7 @@ final class ReservationController extends Controller
             ->with(['specification' => function ($query) {
                 $query->select(['id', 'name']);
             }])
+            ->with(['patient.media' , 'doctor.media' , 'specification.media'])
             ->whereDate('start', '>=', $startDate)
             ->whereDate('end', '<=', $endDate)
             ->orderBy('start');

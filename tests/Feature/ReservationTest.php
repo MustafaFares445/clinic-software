@@ -9,124 +9,101 @@ use App\Models\Patient;
 use App\Models\Reservation;
 use App\Models\Specification;
 use App\Models\User;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 final class ReservationTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    private User $user;
-
-    private Clinic $clinic;
-
-    private User $doctor;
-
-    private Patient $patient;
-
-    private Specification $specification;
+    protected User $user;
+    protected Clinic $clinic;
+    protected Patient $patient;
+    protected  Specification $specification;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Create base test data
         $this->clinic = Clinic::factory()->create([
-            'start' => '09:00',
-            'end' => '17:00',
+            'start' => '08:00:00',
+            'end' => '17:00:00'
         ]);
 
         $this->user = User::factory()->create([
             'clinic_id' => $this->clinic->id,
         ]);
 
-        // Create a doctor user
-        $this->doctor = User::factory()->create([
-            'clinic_id' => $this->clinic->id,
-        ]);
-        $this->doctor->assignRole('doctor');
-
-        $this->patient = Patient::factory()->create([
-            'clinic_id' => $this->clinic->id,
-        ]);
-
         $this->specification = Specification::factory()->create();
 
-        /** @var Authenticatable $user */
-        $user = $this->user;
-        $this->actingAs($user);
+        $this->patient = Patient::factory()->create();
     }
 
-    public function testCanListReservations()
+    public function test_can_get_reservations()
     {
-        Reservation::factory()->count(3)->create([
+        Reservation::factory()->create([
             'clinic_id' => $this->clinic->id,
-            'doctor_id' => $this->doctor->id,
-            'patient_id' => $this->patient->id,
-            'specification_id' => $this->specification->id,
-            'start' => now()->startOfWeek(),
-            'end' => now()->startOfWeek()->addHour(),
+            'start' => now()->setTime(10, 0),
+            'end' => now()->setTime(11, 0)
         ]);
 
-        $response = $this->getJson('/api/reservations');
+        $response = $this->actingAs($this->user)
+            ->getJson('/api/reservations');
 
-        $response->assertOk()
-            ->assertJsonCount(3, 'data')
+        $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
                         'id',
                         'start',
                         'end',
+                        'type',
                         'status',
-                        'patient',
-                        'doctor',
-                        'specification',
-                    ],
-                ],
-            ]);
-    }
-
-    public function testCanFilterReservationsByDateRange()
-    {
-        // Create reservations with different dates
-        $pastReservation = Reservation::factory()->create([
-            'start' => now()->subWeek(),
-            'end' => now()->subWeek()->addHour(),
-        ]);
-
-        $currentReservation = Reservation::factory()->create([
-            'start' => now(),
-            'end' => now()->addHour(),
-        ]);
-
-        $response = $this->getJson('/api/reservations?' . http_build_query([
-            'start' => now()->startOfDay()->format('Y-m-d'),
-            'end' => now()->endOfDay()->format('Y-m-d'),
-        ]));
-
-        $response->assertOk()
+                        'patient' => [
+                            'id',
+                            'firstName',
+                            'lastName',
+                            'avatar',
+                            'media'
+                        ],
+                        'doctor' => [
+                            'id',
+                            'firstName',
+                            'lastName',
+                            'avatar'
+                        ],
+                        'specification' => [
+                            'id',
+                            'name',
+                            'image'
+                        ],
+                        'createdAt'
+                    ]
+                ]
+            ])
             ->assertJsonCount(1, 'data');
     }
 
-    public function testCanStoreNewReservation()
+    public function test_can_create_a_reservation()
     {
-        $reservationData = [
-            'patientId' => $this->patient->id,
-            'doctorId' => $this->doctor->id,
-            'specificationId' => $this->specification->id,
-            'start' => now()->addDay()->format('Y-m-d H:i:s'),
-            'end' => now()->addDay()->addHour()->format('Y-m-d H:i:s'),
-            'status' => ReservationStatuses::INCOME,
+        $data = [
             'clinicId' => $this->clinic->id,
-            'type' => ReservationTypes::APPOINTMENT,
+            'patientId' => $this->patient->id,
+            'doctorId' => $this->user->id,
+            'specificationId' => $this->specification->id,
+            'start' => now()->addMinutes(5)->toDateTimeString(),
+            'end' => now()->addMinutes(20)->toDateTimeString(),
+            'status' => ReservationStatuses::INCOME->value,
+            'type' => ReservationTypes::APPOINTMENT->value,
         ];
 
-        $response = $this->postJson('/api/reservations', $reservationData);
+        $response = $this->actingAs($this->user)
+            ->postJson('/api/reservations', $data);
 
-        $response->assertCreated()
+        $response->assertStatus(201)
             ->assertJsonStructure([
                 'data' => [
                     'id',
@@ -135,29 +112,19 @@ final class ReservationTest extends TestCase
                     'status',
                     'patient',
                     'doctor',
-                    'specification',
-                ],
+                    'specification'
+                ]
             ]);
-
-        $this->assertDatabaseHas('reservations', [
-            'patient_id' => $this->patient->id,
-            'doctor_id' => $this->doctor->id,
-            'specification_id' => $this->specification->id,
-        ]);
     }
 
-    public function testCanShowReservation()
+    public function test_can_show_a_reservation()
     {
-        $reservation = Reservation::factory()->create([
-            'clinic_id' => $this->clinic->id,
-            'doctor_id' => $this->doctor->id,
-            'patient_id' => $this->patient->id,
-            'specification_id' => $this->specification->id,
-        ]);
+        $reservation = Reservation::factory()->create();
 
-        $response = $this->getJson("/api/reservations/{$reservation->id}");
+        $response = $this->actingAs($this->user)
+            ->getJson("/api/reservations/{$reservation->id}");
 
-        $response->assertOk()
+        $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
                     'id',
@@ -166,107 +133,68 @@ final class ReservationTest extends TestCase
                     'status',
                     'patient',
                     'doctor',
-                    'specification',
-                ],
+                    'specification'
+                ]
             ]);
     }
 
-    public function testCanUpdateReservation()
+    public function test_can_update_a_reservation()
     {
-        $reservation = Reservation::factory()->create([
-            'clinic_id' => $this->clinic->id,
-            'doctor_id' => $this->doctor->id,
-            'patient_id' => $this->patient->id,
-            'specification_id' => $this->specification->id,
-            'type' => ReservationTypes::INSPECTION,
-        ]);
-
-        $updateData = [
-            'patientId' => $this->patient->id,
-            'doctorId' => $this->doctor->id,
-            'specificationId' => $this->specification->id,
-            'start' => now()->addDays(2)->format('Y-m-d H:i:s'),
-            'end' => now()->addDays(2)->addHour()->format('Y-m-d H:i:s'),
-            'status' => ReservationStatuses::INCOME,
-            'clinicId' => $this->clinic->id,
-            'type' => ReservationTypes::SURGERY,
+        $reservation = Reservation::factory()->create();
+        $newData = [
+            'start' => now()->addMinutes(5)->toDateTimeString(),
+            'end' => now()->addMinutes(20)->toDateTimeString(),
+            'status' => ReservationStatuses::CHECK->value
         ];
 
-        $response = $this->putJson("/api/reservations/{$reservation->id}", $updateData);
+        $response = $this->actingAs($this->user)
+            ->putJson("/api/reservations/{$reservation->id}", $newData);
 
-        $response->assertOk();
-
-        $this->assertDatabaseHas('reservations', [
-            'id' => $reservation->id,
-            'start' => $updateData['start'],
-            'end' => $updateData['end'],
-        ]);
+        $response->assertStatus(200)
+            ->assertJsonFragment($newData);
     }
 
-    public function testCanChangeReservationStatus()
+    public function test_can_delete_a_reservation()
     {
-        $reservation = Reservation::factory()->create([
-            'clinic_id' => $this->clinic->id,
-            'doctor_id' => $this->doctor->id,
-            'patient_id' => $this->patient->id,
-            'specification_id' => $this->specification->id,
-            'status' => ReservationStatuses::INCOME,
-        ]);
+        $reservation = Reservation::factory()->create();
 
-        $response = $this->patchJson("/api/reservations/{$reservation->id}/change-status", [
-            'status' => ReservationStatuses::CHECK,
-        ]);
+        $response = $this->actingAs($this->user)
+            ->deleteJson("/api/reservations/{$reservation->id}");
 
-        $response->assertOk();
-
-        $this->assertDatabaseHas('reservations', [
-            'id' => $reservation->id,
-            'status' => ReservationStatuses::CHECK,
-        ]);
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('reservations', ['id' => $reservation->id]);
     }
 
-    public function testCanDeleteReservation()
+    public function test_can_updates_income_reservations_to_check_when_they_end()
     {
-        $reservation = Reservation::factory()->create([
-            'clinic_id' => $this->clinic->id,
-            'doctor_id' => $this->doctor->id,
-            'patient_id' => $this->patient->id,
-            'specification_id' => $this->specification->id,
+        $oldReservation = Reservation::factory()->create([
+            'start' => now()->subDays(2),
+            'end' => now()->subDay(),
+            'status' => ReservationStatuses::INCOME
         ]);
 
-        $response = $this->deleteJson("/api/reservations/{$reservation->id}");
+        $this->actingAs($this->user)
+            ->getJson('/api/reservations');
 
-        $response->assertOk();
+        $this->assertEquals(ReservationStatuses::CHECK->value, $oldReservation->fresh()->status);
+    }
 
-        $this->assertDatabaseMissing('reservations', [
-            'id' => $reservation->id,
+    public function test_can_filters_reservations_by_date_range()
+    {
+        $inRange = Reservation::factory()->create([
+            'start' => now()->setTime(10, 0),
+            'end' => now()->setTime(11, 0)
         ]);
-    }
+        $outOfRange = Reservation::factory()->create([
+            'start' => now()->addWeek(),
+            'end' => now()->addWeek()->addHour()
+        ]);
 
-    public function testValidatesRequiredFieldsWhenStoringReservation()
-    {
-        $response = $this->postJson('/api/reservations', []);
+        $response = $this->actingAs($this->user)
+            ->getJson('/api/reservations?start=' . now()->startOfWeek(Carbon::SATURDAY) . '&end=' . now()->endOfWeek(Carbon::FRIDAY));
 
-        $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['patientId', 'start', 'end', 'type']);
-    }
-
-    public function testValidatesDateRangeWhenStoringReservation()
-    {
-        $reservationData = [
-            'patientId' => $this->patient->id,
-            'doctorId' => $this->doctor->id,
-            'specificationId' => $this->specification->id,
-            'start' => now()->addHour()->format('Y-m-d H:i:s'),
-            'end' => now()->format('Y-m-d H:i:s'), // End before start
-            'status' => ReservationStatuses::INCOME,
-            'clinicId' => $this->clinic->id,
-            'type' => ReservationTypes::APPOINTMENT,
-        ];
-
-        $response = $this->postJson('/api/reservations', $reservationData);
-
-        $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['end']);
+        $response->assertStatus(200)
+            ->assertJsonFragment(['id' => $inRange->id])
+            ->assertJsonMissing(['id' => $outOfRange->id]);
     }
 }

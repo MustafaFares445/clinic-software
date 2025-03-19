@@ -92,7 +92,7 @@ final class ReservationRequest extends FormRequest
         $rules = [];
 
         if ($this->has('start')) {
-            $rules['start'] = ['date_format:Y-m-d H:i:s', 'after_or_equal:now'];
+            $rules['start'] = ['date_format:Y-m-d H:i:s', 'after_or_equal:'.now()->subMinute()];
         }
 
         if ($this->has('end')) {

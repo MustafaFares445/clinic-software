@@ -84,8 +84,8 @@ final class ReservationResource extends JsonResource
     {
         return [
             'id' => $this->when($this->id, $this->id),
-            // 'start' => $this->when($this->start, $this->start->toDateTimeString()),
-            // 'end' => $this->when($this->end, $this->end->toDateTimeString()),
+            'start' => $this->when($this->start, $this->start),
+            'end' => $this->when($this->end, $this->end),
             'type' => $this->when($this->type, $this->type),
             'status' => $this->when($this->status, $this->status),
             'patient' => PatientResource::make($this->whenLoaded('patient')),

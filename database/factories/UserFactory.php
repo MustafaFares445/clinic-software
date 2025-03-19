@@ -29,9 +29,10 @@ final class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => self::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'fullName' => fake()->name(),
+            'firstName' => fake()->name(),
+            'lastName' => fake()->name(),
             'username' => fake()->userName(),
-            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+            'clinic_id' => Clinic::factory()->create(),
             'is_banned' => fake()->boolean(),
         ];
     }

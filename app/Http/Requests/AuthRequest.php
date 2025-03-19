@@ -35,7 +35,8 @@ final class AuthRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fullName' => ['required', 'string', 'min:2', 'max:255'],
+            'firstName' => ['required', 'string', 'min:2', 'max:255'],
+            'lastName' => ['required', 'string', 'min:2', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'max:255'],
             'username' => ['required', 'string', 'min:3', 'max:255', 'unique:users,username'],

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\BillingTransactionResource;
 use App\Models\BillingTransaction;
 use App\Http\Requests\BillingTransactionRequest;
+use Illuminate\Http\Request;
 
 /**
  * @OA\Tag(
@@ -20,6 +21,13 @@ class BillingTransactionController extends Controller
      *     summary="List all billing transactions",
      *     tags={"Billing Transactions"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="type",
+     *         in="query",
+     *         description="Filter by transaction type",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -30,13 +38,16 @@ class BillingTransactionController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
         return BillingTransactionResource::collection(
             BillingTransaction::with([
                 'user' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
                 'model'
-            ])->paginate()
+            ])->when(
+                $request->has('type'),
+                fn($query) => $query->where('type', $request->input('type'))
+            )->paginate()
         );
     }
 

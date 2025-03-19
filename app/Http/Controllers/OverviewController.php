@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enums\RecordTypes;
 use App\Http\Resources\IllResource;
+use App\Models\BillingTransaction;
 use App\Models\Ill;
 use App\Models\Patient;
 use App\Models\Record;
 use App\Models\Reservation;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -241,6 +241,71 @@ final class OverviewController extends Controller
         return response()->json([
             'count' => $patientsQuery->clone()->count(),
             'currentMonth' => $patientsQuery->clone()->whereMonth('created_at', Carbon::now()->month)->count(),
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/overview/billing-statistics",
+     *     summary="Get billing statistics",
+     *     tags={"Overview"},
+     *
+     *     @OA\Parameter(
+     *         name="type",
+     *         in="query",
+     *         description="Type of transaction (in/out)",
+     *         required=false,
+     *
+     *         @OA\Schema(type="string", default="in")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="totalTransactions", type="integer", example=100),
+     *             @OA\Property(property="totalType", type="number", format="float", example=5000.50)
+     *         )
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
+    public function getStatistics(Request $request): JsonResponse
+    {
+        $query = BillingTransaction::query();
+
+        return response()->json([
+            'totalTransactions' => $query->count(),
+            'totalType' => $query->where('type' , $request->input('type' , 'in'))->sum('amount'),
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/overview/age-statistics",
+     *     summary="Get patient age statistics",
+     *     tags={"Overview"},
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="adults", type="integer", example=300),
+     *             @OA\Property(property="children", type="integer", example=200)
+     *         )
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
+    public function getAgeStatistics(): JsonResponse
+    {
+        return response()->json([
+            'adults' => Patient::query()->where('age', '>=', 18)->count(),
+            'children' => Patient::query()->where('age', '<', 18)->count(),
         ]);
     }
 }
