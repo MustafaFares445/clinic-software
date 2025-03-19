@@ -35,7 +35,7 @@ final class ClinicController extends Controller
      *     )
      * )
      */
-    public function show(): ClinicResource
+    public function index(): ClinicResource
     {
         return ClinicResource::make(Auth::user()->clinic);
     }
