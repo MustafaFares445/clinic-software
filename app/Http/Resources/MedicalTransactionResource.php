@@ -32,8 +32,6 @@ class MedicalTransactionResource extends JsonResource
             'id' => $this->id,
             'quantity' => $this->quantity,
             'type' => $this->type,
-            'patient_id' => $this->patient_id,
-            'clinic_id' => $this->clinic_id,
             'description' => $this->description,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),

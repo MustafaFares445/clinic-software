@@ -40,13 +40,4 @@ final class MediaService
 
         return null;
     }
-
-    public function handleMediaUploadByPath(Model $model, string $path, string $collection): ?Media
-    {
-        if ($media) {
-            return $model->addMedia($media)->usingName($media->hashName())->toMediaCollection($collection);
-        }
-
-        return null;
-    }
 }

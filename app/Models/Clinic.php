@@ -57,9 +57,4 @@ final class Clinic extends Model implements HasMedia
     {
         return $this->hasMany(User::class);
     }
-
-    public function transaction(): MorphMany
-    {
-        return $this->morphMany(Transaction::class, 'relateable');
-    }
 }
