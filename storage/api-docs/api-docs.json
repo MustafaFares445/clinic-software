@@ -192,7 +192,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/BillingTransactionRequest"
+                                "$ref": "#/components/schemas/CreateBillingTransactionRequest"
                             }
                         }
                     }
@@ -277,7 +277,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/BillingTransactionRequest"
+                                "$ref": "#/components/schemas/UpdateBillingTransactionRequest"
                             }
                         }
                     }
@@ -2409,33 +2409,6 @@
                 },
                 "type": "object"
             },
-            "BillingTransactionRequest": {
-                "required": [
-                    "type",
-                    "amount"
-                ],
-                "properties": {
-                    "clinicId": {
-                        "description": "UUID of the clinic associated with the transaction",
-                        "type": "string"
-                    },
-                    "type": {
-                        "description": "Type of the transaction (e.g., in, out)",
-                        "type": "string"
-                    },
-                    "amount": {
-                        "description": "Transaction amount",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "description": {
-                        "description": "Optional description of the transaction",
-                        "type": "string",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
             "ClinicRequest": {
                 "required": [
                     "name",
@@ -2623,6 +2596,45 @@
                         "minimum": 0,
                         "example": 2,
                         "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "CreateBillingTransactionRequest": {
+                "required": [
+                    "type",
+                    "amount"
+                ],
+                "properties": {
+                    "clinicId": {
+                        "description": "UUID of the clinic associated with the transaction",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Type of the transaction (e.g., in, out)",
+                        "type": "string"
+                    },
+                    "amount": {
+                        "description": "Transaction amount",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "description": {
+                        "description": "Optional description of the transaction",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "modelId": {
+                        "description": "ID of the related model (medical transaction or reservation)",
+                        "type": "string"
+                    },
+                    "modelType": {
+                        "description": "Type of the related model",
+                        "type": "string",
+                        "enum": [
+                            "medicalTransaction",
+                            "reservation"
+                        ]
                     }
                 },
                 "type": "object"
@@ -3023,6 +3035,29 @@
                         "type": "string",
                         "format": "uuid",
                         "example": "550e8400-e29b-41d4-a716-446655440003"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateBillingTransactionRequest": {
+                "properties": {
+                    "clinicId": {
+                        "description": "UUID of the clinic associated with the transaction",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Type of the transaction (e.g., in, out)",
+                        "type": "string"
+                    },
+                    "amount": {
+                        "description": "Transaction amount",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "description": {
+                        "description": "Optional description of the transaction",
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "type": "object"
