@@ -36,10 +36,9 @@ class BillingTransactionResource extends JsonResource
             'amount' => $this->when($this->amount , $this->amount),
             'description' => $this->when($this->description , $this->description),
             'user' => UserResource::make($this->whenLoaded('user')),
-            'createdAt' => $this->when($this->created_at , $this->created_at->toDateTimeString()),
-            'updatedAt' => $this->when($this->updated_at, $this->updated_at->toDateTimeString()),
+            // 'createdAt' => $this->created_at,
+            // 'updatedAt' => $this->when($this->updated_at, $this->updated_at->toDateTimeString()),
         ];
-
 
         if($this->model_type === Reservation::class)
             $data['reservation'] = ReservationResource::make($this->model);

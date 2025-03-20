@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BillingTransactionResource;
 use App\Models\BillingTransaction;
-use App\Http\Requests\BillingTransactionRequest;
+use App\Http\Requests\CreateBillingTransactionRequest;
+use App\Http\Requests\UpdateBillingTransactionRequest;
 use Illuminate\Http\Request;
 
 /**
@@ -59,7 +60,7 @@ class BillingTransactionController extends Controller
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/BillingTransactionRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/CreateBillingTransactionRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
@@ -68,7 +69,7 @@ class BillingTransactionController extends Controller
      *     )
      * )
      */
-    public function store(BillingTransactionRequest $request)
+    public function store(CreateBillingTransactionRequest $request)
     {
         return BillingTransactionResource::make(
             BillingTransaction::create($request->validated())
@@ -99,9 +100,11 @@ class BillingTransactionController extends Controller
      *     )
      * )
      */
-    public function show(BillingTransaction $billingTransaction)
+    public function show(string $billingTransaction)
     {
-        return BillingTransactionResource::make($billingTransaction);
+        return BillingTransactionResource::make(
+            BillingTransaction::query()->find($billingTransaction)
+        );
     }
 
     /**
@@ -119,7 +122,7 @@ class BillingTransactionController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/BillingTransactionRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateBillingTransactionRequest")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -132,10 +135,14 @@ class BillingTransactionController extends Controller
      *     )
      * )
      */
-    public function update(BillingTransactionRequest $request, BillingTransaction $billingTransaction)
+    public function update(UpdateBillingTransactionRequest $request, string $billingTransaction)
     {
+        $billingTransaction = BillingTransaction::query()->find($billingTransaction);
+
+        $billingTransaction->update($request->validated());
+        
         return BillingTransactionResource::make(
-            $billingTransaction->update($request->validated())
+            $billingTransaction->refre
         );
     }
 

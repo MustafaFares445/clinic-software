@@ -58,7 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Transaction routes
     Route::apiResource('/transactions/medical', MedicalTransactionController::class);
-    Route::apiResource('transactions/billing', BillingTransactionController::class);
+    Route::apiResource('/transactions/billing', BillingTransactionController::class);
 
     // Overview routes
     Route::prefix('overview')->group(function () {
