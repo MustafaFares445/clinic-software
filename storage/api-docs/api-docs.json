@@ -149,6 +149,17 @@
                 ],
                 "summary": "List all billing transactions",
                 "operationId": "d667712155aae0eb30ab8ee4bad6dc36",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filter by transaction type",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -1070,6 +1081,91 @@
                                         "currentMonth": {
                                             "type": "integer",
                                             "example": 50
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/overview/billing-statistics": {
+            "get": {
+                "tags": [
+                    "Overview"
+                ],
+                "summary": "Get billing statistics",
+                "operationId": "6d00ad1df6782265fc8032082ed7e57f",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of transaction (in/out)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "in"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "totalTransactions": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "totalType": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 5000.5
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/overview/age-statistics": {
+            "get": {
+                "tags": [
+                    "Overview"
+                ],
+                "summary": "Get patient age statistics",
+                "operationId": "975b17e44ce32598e91c04ef676324b2",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "adults": {
+                                            "type": "integer",
+                                            "example": 300
+                                        },
+                                        "children": {
+                                            "type": "integer",
+                                            "example": 200
                                         }
                                     },
                                     "type": "object"

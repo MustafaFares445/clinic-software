@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use App\Models\Clinic;
+use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -25,8 +26,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $user_id
  * @property string $model_id
  * @property string $model_type
- * @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 final class BillingTransaction extends Model implements HasMedia
 {
