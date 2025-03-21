@@ -76,7 +76,7 @@ class RecordQueryService
      * @param string|null $searchTerm The search term to filter by
      * @return self
      */
-    public function filterByText(?string $searchTerm): self
+    public function filterBySearchTerm(?string $searchTerm): self
     {
         $this->query->where(function($query) use ($searchTerm) {
             $query->where('notes', 'like', "%{$searchTerm}%")
@@ -121,7 +121,13 @@ class RecordQueryService
      */
     public function sortBy(string $field, string $direction = 'desc'): self
     {
-        $this->query->orderBy($field, $direction);
+        if(in_array($field  , ['firstName' , 'lastName'])){
+            $this->query->join('patients', 'patients.id', '=', 'reservations.patient_id')
+                ->orderBy('patients.' . $field, $direction);
+        }else{
+            $this->query->orderBy($field, $direction);
+        }
+
         return $this;
     }
 

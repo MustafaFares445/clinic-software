@@ -3,8 +3,35 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
+/**
+ * @OA\Schema(
+ *     schema="PatientRecordsRequest",
+ *     title="Patient Records Request",
+ *     description="Request parameters for filtering patient records",
+ *     type="object",
+ *     @OA\Property(
+ *         property="startDate",
+ *         type="string",
+ *         format="date",
+ *         description="Start date for filtering records",
+ *         example="2023-01-01"
+ *     ),
+ *     @OA\Property(
+ *         property="endDate",
+ *         type="string",
+ *         format="date",
+ *         description="End date for filtering records",
+ *         example="2023-12-31"
+ *     ),
+ *     @OA\Property(
+ *         property="search",
+ *         type="string",
+ *         description="Search term for filtering records",
+ *         example="John Doe"
+ *     )
+ * )
+ */
 class PatientRecordsRequest extends FormRequest
 {
     /**
@@ -25,6 +52,7 @@ class PatientRecordsRequest extends FormRequest
         return [
             'startDate' => ['nullable', 'date', 'before_or_equal:endDate'],
             'endDate' => ['nullable', 'date', 'after_or_equal:startDate'],
+            'search' => ['nullable' , 'string' , 'max:255']
         ];
     }
 

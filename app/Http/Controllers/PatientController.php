@@ -18,8 +18,16 @@ use App\Http\Resources\PatientResource;
 use App\Http\Requests\PatientIndexRequest;
 use App\Http\Resources\ReservationResource;
 use App\Http\Requests\PatientRecordsRequest;
+use App\Http\Requests\PatientReservationRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Services\ReservationQueryService;
 
+/**
+ * @OA\Tag(
+ *     name="Patients",
+ *     description="Operations related to Patients"
+ * )
+ */
 final class PatientController extends Controller
 {
     protected MediaService $mediaService;
@@ -230,9 +238,9 @@ final class PatientController extends Controller
     /**
      * @OA\Get(
      *     path="/api/patients/{patient}/records",
-     *     summary="Get patient files",
-     *     description="Retrieves all files for a specific patient",
-     *     operationId="patientFiles",
+     *     summary="Get patient medical records",
+     *     description="Retrieves all medical records for a specific patient with filtering options",
+     *     operationId="getPatientRecords",
      *     tags={"Patients"},
      *     security={{"bearerAuth": {}}},
      *
@@ -241,29 +249,58 @@ final class PatientController extends Controller
      *         in="path",
      *         required=true,
      *         description="Patient ID",
-     *
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="startDate",
+     *         in="query",
+     *         description="Start date for filtering records (Y-m-d)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(
+     *         name="endDate",
+     *         in="query",
+     *         description="End date for filtering records (Y-m-d), must be after or equal to startDate",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Search term to filter records by content",
+     *         required=false,
      *         @OA\Schema(type="string")
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *
      *         @OA\JsonContent(
      *             type="object",
-     *
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *
      *                 @OA\Items(ref="#/components/schemas/RecordResource")
+     *             ),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 description="Pagination links"
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 description="Pagination metadata"
      *             )
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=404,
      *         description="Patient not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
      *     )
      * )
      */
@@ -272,7 +309,7 @@ final class PatientController extends Controller
         $records = RecordQueryService::make()
             ->filterByPatient($patient->id)
             ->filterByDateRange($request->validated('startDate'), $request->validated('endDate'))
-            ->filterByText($request->input('text'))
+            ->filterBySearchTerm($request->input('search'))
             ->withRelations([
                 'media', 'ills', 'medicines', 'doctors',
                 'reservation' => fn($query) => $query->select(['id'  , 'created_at'])
@@ -289,8 +326,8 @@ final class PatientController extends Controller
      * @OA\Get(
      *     path="/api/patients/{patient}/reservations",
      *     summary="Get patient reservations",
-     *     description="Retrieves all reservations for a specific patient with related media and doctor information",
-     *     operationId="patientReservations",
+     *     description="Retrieves all reservations for a specific patient with filtering and sorting options",
+     *     operationId="getPatientReservations",
      *     tags={"Patients"},
      *     security={{"bearerAuth": {}}},
      *
@@ -299,37 +336,99 @@ final class PatientController extends Controller
      *         in="path",
      *         required=true,
      *         description="Patient ID",
-     *
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="startDate",
+     *         in="query",
+     *         description="Start date for filtering reservations (Y-m-d)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(
+     *         name="endDate",
+     *         in="query",
+     *         description="End date for filtering reservations (Y-m-d), must be after or equal to startDate",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(
+     *         name="doctorsIds[]",
+     *         in="query",
+     *         description="Array of doctor IDs to filter by",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="array",
+     *             @OA\Items(type="integer")
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Search term to filter by patient name",
+     *         required=false,
      *         @OA\Schema(type="string")
      *     ),
-     *
+     *     @OA\Parameter(
+     *         name="sortBy",
+     *         in="query",
+     *         description="Field to sort by",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"start", "firstName", "lastName"}, default="start")
+     *     ),
+     *     @OA\Parameter(
+     *         name="sortOrder",
+     *         in="query",
+     *         description="Sort order",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"asc", "desc"}, default="desc")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *
      *         @OA\JsonContent(
      *             type="object",
-     *
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
-     *
      *                 @OA\Items(ref="#/components/schemas/ReservationResource")
+     *             ),
+     *             @OA\Property(
+     *                 property="links",
+     *                 type="object",
+     *                 description="Pagination links"
+     *             ),
+     *             @OA\Property(
+     *                 property="meta",
+     *                 type="object",
+     *                 description="Pagination metadata"
      *             )
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=404,
      *         description="Patient not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
      *     )
      * )
      */
-    public function patientReservations(Patient $patient): AnonymousResourceCollection
+    public function patientReservations(Patient $patient , PatientReservationRequest $request): AnonymousResourceCollection
     {
-        return ReservationResource::collection(
-            $patient->reservations()->with(['media', 'doctor'])->orderByDesc('created_at')->cursorPaginate()
-        );
+        $reservations = ReservationQueryService::make()
+            ->filterByPatient($patient->id)
+            ->filterByType($request->validated('type'))
+            ->filterByDateRange($request->validated('startDate') , $request->input('endDate'))
+            ->filterByDoctors($request->validated('doctorsIds'))
+            ->filterByPatientName($request->input('search'))
+            ->withRelations(['media', 'doctor'])
+            ->sortBy($request->validated('sortBy' , 'start'), $request->validated('sortOrder' , 'desc'))
+            ->getQuery()
+            ->cursorPaginate();
+
+        return ReservationResource::collection($reservations);
     }
 
     /**
