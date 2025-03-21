@@ -13,12 +13,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Laravel\Scout\Searchable;
+// use Laravel\Scout\Searchable;
 
 final class Record extends Model implements HasMedia
 {
     /** @use HasFactory<RecordFactory> */
-    use HasFactory , HasUuids , InteractsWithMedia , SoftDeletes, Searchable;
+    use HasFactory , HasUuids , InteractsWithMedia , SoftDeletes;
 
     protected $fillable = [
         'patient_id',
