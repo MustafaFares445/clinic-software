@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Patient;
+use App\Models\Reservation;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Actions\PatientsOrder;
-use App\Http\Requests\PatientIndexRequest;
+use App\Services\MediaService;
+use Illuminate\Http\JsonResponse;
+use App\Services\RecordQueryService;
 use App\Http\Requests\PatientRequest;
 use App\Http\Requests\ProfileRequest;
 use App\Http\Resources\MediaResource;
-use App\Http\Resources\PatientResource;
 use App\Http\Resources\RecordResource;
+use App\Http\Resources\PatientResource;
+use App\Http\Requests\PatientIndexRequest;
 use App\Http\Resources\ReservationResource;
-use App\Models\Patient;
-use App\Models\Reservation;
-use App\Services\MediaService;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\PatientRecordsRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Response;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 final class PatientController extends Controller
 {
@@ -267,11 +267,22 @@ final class PatientController extends Controller
      *     )
      * )
      */
-    public function patientRecords(Patient $patient): AnonymousResourceCollection
+    public function patientRecords(Patient $patient, PatientRecordsRequest $request): AnonymousResourceCollection
     {
-        return RecordResource::collection(
-            $patient->records()->with(['media', 'reservation', 'ills', 'medicines', 'doctors'])->orderByDesc('created_at')->cursorPaginate()
-        );
+        $records = RecordQueryService::make()
+            ->filterByPatient($patient->id)
+            ->filterByDateRange($request->validated('startDate'), $request->validated('endDate'))
+            ->filterByText($request->input('text'))
+            ->withRelations([
+                'media', 'ills', 'medicines', 'doctors',
+                'reservation' => fn($query) => $query->select(['id'  , 'created_at'])
+            ])
+            ->sortBy('created_at')
+            ->getQuery()
+            ->cursorPaginate();
+
+
+        return RecordResource::collection($records);
     }
 
     /**

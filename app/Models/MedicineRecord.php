@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 final class MedicineRecord extends Pivot
 {
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $keyType = 'string';
 

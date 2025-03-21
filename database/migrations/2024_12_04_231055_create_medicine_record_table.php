@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use App\Enums\RecordMedicinesTypes;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -13,11 +14,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('medicine_record', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->foreignUuid('medicine_id')->nullable()->constrained('medicines');
             $table->foreignUuid('record_id')->constrained('records');
             $table->enum('type', array_column(RecordMedicinesTypes::cases(), 'value'))->default(RecordMedicinesTypes::DIAGNOSED->value)->index();
-            $table->text('note')->nullable();
+            $table->text('notes')->nullable();
         });
     }
 

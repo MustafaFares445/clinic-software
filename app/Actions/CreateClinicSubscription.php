@@ -24,7 +24,7 @@ class CreateClinicSubscription
     {
         return DB::transaction(function () use ($clinicDTO, $userDTO, $workingDaysData) {
 
-            $clinic = $this->createClinic($clinicDTO);
+            $clinic = Clinic::create($clinicDTO->toArray());
 
             $user = $this->createUser($userDTO, $clinic);
 
@@ -36,16 +36,6 @@ class CreateClinicSubscription
         });
     }
 
-    /**
-     * Creates a new clinic.
-     *
-     * @param ClinicDTO $data Clinic data
-     * @return Clinic The created clinic
-     */
-    protected function createClinic(ClinicDTO $clinicDTO): Clinic
-    {
-        return Clinic::create($clinicDTO->toArray());
-    }
 
     /**
      * Creates a new user associated with the clinic.

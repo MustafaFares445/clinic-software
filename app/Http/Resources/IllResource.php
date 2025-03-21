@@ -54,13 +54,17 @@ final class IllResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
             'id' => $this->when($this->id, $this->id),
             'name' => $this->when($this->name, $this->name),
             'description' => $this->when($this->description, $this->description),
-            'notes' => $this->whenPivotLoaded('ill_patient', $this->pivot->notes),
+            'notes' => $this->when(
+                $this->hasPivotLoaded('ill_patient') || $this->hasPivotLoaded('ill_record'),
+                $this->pivot->notes
+            ),
             'specifications' => SpecificationResource::collection($this->whenLoaded('specifications')),
-            'recordsCount' => $this->when($this->records_count , $this->records_count)
+            'recordsCount' => $this->when($this->records_count, $this->records_count)
         ];
     }
 }

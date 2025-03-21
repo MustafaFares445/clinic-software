@@ -13,11 +13,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Laravel\Scout\Searchable;
 
 final class Record extends Model implements HasMedia
 {
     /** @use HasFactory<RecordFactory> */
-    use HasFactory , HasUuids , InteractsWithMedia , SoftDeletes;
+    use HasFactory , HasUuids , InteractsWithMedia , SoftDeletes, Searchable;
 
     protected $fillable = [
         'patient_id',
@@ -26,6 +27,7 @@ final class Record extends Model implements HasMedia
         'description',
         'type',
         'dateTime',
+        'notes'
     ];
 
     protected static function booted(): void
@@ -41,6 +43,21 @@ final class Record extends Model implements HasMedia
         if (Auth::check() && Auth::user()->hasRole('doctor')) {
             self::query()->whereRelation('doctors', 'doctor_id', '=', Auth::id());
         }
+    }
+
+    public function searchableAs()
+    {
+        return 'record_index';
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            'id' => (string) $this->id,
+            'notes' => $this->notes ?? '',
+            'type' => $this->type ?? '',
+            'created_at' => $this->created_at ? $this->created_at->timestamp : 0,
+        ];
     }
 
     public function patient(): BelongsTo
@@ -60,14 +77,14 @@ final class Record extends Model implements HasMedia
 
     public function ills(): BelongsToMany
     {
-        return $this->belongsToMany(Ill::class, 'ill_record')->withPivot('type');
+        return $this->belongsToMany(Ill::class, 'ill_record')
+            ->withPivot(['id' ,'type' , 'notes']);
     }
 
     public function medicines(): BelongsToMany
     {
         return $this->belongsToMany(Medicine::class, 'medicine_record')
-            ->using(MedicineRecord::class)
-            ->withPivot(['id', 'note', 'type']);
+            ->withPivot(['id', 'notes', 'type']);
     }
 
     public function doctors(): BelongsToMany

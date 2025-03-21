@@ -40,12 +40,12 @@ final class RecordSeeder extends Seeder
 
         $record->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
             'type' => RecordMedicinesTypes::DIAGNOSED,
-            'note' => '200 gm من الدواء ثلاث مرات باليوم لمدة أسبوع',
+            'notes' => '200 gm من الدواء ثلاث مرات باليوم لمدة أسبوع',
         ]);
 
         $record->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
             'type' => RecordMedicinesTypes::TRANSIENT,
-            'note' => '400 gm من الدواء 5 مرات باليوم لمدة شهر',
+            'notes' => '400 gm من الدواء 5 مرات باليوم لمدة شهر',
         ]);
 
         $record->doctors()->sync(User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray());
@@ -102,7 +102,7 @@ final class RecordSeeder extends Seeder
 
         $record3->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
             'type' => RecordMedicinesTypes::TRANSIENT,
-            'note' => '400 gm من الدواء 5 مرات باليوم لمدة شهر',
+            'notes' => '400 gm من الدواء 5 مرات باليوم لمدة شهر',
         ]);
 
         $record3->doctors()->sync(User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray());

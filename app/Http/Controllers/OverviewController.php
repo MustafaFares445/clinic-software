@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
 
 /**
@@ -43,10 +44,23 @@ final class OverviewController extends Controller
      *     security={{ "bearerAuth": {} }}
      * )
      */
-    public function patientsGenderCount(): JsonResponse
+    public function patientsGenderCount(Request $request): JsonResponse
     {
-        $malesCount = Patient::query()->where('gender', 'male')->count();
-        $femalesCount = Patient::query()->where('gender', 'female')->count();
+        $request->validate([
+            'year' => ['nullable', 'integer', 'min:1900', 'max:' . (date('Y') + 1)]
+        ]);
+
+        $year = $request->input('year', now()->year);
+
+        $malesCount = Patient::query()
+            ->where('gender', 'male')
+            ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
+            ->count();
+
+        $femalesCount = Patient::query()
+            ->where('gender', 'female')
+            ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
+            ->count();
 
         return response()->json([
             'malesCount' => $malesCount,
@@ -255,18 +269,23 @@ final class OverviewController extends Controller
      *         in="query",
      *         description="Type of transaction (in/out)",
      *         required=false,
-     *
-     *         @OA\Schema(type="string", default="in")
+     *         @OA\Schema(type="string", enum={"in", "out"}, default="in")
      *     ),
      *
      *     @OA\Response(
      *         response=200,
      *         description="Success",
-     *
      *         @OA\JsonContent(
-     *
      *             @OA\Property(property="totalTransactions", type="number", format="float", example=5000.50),
      *             @OA\Property(property="totalInMonth", type="number", format="float", example=1500.00)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
      *         )
      *     ),
      *     security={{ "bearerAuth": {} }}
@@ -277,7 +296,7 @@ final class OverviewController extends Controller
         $query = BillingTransaction::query();
 
         return response()->json([
-            'totalTransactions' => $query->where('type' , $request->input('type' , 'in'))->sum('amount'),
+            'totalTransactions' => (float) $query->where('type' , $request->input('type' , 'in'))->sum('amount'),
             'totalInMonth' => (float) $query
                 ->where('type' , $request->input('type' , 'in'))
                 ->whereMonth('created_at' , Carbon::now()->month)
@@ -310,13 +329,18 @@ final class OverviewController extends Controller
      */
     public function getAgeStatistics(Request $request): JsonResponse
     {
-        $year = $request->input('year', Carbon::now()->year);
+        $request->validate([
+            'year' => ['nullable', 'integer', 'min:1900', 'max:' . (date('Y') + 1)]
+        ]);
+
+        $year = $request->input('year', now()->year);
 
         return response()->json([
             'adults' => Patient::query()
                 ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
                 ->where('age', '>=', 18)
                 ->count(),
+
             'children' => Patient::query()
                 ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
                 ->where('age', '<', 18)
@@ -335,7 +359,6 @@ final class OverviewController extends Controller
      *         in="query",
      *         description="Year for billing statistics",
      *         required=false,
-     *
      *         @OA\Schema(type="integer", default="2025")
      *     ),
      *     @OA\Parameter(
@@ -343,23 +366,26 @@ final class OverviewController extends Controller
      *         in="query",
      *         description="Type of transaction (in/out)",
      *         required=false,
-     *
-     *         @OA\Schema(type="string", default="in")
+     *         @OA\Schema(type="string", enum={"in", "out"}, default="in")
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Success",
-     *
      *         @OA\JsonContent(
-     *
      *             @OA\Property(property="labels", type="array",
-     *
      *                 @OA\Items(type="string", example="Jan")
      *             ),
      *             @OA\Property(property="data", type="array",
-     *
      *                 @OA\Items(type="number", format="float", example=1500.50)
      *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
      *         )
      *     ),
      *     security={{ "bearerAuth": {} }}
@@ -367,8 +393,13 @@ final class OverviewController extends Controller
      */
     public function billingChartStatistics(Request $request): JsonResponse
     {
+        $request->validate([
+            'year' => ['nullable', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
+            'input' => ['required' , 'string' , Rule::in(['in' , 'out'])]
+        ]);
+
         $year = $request->input('year', now()->year);
-        $type = $request->input('type', 'in');
+        $type = $request->input('type');
 
         $monthlyTotals = BillingTransaction::query()
             ->whereYear('created_at', $year)

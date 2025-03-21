@@ -64,7 +64,7 @@ final class RecordService
      * Insert or update medicines for a record.
      *
      * @param Record $record the record model to update
-     * @param array  $values array of medicine data, each containing 'id' and optionally 'note'
+     * @param array  $values array of medicine data, each containing 'id' and optionally 'notes'
      * @param string $type   the type of medicine (default: DIAGNOSED)
      */
     public function insertMedicines(Record $record, array $values, string $type = RecordMedicinesTypes::DIAGNOSED): void

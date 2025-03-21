@@ -20,6 +20,7 @@ return new class extends Migration
             $table->longText('description');
             $table->enum('type', array_column(RecordTypes::cases(), 'value'))->default(RecordTypes::APPOINTMENT->value)->index();
             $table->dateTime('dateTime');
+            $table->longText('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
