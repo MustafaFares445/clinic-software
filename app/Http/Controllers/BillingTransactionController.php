@@ -100,11 +100,9 @@ class BillingTransactionController extends Controller
      *     )
      * )
      */
-    public function show(string $billingTransaction)
+    public function show(BillingTransaction $billing)
     {
-        return BillingTransactionResource::make(
-            BillingTransaction::query()->find($billingTransaction)
-        );
+        return BillingTransactionResource::make($billing->load('user'));
     }
 
     /**
@@ -135,15 +133,11 @@ class BillingTransactionController extends Controller
      *     )
      * )
      */
-    public function update(UpdateBillingTransactionRequest $request, string $billingTransaction)
+    public function update(UpdateBillingTransactionRequest $request, BillingTransaction $billing)
     {
-        $billingTransaction = BillingTransaction::query()->find($billingTransaction);
+        $billing->update($request->validated());
 
-        $billingTransaction->update($request->validated());
-        
-        return BillingTransactionResource::make(
-            $billingTransaction->refre
-        );
+        return BillingTransactionResource::make($billing->refresh());
     }
 
     /**
@@ -169,9 +163,9 @@ class BillingTransactionController extends Controller
      *     )
      * )
      */
-    public function destroy(BillingTransaction $billingTransaction)
+    public function destroy(BillingTransaction $billing)
     {
-        $billingTransaction->delete();
+        $billing->delete();
 
         return response()->noContent();
     }

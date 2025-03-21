@@ -1152,6 +1152,17 @@
                 ],
                 "summary": "Get patient age statistics",
                 "operationId": "975b17e44ce32598e91c04ef676324b2",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter by year of records",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -1166,6 +1177,61 @@
                                         "children": {
                                             "type": "integer",
                                             "example": 200
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/overview/chart/billing-statistics": {
+            "get": {
+                "tags": [
+                    "Overview"
+                ],
+                "summary": "Get billing statistics by month for a given year",
+                "operationId": "4e64ac10a5a73e5192d0134e72f490ac",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Year for billing statistics",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": "current year"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "labels": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "Jan"
+                                            }
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 1500.5
+                                            }
                                         }
                                     },
                                     "type": "object"

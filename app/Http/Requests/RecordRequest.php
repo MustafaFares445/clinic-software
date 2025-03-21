@@ -85,11 +85,11 @@ final class RecordRequest extends FormRequest
             'patientId' => ['required', 'string', Rule::exists('patients', 'id')],
             'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
             'reservationId' => ['nullable', 'string', Rule::exists('reservations', 'id')],
-            'description' => ['nullable', 'text'],
+            'description' => ['nullable', 'string' , 'min:2' , 'max:255'],
             'type' => ['required', 'string', Rule::in(array_values(RecordTypes::cases()))],
-            'price' => ['nullable', 'integer'],
-            'doctorsIds' => ['nullable', 'array', 'min:1', Rule::exists('doctors', 'id')],
-            'doctorsIds.*' => ['required', 'string', Rule::exists('doctors', 'id')],
+            'price' => ['nullable', 'integer' , 'min:1'],
+            'doctorsIds' => ['nullable', 'array', 'min:1'],
+            'doctorsIds.*' => ['required', 'string', Rule::exists('users', 'id')],
         ];
     }
 

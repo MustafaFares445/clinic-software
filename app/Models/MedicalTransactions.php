@@ -18,7 +18,8 @@ class MedicalTransactions extends Model
         'type',
         'record_id',
         'clinic_id',
-        'description'
+        'description',
+        'medicine_id'
     ];
 
     public function model() : MorphTo
@@ -39,5 +40,10 @@ class MedicalTransactions extends Model
     public function record() : BelongsTo
     {
         return $this->belongsTo(Record::class);
+    }
+
+    public function medicine() : BelongsTo
+    {
+        return $this->belongsTo(Medicine::class);
     }
 }

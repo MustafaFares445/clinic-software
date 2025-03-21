@@ -282,18 +282,22 @@ final class OverviewController extends Controller
         ]);
     }
 
-    /**
+       /**
      * @OA\Get(
      *     path="/api/overview/age-statistics",
      *     summary="Get patient age statistics",
      *     tags={"Overview"},
-     *
+     *     @OA\Parameter(
+     *         name="year",
+     *         in="query",
+     *         description="Filter by year of records",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Success",
-     *
      *         @OA\JsonContent(
-     *
      *             @OA\Property(property="adults", type="integer", example=300),
      *             @OA\Property(property="children", type="integer", example=200)
      *         )
@@ -301,11 +305,74 @@ final class OverviewController extends Controller
      *     security={{ "bearerAuth": {} }}
      * )
      */
-    public function getAgeStatistics(): JsonResponse
+    public function getAgeStatistics(Request $request): JsonResponse
     {
+        $year = $request->input('year', Carbon::now()->year);
+
         return response()->json([
-            'adults' => Patient::query()->where('age', '>=', 18)->count(),
-            'children' => Patient::query()->where('age', '<', 18)->count(),
+            'adults' => Patient::query()
+                ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
+                ->where('age', '>=', 18)
+                ->count(),
+            'children' => Patient::query()
+                ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
+                ->where('age', '<', 18)
+                ->count(),
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/overview/chart/billing-statistics",
+     *     summary="Get billing statistics by month for a given year",
+     *     tags={"Overview"},
+     *
+     *     @OA\Parameter(
+     *         name="year",
+     *         in="query",
+     *         description="Year for billing statistics",
+     *         required=false,
+     *
+     *         @OA\Schema(type="integer", default="current year")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *
+     *         @OA\JsonContent(
+     *
+     *             @OA\Property(property="labels", type="array",
+     *
+     *                 @OA\Items(type="string", example="Jan")
+     *             ),
+     *             @OA\Property(property="data", type="array",
+     *
+     *                 @OA\Items(type="number", format="float", example=1500.50)
+     *             )
+     *         )
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
+    public function billingChartStatistics(Request $request): JsonResponse
+    {
+        $year = $request->input('year', now()->year);
+
+        $monthlyTotals = BillingTransaction::query()
+            ->whereYear('created_at', $year)
+            ->get(['id' , 'amount' , 'created_at'])
+            ->groupBy(fn($transaction) => $transaction->created_at->month)
+            ->map(fn($transactions) => $transactions->sum('amount'));
+
+        // Fill missing months with 0
+        $monthlyTotals = collect(range(1, 12))->mapWithKeys(fn($month) => [
+            $month => $monthlyTotals->get($month, 0)
+        ]);
+
+        return response()->json([
+            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            'data' => $monthlyTotals->values()->toArray(),
         ]);
     }
 }

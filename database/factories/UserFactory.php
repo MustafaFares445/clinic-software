@@ -46,4 +46,23 @@ final class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Assign a random role to the user
+     */
+    public function withRole(?array $rolesNames): static
+    {
+        if(isset($rolesNames)){
+            return $this->afterCreating(function ($user) use ($rolesNames) {
+                $user->assignRole($rolesNames);
+            });
+        }
+
+
+        $roles = ['admin', 'doctor', 'patient']; // Add your roles here
+
+        return $this->afterCreating(function ($user) use ($roles) {
+            $user->assignRole(fake()->randomElement($roles));
+        });
+    }
 }

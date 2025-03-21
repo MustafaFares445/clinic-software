@@ -2,6 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\Clinic;
+use App\Models\Medicine;
+use App\Models\Record;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +21,13 @@ class MedicalTransactionsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'quantity' => $this->faker->numberBetween(1, 100),
+            'type' => $this->faker->randomElement(['in', 'out']),
+            'description' => $this->faker->sentence,
+            'record_id' => Record::factory(),
+            'clinic_id' => Clinic::factory(),
+            'doctor_id' => User::factory(),
+            'medicine_id' => Medicine::factory()
         ];
     }
 }

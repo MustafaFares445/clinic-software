@@ -70,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/patients/count', [OverviewController::class, 'patientsCount']);
         Route::get('/billing-statistics', [OverviewController::class, 'getStatistics']);
         Route::get('/age-statistics', [OverviewController::class, 'getAgeStatistics']);
+        Route::get('/chart/billing-statistics', [OverviewController::class, 'billingChartStatistics']);
     });
 });
 

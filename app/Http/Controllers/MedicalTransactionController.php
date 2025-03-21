@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\MedicalTransactions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MedicalTransactionRequest;
-use App\Http\Resources\MedicalResource;
 use App\Http\Resources\MedicalTransactionResource;
 
 /**
@@ -93,9 +92,9 @@ class MedicalTransactionController extends Controller
      *     )
      * )
      */
-    public function show(MedicalTransactions $medicalTransaction)
+    public function show(MedicalTransactions $medical)
     {
-        return MedicalTransactionResource::make($medicalTransaction->load('doctor'));
+        return MedicalTransactionResource::make($medical->load(['doctor' , 'record.patient']));
     }
 
     /**
@@ -126,11 +125,11 @@ class MedicalTransactionController extends Controller
      *     )
      * )
      */
-    public function update(MedicalTransactionRequest $request, MedicalTransactions $medicalTransaction)
+    public function update(MedicalTransactionRequest $request, MedicalTransactions $medical)
     {
-        return MedicalTransactionResource::make(
-            $medicalTransaction->update($request->validated())
-        );
+        $medical->update($request->validated());
+
+        return MedicalTransactionResource::make($medical->refresh());
     }
 
     /**
@@ -156,9 +155,9 @@ class MedicalTransactionController extends Controller
      *     )
      * )
      */
-    public function destroy(MedicalTransactions $medicalTransaction)
+    public function destroy(MedicalTransactions $medical)
     {
-        $medicalTransaction->delete();
+        $medical->delete();
 
         return response()->noContent();
     }

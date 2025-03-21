@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\BillingTransaction;
 use App\Models\Clinic;
+use App\Models\MedicalTransactions;
 use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,7 +32,7 @@ class BillingTransactionTest extends TestCase
 
     public function test_can_list_all_billing_transactions()
     {
-        BillingTransaction::factory()->count(3)->create();
+        BillingTransaction::factory()->forReservation()->count(3)->create();
 
         $response = $this->getJson('/api/transactions/billing');
 
@@ -43,6 +44,7 @@ class BillingTransactionTest extends TestCase
                         'amount',
                         'description',
                         'user' => ['id', 'firstName', 'lastName'],
+                        'reservation'
                     ]
                 ],
                 'links',
@@ -50,15 +52,14 @@ class BillingTransactionTest extends TestCase
             ]);
     }
 
-    public function test_can_create_a_billing_transaction()
+    public function test_can_create_a_billing_transaction_from_reservation()
     {
         $transactionData = [
             'amount' => 100.50,
             'description' => 'Test transaction',
-            'user_id' => $this->authUser->id,
             'type' => 'in',
-            'model_type' => Reservation::class,
-            'model_id' => Reservation::factory()->create()->id
+            'modelType' => 'reservation',
+            'modelId' => Reservation::factory()->create()->id,
         ];
 
         $response = $this->postJson('/api/transactions/billing', $transactionData);
@@ -69,19 +70,44 @@ class BillingTransactionTest extends TestCase
                     'id',
                     'amount',
                     'description',
-                    'user',
-                    'model'
+                    'reservation'
                 ]
             ]);
+    }
 
-        $this->assertDatabaseHas('billing_transactions', $transactionData);
+    public function test_can_create_a_billing_transaction_from_medical_transaction()
+    {
+        $transactionData = [
+            'amount' => 100.50,
+            'description' => 'Test transaction',
+            'type' => 'in',
+            'modelType' => 'medicalTransaction',
+            'modelId' => MedicalTransactions::factory()->create()->id,
+        ];
+
+        $response = $this->postJson('/api/transactions/billing', $transactionData);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'amount',
+                    'description',
+                    'medicalTransaction'
+                ]
+            ]);
     }
 
     public function test_can_show_a_specific_billing_transaction()
     {
-        $transaction = BillingTransaction::factory()->create();
+        $billing = BillingTransaction::factory()
+            ->forReservation()
+            ->create([
+                'clinic_id' => $this->clinic->id,
+                'user_id' => $this->authUser->id
+            ]);
 
-        $response = $this->getJson("/api/transactions/billing/{$transaction->id}");
+        $response = $this->getJson("/api/transactions/billing/{$billing->id}");
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -90,14 +116,17 @@ class BillingTransactionTest extends TestCase
                     'amount',
                     'description',
                     'user',
-                    'model'
+                    'reservation'
                 ]
             ]);
     }
 
     public function test_can_update_a_billing_transaction()
     {
-        $transaction = BillingTransaction::factory()->create();
+        $transaction = BillingTransaction::factory()->forReservation()->create([
+            'clinic_id' => $this->clinic->id,
+            'user_id' => $this->authUser->id
+        ]);
         $updateData = [
             'amount' => 200.00,
             'description' => 'Updated transaction'
@@ -110,9 +139,7 @@ class BillingTransactionTest extends TestCase
                 'data' => [
                     'id',
                     'amount',
-                    'description',
-                    'user',
-                    'model'
+                    'description'
                 ]
             ]);
 
@@ -121,11 +148,15 @@ class BillingTransactionTest extends TestCase
 
     public function test_can_delete_a_billing_transaction()
     {
-        $transaction = BillingTransaction::factory()->create();
+        $transaction = BillingTransaction::factory()->forMedicalTransaction()->create([
+            'clinic_id' => $this->clinic->id,
+            'user_id' => $this->authUser->id
+        ]);
 
         $response = $this->deleteJson("/api/transactions/billing/{$transaction->id}");
 
         $response->assertStatus(204);
+
         $this->assertDatabaseMissing('billing_transactions', ['id' => $transaction->id]);
     }
 
