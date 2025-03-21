@@ -11,13 +11,13 @@ use Illuminate\Validation\Rule;
  * @OA\Schema(
  *     schema="ClinicSubscriptionRequest",
  *     type="object",
- *     required={"fullName", "email", "password", "username", "clinicName", "clinicAddress", "clinicType"},
+ *     required={"firstName", "lastName", "email", "password", "username", "clinicName", "clinicAddress", "clinicType", "workingDays"},
  *
  *     @OA\Property(
  *         property="firstName",
  *         type="string",
  *         example="Mustafa",
- *         description="The name of the user",
+ *         description="The first name of the user",
  *         minLength=2,
  *         maxLength=255
  *     ),
@@ -25,7 +25,7 @@ use Illuminate\Validation\Rule;
  *         property="lastName",
  *         type="string",
  *         example="Fares",
- *         description="The name of the user",
+ *         description="The last name of the user",
  *         minLength=2,
  *         maxLength=255
  *     ),
@@ -74,7 +74,7 @@ use Illuminate\Validation\Rule;
  *         type="number",
  *         format="float",
  *         example="40.7128",
- *         description="Longitude of the clinic location (-180 to 180)",
+ *         description="Longitude of the clinic location",
  *         minimum=-180,
  *         maximum=180,
  *         nullable=true
@@ -85,7 +85,8 @@ use Illuminate\Validation\Rule;
  *         format="float",
  *         example="-74.0060",
  *         description="Latitude of the clinic location",
- *         maxLength=255,
+ *         minimum=-90,
+ *         maximum=90,
  *         nullable=true
  *     ),
  *     @OA\Property(
@@ -93,7 +94,7 @@ use Illuminate\Validation\Rule;
  *         type="string",
  *         format="time",
  *         example="09:00",
- *         description="Clinic opening time",
+ *         description="Clinic opening time in 24-hour format (HH:MM)",
  *         nullable=true
  *     ),
  *     @OA\Property(
@@ -101,7 +102,7 @@ use Illuminate\Validation\Rule;
  *         type="string",
  *         format="time",
  *         example="17:00",
- *         description="Clinic closing time",
+ *         description="Clinic closing time in 24-hour format (HH:MM)",
  *         nullable=true
  *     ),
  *     @OA\Property(
@@ -109,6 +110,7 @@ use Illuminate\Validation\Rule;
  *         type="string",
  *         example="A modern healthcare facility",
  *         description="Description of the clinic",
+ *         maxLength=1000,
  *         nullable=true
  *     ),
  *     @OA\Property(
@@ -132,6 +134,24 @@ use Illuminate\Validation\Rule;
  *         description="Number of secretariat staff in the clinic",
  *         nullable=true,
  *         minimum=0
+ *     ),
+ *     @OA\Property(
+ *         property="workingDays",
+ *         type="array",
+ *         description="Clinic working days schedule",
+ *         @OA\Items(
+ *             type="object",
+ *             required={"day", "start", "end"},
+ *             @OA\Property(property="day", type="string", enum={"mon", "tue", "wed", "thu", "fri", "sat", "sun"}, description="Day of week", example="mon"),
+ *             @OA\Property(property="start", type="string", format="time", description="Opening time in 24-hour format (HH:MM)", example="09:00"),
+ *             @OA\Property(property="end", type="string", format="time", description="Closing time in 24-hour format (HH:MM)", example="17:00")
+ *         )
+ *     ),
+ *     @OA\Property(
+ *         property="planId",
+ *         type="integer",
+ *         description="Subscription plan ID",
+ *         example=1
  *     )
  * )
  */
@@ -163,40 +183,41 @@ final class ClinicSubscriptionRequest extends FormRequest
             'clinicAddress' => ['required', 'string', 'max:500'],
             'clinicLongitude' => ['nullable', 'numeric', 'between:-180,180'],
             'clinicLatitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'clinicStartTime' => ['nullable', 'date_format:H:i'],
-            'clinicEndTime' => ['nullable', 'date_format:H:i'],
             'clinicDescription' => ['nullable', 'string' , 'max:1000'],
             'clinicType' => ['required', 'string', Rule::in(array_values(ClinicTypes::cases()))],
             'numberOfDoctors' => ['nullable' , 'integer' , 'min:0'],
             'numberOfSecretariat' => ['nullable' , 'integer' , 'min:0'],
+
+            'workingDays' => ['required', 'array'],
+            'workingDays.*.day' => ['required', 'string', Rule::in(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'])],
+            'workingDays.*.start' => ['required', 'date_format:H:i'],
+            'workingDays.*.end' => ['required', 'date_format:H:i', 'after:working_days.*.start'],
         ];
     }
 
     public function userValidated(): array
     {
-        return $this->safe()->only([
-            'firstName',
-            'lastName',
-            'email',
-            'password',
-            'username',
-        ]);
+        return [
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'email' => $this->email,
+            'password' => $this->password,
+            'username' => $this->username,
+        ];
     }
 
     public function clinicValidated(): array
     {
         return [
-            'name' => $this->safe()->clinicName,
-            'address' => $this->safe()->clinicAddress,
-            'longitude' => $this->safe()->clinicLongitude,
-            'latitude' => $this->safe()->clinicLatitude,
-            'start' => $this->safe()->clinicStartTime,
-            'end' => $this->safe()->clinicEndTime,
-            'description' => $this->safe()->clinicDescription,
-            'type' => $this->safe()->clinicType,
-            'number_of_doctors' => $this->safe()->numberOfDoctors,
-            'number_of_secretariat' => $this->safe()->numberOfSecretariat,
-            'plan_id' => $this->safe()->planId,
+            'name' => $this->clinicName,
+            'address' => $this->clinicAddress,
+            'longitude' => $this->clinicLongitude,
+            'latitude' => $this->clinicLatitude,
+            'description' => $this->clinicDescription,
+            'type' => $this->clinicType,
+            'number_of_doctors' => $this->numberOfDoctors,
+            'number_of_secretariat' => $this->numberOfSecretariat,
+            'plan_id' => $this->planId,
         ];
     }
 }

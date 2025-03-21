@@ -265,8 +265,8 @@ final class OverviewController extends Controller
      *
      *         @OA\JsonContent(
      *
-     *             @OA\Property(property="totalTransactions", type="integer", example=100),
-     *             @OA\Property(property="totalType", type="number", format="float", example=5000.50)
+     *             @OA\Property(property="totalTransactions", type="number", format="float", example=5000.50),
+     *             @OA\Property(property="totalInMonth", type="number", format="float", example=1500.00)
      *         )
      *     ),
      *     security={{ "bearerAuth": {} }}
@@ -277,8 +277,11 @@ final class OverviewController extends Controller
         $query = BillingTransaction::query();
 
         return response()->json([
-            'totalTransactions' => $query->count(),
-            'totalType' => $query->where('type' , $request->input('type' , 'in'))->sum('amount'),
+            'totalTransactions' => $query->where('type' , $request->input('type' , 'in'))->sum('amount'),
+            'totalInMonth' => (float) $query
+                ->where('type' , $request->input('type' , 'in'))
+                ->whereMonth('created_at' , Carbon::now()->month)
+                ->sum('amount'),
         ]);
     }
 
@@ -333,9 +336,16 @@ final class OverviewController extends Controller
      *         description="Year for billing statistics",
      *         required=false,
      *
-     *         @OA\Schema(type="integer", default="current year")
+     *         @OA\Schema(type="integer", default="2025")
      *     ),
+     *     @OA\Parameter(
+     *         name="type",
+     *         in="query",
+     *         description="Type of transaction (in/out)",
+     *         required=false,
      *
+     *         @OA\Schema(type="string", default="in")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -358,9 +368,11 @@ final class OverviewController extends Controller
     public function billingChartStatistics(Request $request): JsonResponse
     {
         $year = $request->input('year', now()->year);
+        $type = $request->input('type', 'in');
 
         $monthlyTotals = BillingTransaction::query()
             ->whereYear('created_at', $year)
+            ->where('type', $type)
             ->get(['id' , 'amount' , 'created_at'])
             ->groupBy(fn($transaction) => $transaction->created_at->month)
             ->map(fn($transactions) => $transactions->sum('amount'));

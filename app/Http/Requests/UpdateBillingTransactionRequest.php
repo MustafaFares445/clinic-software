@@ -66,8 +66,7 @@ class UpdateBillingTransactionRequest extends FormRequest
     {
         $validated = parent::validated($key, $default);
 
-        return array_filter($validated, function($value, $key) {
-            return $this->has($key);
-        }, ARRAY_FILTER_USE_BOTH);
+        // Filter out values that weren't actually in the request
+        return array_filter($validated, fn($value, $key) => $this->has($key), ARRAY_FILTER_USE_BOTH);
     }
 }

@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ClinicRequest;
-use App\Http\Requests\ClinicSubscriptionRequest;
-use App\Http\Resources\ClinicResource;
-use App\Http\Resources\UserResource;
-use App\Models\Clinic;
+use App\DTO\UserDTO;
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
+use App\DTO\ClinicDTO;
 use Illuminate\Http\Response;
+use App\DTO\ClinicWorkingDayDTO;
+use Illuminate\Http\JsonResponse;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Http\Resources\ClinicResource;
+use App\Actions\CreateClinicSubscription;
+use App\Http\Requests\UpdateClinicRequest;
+use App\Http\Requests\ClinicSubscriptionRequest;
 
 
 /**
@@ -43,39 +45,47 @@ final class ClinicController extends Controller
     /**
      * @OA\Post(
      *     path="/api/clinics/subscription",
-     *     summary="Create a new clinic",
+     *     summary="Create a new clinic subscription",
      *     tags={"Clinic"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/ClinicSubscriptionRequest")
      *     ),
      *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
+     *         response=201,
+     *         description="Clinic subscription created successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="accessToken", type="string"),
      *             @OA\Property(property="tokenType", type="string"),
      *             @OA\Property(property="user", ref="#/components/schemas/UserResource")
      *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
      *     )
      * )
      */
-    public function store(ClinicSubscriptionRequest $request): JsonResponse
+    public function store(ClinicSubscriptionRequest $request, CreateClinicSubscription $action): JsonResponse
     {
-        return DB::transaction(function () use ($request) {
-            $clinic = Clinic::query()->create($request->clinicValidated());
-            $user = User::query()->create(array_merge($request->userValidated(), [
-                'clinic_id' => $clinic->id,
-            ]));
+        $workingDays = collect($request->validated('workingDays'))
+            ->map(fn(array $day) => ClinicWorkingDayDTO::fromArray($day));
 
-            $user->assignRole('admin');
+        $user = $action->handle(
+            ClinicDTO::fromArray($request->clinicValidated()),
+            UserDTO::fromArray($request->userValidated()),
+            $workingDays
+        );
 
-            return response()->json([
-                'accessToken' => $user->createToken('auth_token')->plainTextToken,
-                'tokenType' => 'Bearer',
-                'user' => UserResource::make($user->load('roles')),
-            ]);
-        });
+        return response()->json([
+            'accessToken' => $user->createToken('auth_token')->plainTextToken,
+            'tokenType' => 'Bearer',
+            'user' => UserResource::make($user->load('roles')),
+        ], 201);
     }
 
     /**
@@ -95,7 +105,7 @@ final class ClinicController extends Controller
      *     )
      * )
      */
-    public function update(ClinicRequest $request): ClinicResource
+    public function update(UpdateClinicRequest $request): ClinicResource
     {
         $clinic = Auth::user()->clinic;
         $clinic->update($request->validated());
