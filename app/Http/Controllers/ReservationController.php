@@ -60,7 +60,9 @@ final class ReservationController extends Controller
     {
         // Determine the clinic ID to use
         $clinicId = $request->validated('clinicId') ?? Auth::user()->clinic_id;
-        $clinic = Clinic::query()->select(['start', 'end'])->find($clinicId);
+        $clinic = Clinic::query()->select(['id'])->find($clinicId);
+        $startTime = $clinic->workingDays()->where('day', strtolower(now()->today()->shortDayName))->first()?->start;
+        $endTime = $clinic->workingDays()->where('day', strtolower(now()->today()->shortDayName))->first()?->end;
 
         // Update reservation statuses from 'income' to 'check' if they have ended
         Reservation::query()
@@ -73,7 +75,7 @@ final class ReservationController extends Controller
         $endDate = $request->has('end') ? Carbon::parse($request->validated('end')) : now()->endOfWeek(CarbonInterface::FRIDAY);
 
         // Adjust start and end dates based on clinic working hours
-        if ($clinic->start && $clinic->end) {
+        if ($startTime && $endTime) {
             $startDate = $startDate->setTimeFromTimeString($clinic->start);
             $endDate = $endDate->setTimeFromTimeString($clinic->end);
         } else {
