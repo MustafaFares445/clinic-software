@@ -194,7 +194,7 @@ final class PatientController extends Controller
      *         required=true,
      *         description="ID of the patient to retrieve",
      *
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *
      *     @OA\Parameter(

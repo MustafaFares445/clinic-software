@@ -73,11 +73,11 @@ final class Patient extends Model implements HasMedia
 
     public function permanentIlls(): BelongsToMany
     {
-        return $this->belongsToMany(Ill::class, 'ill_patient');
+        return $this->belongsToMany(Ill::class, 'ill_patient')->withPivot('notes');
     }
 
     public function permanentMedicines(): BelongsToMany
     {
-        return $this->belongsToMany(Medicine::class, 'medicine_patient');
+        return $this->belongsToMany(Medicine::class, 'medicine_patient')->withPivot('notes');
     }
 }

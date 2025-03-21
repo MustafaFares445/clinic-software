@@ -30,8 +30,12 @@ final class PatientSeeder extends Seeder
             'notes' => 'وصف موجز',
         ]);
 
-        $patient1->permanentIlls()->sync(Ill::query()->inRandomOrder()->first()->id);
-        $patient1->permanentMedicines()->sync(Medicine::query()->inRandomOrder()->first()->id);
+        $patient1->permanentIlls()->sync([
+            Ill::query()->inRandomOrder()->first()->id => ['notes' => 'مريض يعاني من هذا المرض بشكل مزمن']
+        ]);
+        $patient1->permanentMedicines()->sync([
+            Medicine::query()->inRandomOrder()->first()->id => ['notes' => 'يأخذ هذا الدواء بشكل يومي']
+        ]);
 
         $patient2 = Patient::query()->create([
             'firstName' => 'حسن',
@@ -48,7 +52,11 @@ final class PatientSeeder extends Seeder
             'notes' => 'وصف موجز',
         ]);
 
-        $patient2->permanentIlls()->sync(Ill::query()->inRandomOrder()->first()->id);
-        $patient2->permanentMedicines()->sync(Medicine::query()->inRandomOrder()->first()->id);
+        $patient2->permanentIlls()->sync([
+            Ill::query()->inRandomOrder()->first()->id => ['notes' => 'تم تشخيص المرض منذ 3 سنوات']
+        ]);
+        $patient2->permanentMedicines()->sync([
+            Medicine::query()->inRandomOrder()->first()->id => ['notes' => 'يأخذ الدواء مرتين يوميا بعد الأكل']
+        ]);
     }
 }

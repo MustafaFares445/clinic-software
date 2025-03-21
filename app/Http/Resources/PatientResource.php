@@ -158,7 +158,7 @@ final class PatientResource extends JsonResource
             'birth' => $this->when($this->birth, $this->birth),
             'phone' => $this->when($this->phone, $this->phone),
             'gender' => $this->when($this->gender, $this->gender),
-            'notes' => $this->when($this->note, $this->note),
+            'notes' => $this->when($this->notes, $this->notes),
             'nationalNumber' => $this->when($this->nationalNumber, $this->nationalNumber),
             'address' => $this->when($this->address, $this->address),
             'createdAt' => $this->when($this->created_at, Carbon::parse($this->created_at)->toDateTimeString()),

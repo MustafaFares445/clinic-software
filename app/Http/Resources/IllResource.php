@@ -58,6 +58,7 @@ final class IllResource extends JsonResource
             'id' => $this->when($this->id, $this->id),
             'name' => $this->when($this->name, $this->name),
             'description' => $this->when($this->description, $this->description),
+            'notes' => $this->whenPivotLoaded('ill_patient', $this->pivot->notes),
             'specifications' => SpecificationResource::collection($this->whenLoaded('specifications')),
             'recordsCount' => $this->when($this->records_count , $this->records_count)
         ];
