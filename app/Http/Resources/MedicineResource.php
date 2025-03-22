@@ -11,7 +11,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     type="object",
  *     title="Medicine Resource",
  *     description="Medicine resource representation",
- *
  *     @OA\Property(
  *         property="id",
  *         type="string",

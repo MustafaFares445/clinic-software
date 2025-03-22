@@ -668,6 +668,79 @@
                 ]
             }
         },
+        "/api/ills": {
+            "get": {
+                "tags": [
+                    "Ills"
+                ],
+                "summary": "Get list of ills",
+                "description": "Display a listing of the resource.",
+                "operationId": "806a28e94812776909ff1675f30b5954",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/IllResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Ills"
+                ],
+                "summary": "Create a new ill",
+                "description": "Store a newly created resource in storage.",
+                "operationId": "52b7e5c0e670d490af9a294e39fd9005",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/IllRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ill created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IllResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/transactions/medical": {
             "get": {
                 "tags": [
@@ -848,6 +921,61 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/medicines": {
+            "get": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Get list of medicines",
+                "description": "Returns list of all medicines",
+                "operationId": "getMedicinesList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MedicineResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Medicines"
+                ],
+                "summary": "Create a new medicine",
+                "description": "Creates a new medicine with the provided data",
+                "operationId": "storeMedicine",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MedicineRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Medicine created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicineResource"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/overview/patients/gender/count": {
@@ -2876,12 +3004,6 @@
                         "example": "res_123456789",
                         "nullable": true
                     },
-                    "description": {
-                        "description": "Description of the record",
-                        "type": "string",
-                        "example": "Patient visited for regular checkup",
-                        "nullable": true
-                    },
                     "type": {
                         "description": "Type of the record",
                         "type": "string",
@@ -2963,6 +3085,33 @@
                                 }
                             },
                             "type": "object"
+                        },
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "IllRequest": {
+                "description": "Request for Ill resource",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the ill",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "description": {
+                        "description": "Description of the ill",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "specifications": {
+                        "description": "Array of specification IDs",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
                         },
                         "nullable": true
                     }
@@ -3141,6 +3290,33 @@
                             "cancelled"
                         ],
                         "example": "pending"
+                    }
+                },
+                "type": "object"
+            },
+            "MedicineRequest": {
+                "title": "Medicine Request",
+                "description": "Medicine creation/update request",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Name of the medicine",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "description": {
+                        "description": "Description of the medicine",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "specifications": {
+                        "description": "Array of specification IDs",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
                     }
                 },
                 "type": "object"
@@ -4287,8 +4463,16 @@
             "description": "API Endpoints for file management operations"
         },
         {
+            "name": "Ills",
+            "description": "API Endpoints for managing Ills"
+        },
+        {
             "name": "Medical Transactions",
             "description": "Operations related to medical transactions"
+        },
+        {
+            "name": "Medicines",
+            "description": "Operations related to Medicines"
         },
         {
             "name": "Overview",
