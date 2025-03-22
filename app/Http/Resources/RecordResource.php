@@ -33,11 +33,17 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         example="Medical"
  *     ),
  *     @OA\Property(
- *         property="date",
+ *         property="dateTime",
  *         type="string",
  *         format="date-time",
- *         description="Date of the record",
+ *         description="Date and time of the record",
  *         example="2023-10-01T12:34:56Z"
+ *     ),
+ *     @OA\Property(
+ *         property="notes",
+ *         type="string",
+ *         description="Additional notes for the record",
+ *         example="Patient showed improvement"
  *     ),
  *     @OA\Property(
  *         property="reservation",
@@ -47,47 +53,36 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(
  *         property="doctors",
  *         type="array",
- *
  *         @OA\Items(ref="#/components/schemas/DoctorResource"),
  *         description="List of doctors associated with the record"
  *     ),
- *
  *     @OA\Property(
  *         property="ills",
  *         type="array",
- *
  *         @OA\Items(ref="#/components/schemas/IllResource"),
- *         description="List of illnesses associated with the record"
+ *         description="List of diagnosed illnesses associated with the record"
  *     ),
- *
  *     @OA\Property(
  *         property="transientIlls",
  *         type="array",
- *
  *         @OA\Items(ref="#/components/schemas/IllResource"),
  *         description="List of transient illnesses associated with the record"
  *     ),
- *
  *     @OA\Property(
  *         property="medicines",
  *         type="array",
- *
  *         @OA\Items(ref="#/components/schemas/MedicineResource"),
- *         description="List of medicines associated with the record"
+ *         description="List of prescribed medicines associated with the record"
  *     ),
- *
  *     @OA\Property(
  *         property="transientMedicines",
  *         type="array",
- *
  *         @OA\Items(ref="#/components/schemas/MedicineResource"),
  *         description="List of transient medicines associated with the record"
  *     ),
- *
  *     @OA\Property(
  *         property="media",
  *         type="array",
- *
  *         @OA\Items(ref="#/components/schemas/MediaResource"),
  *         description="List of media files associated with the record"
  *     ),

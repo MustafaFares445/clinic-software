@@ -96,7 +96,7 @@ final class ClinicController extends Controller
      *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/ClinicRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateClinicRequest")
      *     ),
      *     @OA\Response(
      *         response=200,

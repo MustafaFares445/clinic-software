@@ -371,7 +371,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/ClinicRequest"
+                                "$ref": "#/components/schemas/UpdateClinicRequest"
                             }
                         }
                     }
@@ -417,7 +417,7 @@
                 "tags": [
                     "Clinic"
                 ],
-                "summary": "Create a new clinic",
+                "summary": "Create a new clinic subscription",
                 "operationId": "7163d55f843d9c086cc0882e58c60e53",
                 "requestBody": {
                     "required": true,
@@ -430,8 +430,8 @@
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Successful operation",
+                    "201": {
+                        "description": "Clinic subscription created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -444,6 +444,25 @@
                                         },
                                         "user": {
                                             "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1111,7 +1130,11 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "default": "in"
+                            "default": "in",
+                            "enum": [
+                                "in",
+                                "out"
+                            ]
                         }
                     }
                 ],
@@ -1123,13 +1146,33 @@
                                 "schema": {
                                     "properties": {
                                         "totalTransactions": {
-                                            "type": "integer",
-                                            "example": 100
-                                        },
-                                        "totalType": {
                                             "type": "number",
                                             "format": "float",
                                             "example": 5000.5
+                                        },
+                                        "totalInMonth": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 1500
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1207,7 +1250,21 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": "current year"
+                            "default": "2025"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of transaction (in/out)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "in",
+                            "enum": [
+                                "in",
+                                "out"
+                            ]
                         }
                     }
                 ],
@@ -1232,6 +1289,25 @@
                                                 "format": "float",
                                                 "example": 1500.5
                                             }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1401,7 +1477,7 @@
                         "description": "ID of the patient to retrieve",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -1523,15 +1599,45 @@
                 "tags": [
                     "Patients"
                 ],
-                "summary": "Get patient files",
-                "description": "Retrieves all files for a specific patient",
-                "operationId": "patientFiles",
+                "summary": "Get patient medical records",
+                "description": "Retrieves all medical records for a specific patient with filtering options",
+                "operationId": "getPatientRecords",
                 "parameters": [
                     {
                         "name": "patient",
                         "in": "path",
                         "description": "Patient ID",
                         "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Start date for filtering records (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "End date for filtering records (Y-m-d), must be after or equal to startDate",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search term to filter records by content",
+                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -1549,6 +1655,14 @@
                                             "items": {
                                                 "$ref": "#/components/schemas/RecordResource"
                                             }
+                                        },
+                                        "links": {
+                                            "description": "Pagination links",
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "description": "Pagination metadata",
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1558,6 +1672,9 @@
                     },
                     "404": {
                         "description": "Patient not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -1573,8 +1690,8 @@
                     "Patients"
                 ],
                 "summary": "Get patient reservations",
-                "description": "Retrieves all reservations for a specific patient with related media and doctor information",
-                "operationId": "patientReservations",
+                "description": "Retrieves all reservations for a specific patient with filtering and sorting options",
+                "operationId": "getPatientReservations",
                 "parameters": [
                     {
                         "name": "patient",
@@ -1582,7 +1699,78 @@
                         "description": "Patient ID",
                         "required": true,
                         "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Start date for filtering reservations (Y-m-d)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "End date for filtering reservations (Y-m-d), must be after or equal to startDate",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "doctorsIds[]",
+                        "in": "query",
+                        "description": "Array of doctor IDs to filter by",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search term to filter by patient name",
+                        "required": false,
+                        "schema": {
                             "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Field to sort by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "start",
+                            "enum": [
+                                "start",
+                                "firstName",
+                                "lastName"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sortOrder",
+                        "in": "query",
+                        "description": "Sort order",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "desc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
                         }
                     }
                 ],
@@ -1598,6 +1786,14 @@
                                             "items": {
                                                 "$ref": "#/components/schemas/ReservationResource"
                                             }
+                                        },
+                                        "links": {
+                                            "description": "Pagination links",
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "description": "Pagination metadata",
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1607,6 +1803,9 @@
                     },
                     "404": {
                         "description": "Patient not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -1892,81 +2091,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "patientId",
-                                    "type"
-                                ],
-                                "properties": {
-                                    "patientId": {
-                                        "description": "Patient's UUID",
-                                        "type": "string",
-                                        "format": "uuid"
-                                    },
-                                    "clinicId": {
-                                        "description": "Clinic's UUID",
-                                        "type": "string",
-                                        "format": "uuid"
-                                    },
-                                    "reservationId": {
-                                        "description": "Reservation's UUID",
-                                        "type": "string",
-                                        "format": "uuid"
-                                    },
-                                    "description": {
-                                        "description": "Record description",
-                                        "type": "string"
-                                    },
-                                    "type": {
-                                        "description": "Record type",
-                                        "type": "string",
-                                        "enum": [
-                                            "diagnosed",
-                                            "transient"
-                                        ]
-                                    },
-                                    "price": {
-                                        "description": "Record price",
-                                        "type": "integer"
-                                    },
-                                    "doctorsIds": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string",
-                                            "format": "uuid"
-                                        }
-                                    },
-                                    "medicines": {
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "string",
-                                                    "format": "uuid"
-                                                },
-                                                "note": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "ills": {
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "string",
-                                                    "format": "uuid"
-                                                },
-                                                "note": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/CreateRecordRequest"
                             }
                         }
                     }
@@ -1982,10 +2107,18 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
                     "422": {
                         "description": "Validation error"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/records/{record}": {
@@ -2003,7 +2136,8 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "format": "uuid"
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
                         }
                     }
                 ],
@@ -2018,10 +2152,18 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
                     "404": {
                         "description": "Record not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "put": {
                 "tags": [
@@ -2046,7 +2188,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/RecordRequest"
+                                "$ref": "#/components/schemas/UpdateRecordRequest"
                             }
                         }
                     }
@@ -2084,7 +2226,8 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "format": "uuid"
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
                         }
                     }
                 ],
@@ -2099,10 +2242,18 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
                     "404": {
                         "description": "Record not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/records/{record}/restore": {
@@ -2156,7 +2307,8 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "format": "uuid"
+                            "format": "uuid",
+                            "example": "550e8400-e29b-41d4-a716-446655440000"
                         }
                     }
                 ],
@@ -2167,9 +2319,11 @@
                             "schema": {
                                 "properties": {
                                     "image": {
+                                        "description": "The media file to upload",
                                         "type": "file"
                                     },
                                     "collection": {
+                                        "description": "Media collection name",
                                         "type": "string",
                                         "enum": [
                                             "files",
@@ -2196,8 +2350,19 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/records/{record}/media/{media}": {
@@ -2475,94 +2640,28 @@
                 },
                 "type": "object"
             },
-            "ClinicRequest": {
-                "required": [
-                    "name",
-                    "address",
-                    "longitude",
-                    "latitude",
-                    "type"
-                ],
-                "properties": {
-                    "name": {
-                        "description": "Name of the clinic",
-                        "type": "string",
-                        "example": "City Clinic"
-                    },
-                    "address": {
-                        "description": "Physical address of the clinic",
-                        "type": "string",
-                        "example": "123 Main St"
-                    },
-                    "longitude": {
-                        "description": "Geographical longitude",
-                        "type": "number",
-                        "format": "float",
-                        "example": 12.345678
-                    },
-                    "latitude": {
-                        "description": "Geographical latitude",
-                        "type": "number",
-                        "format": "float",
-                        "example": 98.765432
-                    },
-                    "description": {
-                        "description": "Optional description of the clinic",
-                        "type": "string",
-                        "example": "A modern healthcare facility",
-                        "nullable": true
-                    },
-                    "is_banned": {
-                        "description": "Indicates if the clinic is banned",
-                        "type": "boolean",
-                        "default": false
-                    },
-                    "type": {
-                        "description": "Type of clinic",
-                        "type": "string",
-                        "enum": [
-                            "general",
-                            "specialized"
-                        ],
-                        "example": "general"
-                    },
-                    "start": {
-                        "description": "Opening time",
-                        "type": "string",
-                        "format": "time",
-                        "example": "08:00",
-                        "nullable": true
-                    },
-                    "end": {
-                        "description": "Closing time",
-                        "type": "string",
-                        "format": "time",
-                        "example": "18:00",
-                        "nullable": true
-                    }
-                },
-                "type": "object"
-            },
             "ClinicSubscriptionRequest": {
                 "required": [
-                    "fullName",
+                    "firstName",
+                    "lastName",
                     "email",
                     "password",
                     "username",
                     "clinicName",
                     "clinicAddress",
-                    "clinicType"
+                    "clinicType",
+                    "workingDays"
                 ],
                 "properties": {
                     "firstName": {
-                        "description": "The name of the user",
+                        "description": "The first name of the user",
                         "type": "string",
                         "maxLength": 255,
                         "minLength": 2,
                         "example": "Mustafa"
                     },
                     "lastName": {
-                        "description": "The name of the user",
+                        "description": "The last name of the user",
                         "type": "string",
                         "maxLength": 255,
                         "minLength": 2,
@@ -2604,7 +2703,7 @@
                         "example": "123 Main St"
                     },
                     "clinicLongitude": {
-                        "description": "Longitude of the clinic location (-180 to 180)",
+                        "description": "Longitude of the clinic location",
                         "type": "number",
                         "format": "float",
                         "maximum": 180,
@@ -2616,19 +2715,20 @@
                         "description": "Latitude of the clinic location",
                         "type": "number",
                         "format": "float",
-                        "maxLength": 255,
+                        "maximum": 90,
+                        "minimum": -90,
                         "example": "-74.0060",
                         "nullable": true
                     },
                     "clinicStartTime": {
-                        "description": "Clinic opening time",
+                        "description": "Clinic opening time in 24-hour format (HH:MM)",
                         "type": "string",
                         "format": "time",
                         "example": "09:00",
                         "nullable": true
                     },
                     "clinicEndTime": {
-                        "description": "Clinic closing time",
+                        "description": "Clinic closing time in 24-hour format (HH:MM)",
                         "type": "string",
                         "format": "time",
                         "example": "17:00",
@@ -2637,6 +2737,7 @@
                     "clinicDescription": {
                         "description": "Description of the clinic",
                         "type": "string",
+                        "maxLength": 1000,
                         "example": "A modern healthcare facility",
                         "nullable": true
                     },
@@ -2662,6 +2763,51 @@
                         "minimum": 0,
                         "example": 2,
                         "nullable": true
+                    },
+                    "workingDays": {
+                        "description": "Clinic working days schedule",
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "day",
+                                "start",
+                                "end"
+                            ],
+                            "properties": {
+                                "day": {
+                                    "description": "Day of week",
+                                    "type": "string",
+                                    "enum": [
+                                        "mon",
+                                        "tue",
+                                        "wed",
+                                        "thu",
+                                        "fri",
+                                        "sat",
+                                        "sun"
+                                    ],
+                                    "example": "mon"
+                                },
+                                "start": {
+                                    "description": "Opening time in 24-hour format (HH:MM)",
+                                    "type": "string",
+                                    "format": "time",
+                                    "example": "09:00"
+                                },
+                                "end": {
+                                    "description": "Closing time in 24-hour format (HH:MM)",
+                                    "type": "string",
+                                    "format": "time",
+                                    "example": "17:00"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "planId": {
+                        "description": "Subscription plan ID",
+                        "type": "integer",
+                        "example": 1
                     }
                 },
                 "type": "object"
@@ -2701,6 +2847,124 @@
                             "medicalTransaction",
                             "reservation"
                         ]
+                    }
+                },
+                "type": "object"
+            },
+            "CreateRecordRequest": {
+                "title": "Record Request",
+                "description": "Record request body for creating or updating records",
+                "required": [
+                    "patientId",
+                    "type"
+                ],
+                "properties": {
+                    "patientId": {
+                        "description": "The ID of the patient",
+                        "type": "string",
+                        "example": "pat_123456789"
+                    },
+                    "clinicId": {
+                        "description": "The ID of the clinic",
+                        "type": "string",
+                        "example": "cln_123456789",
+                        "nullable": true
+                    },
+                    "reservationId": {
+                        "description": "The ID of the reservation",
+                        "type": "string",
+                        "example": "res_123456789",
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Description of the record",
+                        "type": "string",
+                        "example": "Patient visited for regular checkup",
+                        "nullable": true
+                    },
+                    "type": {
+                        "description": "Type of the record",
+                        "type": "string",
+                        "enum": [
+                            "surgery",
+                            "appointment",
+                            "inspection"
+                        ]
+                    },
+                    "price": {
+                        "description": "Price of the service",
+                        "type": "integer",
+                        "example": 1000,
+                        "nullable": true
+                    },
+                    "doctorsIds": {
+                        "description": "Array of doctor IDs",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "doc_123456789"
+                        },
+                        "nullable": true
+                    },
+                    "medicines": {
+                        "description": "Array of medicines",
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id",
+                                "type"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "med_123456789"
+                                },
+                                "notes": {
+                                    "type": "string",
+                                    "example": "Take after meals",
+                                    "nullable": true
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "prescription",
+                                        "recommendation"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "nullable": true
+                    },
+                    "ills": {
+                        "description": "Array of illnesses",
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "id",
+                                "type"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "ill_123456789"
+                                },
+                                "notes": {
+                                    "type": "string",
+                                    "example": "Chronic condition",
+                                    "nullable": true
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "diagnosis",
+                                        "symptom"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -2914,6 +3178,30 @@
                 },
                 "type": "object"
             },
+            "PatientRecordsRequest": {
+                "title": "Patient Records Request",
+                "description": "Request parameters for filtering patient records",
+                "properties": {
+                    "startDate": {
+                        "description": "Start date for filtering records",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-01-01"
+                    },
+                    "endDate": {
+                        "description": "End date for filtering records",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-12-31"
+                    },
+                    "search": {
+                        "description": "Search term for filtering records",
+                        "type": "string",
+                        "example": "John Doe"
+                    }
+                },
+                "type": "object"
+            },
             "PatientRequest": {
                 "title": "Patient Request",
                 "description": "Request body data for creating or updating a patient",
@@ -2988,56 +3276,60 @@
                 },
                 "type": "object"
             },
-            "RecordRequest": {
-                "title": "Record Request",
-                "description": "Record request body for creating or updating records",
+            "PatientReservationRequest": {
+                "title": "Patient Reservation Request",
+                "description": "Request parameters for filtering patient reservations",
                 "properties": {
-                    "patientId": {
-                        "description": "The ID of the patient",
+                    "startDate": {
+                        "description": "Start date for filtering (Y-m-d)",
                         "type": "string",
-                        "example": "pat_123456789"
+                        "format": "date",
+                        "example": "2023-01-01"
                     },
-                    "clinicId": {
-                        "description": "The ID of the clinic",
+                    "endDate": {
+                        "description": "End date for filtering (Y-m-d), must be after or equal to startDate",
                         "type": "string",
-                        "example": "cln_123456789",
-                        "nullable": true
-                    },
-                    "reservationId": {
-                        "description": "The ID of the reservation",
-                        "type": "string",
-                        "example": "res_123456789",
-                        "nullable": true
-                    },
-                    "description": {
-                        "description": "Description of the record",
-                        "type": "string",
-                        "example": "Patient visited for regular checkup",
-                        "nullable": true
-                    },
-                    "type": {
-                        "description": "Type of the record",
-                        "type": "string",
-                        "enum": [
-                            "surgery",
-                            "appointment",
-                            "inspection"
-                        ]
-                    },
-                    "price": {
-                        "description": "Price of the service",
-                        "type": "integer",
-                        "example": 1000,
-                        "nullable": true
+                        "format": "date",
+                        "example": "2023-12-31"
                     },
                     "doctorsIds": {
-                        "description": "Array of doctor IDs",
+                        "description": "Array of doctor IDs to filter by",
                         "type": "array",
                         "items": {
-                            "type": "string",
-                            "example": "doc_123456789"
-                        },
-                        "nullable": true
+                            "type": "integer"
+                        }
+                    },
+                    "search": {
+                        "description": "Search term for patient name",
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "sortBy": {
+                        "description": "Field to sort by",
+                        "type": "string",
+                        "enum": [
+                            "start",
+                            "firstName",
+                            "lastName"
+                        ]
+                    },
+                    "sortOrder": {
+                        "description": "Sort order",
+                        "type": "string",
+                        "enum": [
+                            "asc",
+                            "desc"
+                        ]
+                    },
+                    "type": {
+                        "description": "Type of reservation",
+                        "type": "string",
+                        "enum": [
+                            "consultation",
+                            "follow_up",
+                            "procedure"
+                        ],
+                        "example": "consultation"
                     }
                 },
                 "type": "object"
@@ -3123,6 +3415,210 @@
                     "description": {
                         "description": "Optional description of the transaction",
                         "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateClinicRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Name of the clinic",
+                        "type": "string",
+                        "example": "City Clinic"
+                    },
+                    "address": {
+                        "description": "Physical address of the clinic",
+                        "type": "string",
+                        "example": "123 Main St"
+                    },
+                    "longitude": {
+                        "description": "Geographical longitude",
+                        "type": "number",
+                        "format": "float",
+                        "example": 12.345678
+                    },
+                    "latitude": {
+                        "description": "Geographical latitude",
+                        "type": "number",
+                        "format": "float",
+                        "example": 98.765432
+                    },
+                    "description": {
+                        "description": "Optional description of the clinic",
+                        "type": "string",
+                        "example": "A modern healthcare facility",
+                        "nullable": true
+                    },
+                    "is_banned": {
+                        "description": "Indicates if the clinic is banned",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "type": {
+                        "description": "Type of clinic",
+                        "type": "string",
+                        "enum": [
+                            "general",
+                            "specialized"
+                        ],
+                        "example": "general"
+                    },
+                    "startTime": {
+                        "description": "Opening time",
+                        "type": "string",
+                        "format": "time",
+                        "example": "08:00",
+                        "nullable": true
+                    },
+                    "endTime": {
+                        "description": "Closing time",
+                        "type": "string",
+                        "format": "time",
+                        "example": "18:00",
+                        "nullable": true
+                    },
+                    "numberOfDoctors": {
+                        "description": "Number of doctors in the clinic",
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": true
+                    },
+                    "numberOfSecretariat": {
+                        "description": "Number of secretariat staff in the clinic",
+                        "type": "integer",
+                        "example": 3,
+                        "nullable": true
+                    },
+                    "workingDays": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "day": {
+                                    "description": "Day of week (0=Sunday, 6=Saturday)",
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "start": {
+                                    "description": "Opening time for this day",
+                                    "type": "string",
+                                    "format": "time",
+                                    "example": "08:00"
+                                },
+                                "end": {
+                                    "description": "Closing time for this day",
+                                    "type": "string",
+                                    "format": "time",
+                                    "example": "18:00"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateRecordRequest": {
+                "title": "Update Record Request",
+                "description": "Record request body for updating records",
+                "properties": {
+                    "patientId": {
+                        "description": "ID of the patient",
+                        "type": "string",
+                        "example": "pat_123456789"
+                    },
+                    "clinicId": {
+                        "description": "ID of the clinic",
+                        "type": "string",
+                        "example": "cli_123456789",
+                        "nullable": true
+                    },
+                    "reservationId": {
+                        "description": "ID of the reservation",
+                        "type": "string",
+                        "example": "res_123456789",
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Description of the record",
+                        "type": "string",
+                        "example": "Regular checkup",
+                        "nullable": true
+                    },
+                    "type": {
+                        "description": "Type of the record",
+                        "type": "string",
+                        "enum": [
+                            "consultation",
+                            "examination",
+                            "treatment"
+                        ]
+                    },
+                    "price": {
+                        "description": "Price of the record",
+                        "type": "integer",
+                        "example": 5000,
+                        "nullable": true
+                    },
+                    "doctorsIds": {
+                        "description": "Array of doctor IDs",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "doc_123456789"
+                        },
+                        "nullable": true
+                    },
+                    "medicines": {
+                        "description": "Array of medicines",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "med_123456789"
+                                },
+                                "notes": {
+                                    "type": "string",
+                                    "example": "Take after meals",
+                                    "nullable": true
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "prescription",
+                                        "recommendation"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "nullable": true
+                    },
+                    "ills": {
+                        "description": "Array of illnesses",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "ill_123456789"
+                                },
+                                "notes": {
+                                    "type": "string",
+                                    "example": "Chronic condition",
+                                    "nullable": true
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "diagnosis",
+                                        "symptom"
+                                    ]
+                                }
+                            },
+                            "type": "object"
+                        },
                         "nullable": true
                     }
                 },
@@ -3572,11 +4068,16 @@
                         "type": "string",
                         "example": "Medical"
                     },
-                    "date": {
-                        "description": "Date of the record",
+                    "dateTime": {
+                        "description": "Date and time of the record",
                         "type": "string",
                         "format": "date-time",
                         "example": "2023-10-01T12:34:56Z"
+                    },
+                    "notes": {
+                        "description": "Additional notes for the record",
+                        "type": "string",
+                        "example": "Patient showed improvement"
                     },
                     "reservation": {
                         "$ref": "#/components/schemas/ReservationResource"
@@ -3589,7 +4090,7 @@
                         }
                     },
                     "ills": {
-                        "description": "List of illnesses associated with the record",
+                        "description": "List of diagnosed illnesses associated with the record",
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/IllResource"
@@ -3603,7 +4104,7 @@
                         }
                     },
                     "medicines": {
-                        "description": "List of medicines associated with the record",
+                        "description": "List of prescribed medicines associated with the record",
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/MedicineResource"
@@ -3622,6 +4123,9 @@
                         "items": {
                             "$ref": "#/components/schemas/MediaResource"
                         }
+                    },
+                    "patient": {
+                        "$ref": "#/components/schemas/PatientResource"
                     }
                 },
                 "type": "object"
@@ -3763,6 +4267,10 @@
             "description": "API Endpoints for dashboard overview statistics"
         },
         {
+            "name": "Patients",
+            "description": "Operations related to Patients"
+        },
+        {
             "name": "Records",
             "description": "API Endpoints for managing medical records"
         },
@@ -3773,10 +4281,6 @@
         {
             "name": "Clinic",
             "description": "Clinic"
-        },
-        {
-            "name": "Patients",
-            "description": "Patients"
         },
         {
             "name": "Reservation",

@@ -2,19 +2,46 @@
 
 namespace App\Models;
 
-use Database\Factories\RecordFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Ill;
+use App\Models\User;
+use App\Models\Clinic;
+use App\Models\Patient;
+use App\Models\Medicine;
+use App\Models\Reservation;
 use Spatie\MediaLibrary\HasMedia;
+use App\Models\MedicalTransactions;
+use Illuminate\Support\Facades\Auth;
+use Database\Factories\RecordFactory;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // use Laravel\Scout\Searchable;
 
+/**
+ * @property string $id
+ * @property string $patient_id
+ * @property string $clinic_id
+ * @property string $reservation_id
+ * @property string $description
+ * @property string $type
+ * @property DateTime $dateTime
+ * @property string $notes
+ * @property DateTime $created_at
+ * @property DateTime $updated_at
+ * @property DateTime $deleted_at
+ * @property-read Patient $patient
+ * @property-read Clinic $clinic
+ * @property-read Reservation $reservation
+ * @property-read Collection<Ill> $ills
+ * @property-read Collection<Medicine> $medicines
+ * @property-read  Collection<User> $doctors
+ * @property-read Collection<MedicalTransactions> $transactions
+ */
 final class Record extends Model implements HasMedia
 {
     /** @use HasFactory<RecordFactory> */
@@ -30,6 +57,9 @@ final class Record extends Model implements HasMedia
         'notes'
     ];
 
+    /**
+     * Boot the model and add global scopes
+     */
     protected static function booted(): void
     {
         if (Auth::check() && ! Auth::user()->hasRole('super admin') && ! request()->has('clinicId')) {
@@ -45,11 +75,17 @@ final class Record extends Model implements HasMedia
         }
     }
 
+    /**
+     * Get the name of the search index
+     */
     public function searchableAs()
     {
         return 'record_index';
     }
 
+    /**
+     * Convert the model to a searchable array
+     */
     public function toSearchableArray()
     {
         return [
@@ -60,38 +96,63 @@ final class Record extends Model implements HasMedia
         ];
     }
 
+    /**
+     * Get the patient that owns the record
+     */
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
     }
 
+    /**
+     * Get the clinic that owns the record
+     */
     public function clinic(): BelongsTo
     {
         return $this->belongsTo(Clinic::class);
     }
 
+    /**
+     * Get the reservation that owns the record
+     */
     public function reservation(): BelongsTo
     {
         return $this->belongsTo(Reservation::class);
     }
 
+    /**
+     * Get the ills associated with the record
+     * @return BelongsToMany<Ill>
+     */
     public function ills(): BelongsToMany
     {
         return $this->belongsToMany(Ill::class, 'ill_record')
             ->withPivot(['id' ,'type' , 'notes']);
     }
 
+    /**
+     * Get the medicines associated with the record
+     * @return BelongsToMany<Medicine>
+     */
     public function medicines(): BelongsToMany
     {
         return $this->belongsToMany(Medicine::class, 'medicine_record')
             ->withPivot(['id', 'notes', 'type']);
     }
 
+    /**
+     * Get the doctors associated with the record
+     * @return BelongsToMany<User>
+     */
     public function doctors(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'doctor_record', 'record_id', 'doctor_id');
     }
 
+    /**
+     * Get the transactions associated with the record
+     * @return HasMany<MedicalTransactions>
+     */
     public function transactions(): HasMany
     {
         return $this->hasMany(MedicalTransactions::class);

@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\MediaRequest;
-use App\Http\Requests\RecordRequest;
-use App\Http\Resources\MediaResource;
-use App\Http\Resources\RecordResource;
 use App\Models\Record;
-use App\Models\Reservation;
 use App\Services\MediaService;
 use App\Services\RecordService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use App\Http\Requests\MediaRequest;
+use App\Http\Resources\MediaResource;
+use App\Http\Resources\RecordResource;
+use App\Http\Requests\CreateRecordRequest;
+use App\Http\Requests\UpdateRecordRequest;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
+use App\Actions\CreateOrUpdateRecordAction;
 
 /**
  * @OA\Tag(
@@ -38,53 +38,39 @@ final class RecordController extends Controller
      *     path="/api/records",
      *     summary="Create a new medical record",
      *     tags={"Records"},
-     *
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
-     *
-     *         @OA\JsonContent(
-     *             required={"patientId","type"},
-     *
-     *             @OA\Property(property="patientId", type="string", format="uuid", description="Patient's UUID"),
-     *             @OA\Property(property="clinicId", type="string", format="uuid", description="Clinic's UUID"),
-     *             @OA\Property(property="reservationId", type="string", format="uuid", description="Reservation's UUID"),
-     *             @OA\Property(property="description", type="string", description="Record description"),
-     *             @OA\Property(property="type", type="string", enum={"diagnosed","transient"}, description="Record type"),
-     *             @OA\Property(property="price", type="integer", description="Record price"),
-     *             @OA\Property(property="doctorsIds", type="array", @OA\Items(type="string", format="uuid")),
-     *             @OA\Property(property="medicines", type="array", @OA\Items(
-     *                 @OA\Property(property="id", type="string", format="uuid"),
-     *                 @OA\Property(property="note", type="string")
-     *             )),
-     *             @OA\Property(property="ills", type="array", @OA\Items(
-     *                 @OA\Property(property="id", type="string", format="uuid"),
-     *                 @OA\Property(property="note", type="string")
-     *             ))
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/CreateRecordRequest")
      *     ),
-     *
      *     @OA\Response(
      *         response=201,
      *         description="Record created successfully",
-     *
      *         @OA\JsonContent(ref="#/components/schemas/RecordResource")
      *     ),
-     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     ),
      *     @OA\Response(
      *         response=422,
      *         description="Validation error"
      *     )
      * )
      */
-    public function store(RecordRequest $request): RecordResource
+    public function store(CreateRecordRequest $request, CreateOrUpdateRecordAction $action): RecordResource
     {
-        $record = Record::query()->create($request->validated());
+        $record = $action->handle($request);
 
-        $this->recordService->recordRelations($record, $request);
-
-        $this->mediaService->handleMultipleMediaUpload($record, $request);
-
-        return RecordResource::make($record->load(['media', 'reservation', 'ills', 'medicines', 'doctors']));
+        return RecordResource::make(
+            $record->load([
+                'media',
+                'reservation',
+                'ills',
+                'medicines',
+                'doctors'
+            ])
+        );
     }
 
     /**
@@ -92,23 +78,23 @@ final class RecordController extends Controller
      *     path="/api/records/{record}",
      *     summary="Get a specific medical record",
      *     tags={"Records"},
-     *
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="record",
      *         in="path",
      *         required=true,
      *         description="Record UUID",
-     *
-     *         @OA\Schema(type="string", format="uuid")
+     *         @OA\Schema(type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440000")
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
      *         description="Record details retrieved successfully",
-     *
      *         @OA\JsonContent(ref="#/components/schemas/RecordResource")
      *     ),
-     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     ),
      *     @OA\Response(
      *         response=404,
      *         description="Record not found"
@@ -117,7 +103,13 @@ final class RecordController extends Controller
      */
     public function show(Record $record): RecordResource
     {
-        return RecordResource::make($record->load(['media', 'reservation', 'ills', 'transientIlls', 'transientMedicines', 'medicines', 'doctors']));
+        return RecordResource::make($record->load([
+            'media',
+            'reservation',
+            'ills',
+            'medicines',
+            'doctors'
+        ]));
     }
 
     /**
@@ -138,7 +130,7 @@ final class RecordController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *
-     *         @OA\JsonContent(ref="#/components/schemas/RecordRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateRecordRequest")
      *     ),
      *
      *     @OA\Response(
@@ -158,15 +150,17 @@ final class RecordController extends Controller
      *     )
      * )
      */
-    public function update(RecordRequest $request, Record $record): RecordResource
+    public function update(UpdateRecordRequest $request, Record $record , CreateOrUpdateRecordAction $action): RecordResource
     {
-        $record->update($request->validated());
+        $record = $action->handle($request, $record);
 
-        $this->recordService->recordRelations($record, $request);
-
-        $this->mediaService->handleMultipleMediaUpload($record, $request);
-
-        return RecordResource::make($record->load(['media', 'reservation', 'ills', 'transientIlls', 'transientMedicines', 'medicines', 'doctors']));
+        return RecordResource::make($record->load([
+            'media',
+            'reservation',
+            'ills',
+            'medicines',
+            'doctors'
+        ]));
     }
 
     /**
@@ -174,23 +168,23 @@ final class RecordController extends Controller
      *     path="/api/records/{record}",
      *     summary="Soft delete a medical record",
      *     tags={"Records"},
-     *
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="record",
      *         in="path",
      *         required=true,
      *         description="Record UUID",
-     *
-     *         @OA\Schema(type="string", format="uuid")
+     *         @OA\Schema(type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440000")
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
      *         description="Record deleted successfully",
-     *
      *         @OA\JsonContent(ref="#/components/schemas/RecordResource")
      *     ),
-     *
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     ),
      *     @OA\Response(
      *         response=404,
      *         description="Record not found"
@@ -244,35 +238,36 @@ final class RecordController extends Controller
      *     path="/api/records/{record}/media",
      *     summary="Add media to a medical record",
      *     tags={"Records"},
-     *
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="record",
      *         in="path",
      *         required=true,
      *         description="Record UUID",
-     *
-     *         @OA\Schema(type="string", format="uuid")
+     *         @OA\Schema(type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440000")
      *     ),
-     *
      *     @OA\RequestBody(
      *         required=true,
-     *
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
-     *
      *             @OA\Schema(
-     *
-     *                 @OA\Property(property="image", type="file"),
-     *                 @OA\Property(property="collection", type="string", enum={"files","images","audios","videos","x-ray","tests"})
+     *                 @OA\Property(property="image", type="file", description="The media file to upload"),
+     *                 @OA\Property(property="collection", type="string", enum={"files","images","audios","videos","x-ray","tests"}, description="Media collection name")
      *             )
      *         )
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
      *         description="Media added successfully",
-     *
      *         @OA\JsonContent(ref="#/components/schemas/MediaResource")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
      *     )
      * )
      */

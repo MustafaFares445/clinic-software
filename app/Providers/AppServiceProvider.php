@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Record;
+use App\Observers\RecordObserver;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -14,5 +16,8 @@ final class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void {}
+    public function boot(): void
+    {
+        Record::observe(RecordObserver::class);
+    }
 }
