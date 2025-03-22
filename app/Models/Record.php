@@ -20,20 +20,21 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Enums\RecordTypes;
+use Carbon\CarbonImmutable;
 // use Laravel\Scout\Searchable;
 
 /**
  * @property string $id
  * @property string $patient_id
  * @property string $clinic_id
- * @property string $reservation_id
- * @property string $description
- * @property string $type
- * @property DateTime $dateTime
- * @property string $notes
- * @property DateTime $created_at
- * @property DateTime $updated_at
- * @property DateTime $deleted_at
+ * @property string|null $reservation_id
+ * @property RecordTypes $type
+ * @property DateTimeInterface $dateTime
+ * @property string|null $notes
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
+ * @property CarbonImmutable $deleted_at
  * @property-read Patient $patient
  * @property-read Clinic $clinic
  * @property-read Reservation $reservation
@@ -98,6 +99,7 @@ final class Record extends Model implements HasMedia
 
     /**
      * Get the patient that owns the record
+     *  @return BelongsToMany<Patient>
      */
     public function patient(): BelongsTo
     {
@@ -106,6 +108,7 @@ final class Record extends Model implements HasMedia
 
     /**
      * Get the clinic that owns the record
+     * @return BelongsToMany<Clinic>
      */
     public function clinic(): BelongsTo
     {
@@ -114,8 +117,9 @@ final class Record extends Model implements HasMedia
 
     /**
      * Get the reservation that owns the record
+     *  @return BelongsToMany<Reservation>
      */
-    public function reservation(): BelongsTo
+    public function reservation()
     {
         return $this->belongsTo(Reservation::class);
     }

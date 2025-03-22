@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use App\Models\Clinic;
-use Illuminate\Support\Carbon;
+use Carbon\CarbonImmutable;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
@@ -14,20 +15,26 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * Represents a billing transaction in the system.
  *
- * @property string $id
- * @property string $clinic_id
- * @property string $type
+ * @property Uuid $id
+ * @property Uuid $clinic_id
+ * @property string $type Possible values: in, out
  * @property float $amount
  * @property string|null $description
  * @property string $user_id
  * @property string $model_id
- * @property string $model_type
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property string $model_type Possible values: MedicalTransaction::class, Reservation::class
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read Clinic $clinic
+ * @property-read User $user
+ * @property-read MedicalTransaction|Reservation $model
+ * @property-read MediaCollection|Media[] $media
  */
 final class BillingTransaction extends Model implements HasMedia
 {
@@ -47,6 +54,15 @@ final class BillingTransaction extends Model implements HasMedia
         'user_id',
         'model_id',
         'model_type',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'amount' => 'float',
     ];
 
     /**

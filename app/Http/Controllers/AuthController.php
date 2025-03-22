@@ -107,7 +107,7 @@ final class AuthController extends Controller
             return response()->json([
                 'accessToken' => $user->createToken('auth_token')->plainTextToken,
                 'tokenType' => 'Bearer',
-                'user' => UserResource::make($user),
+                'user' => UserResource::make($user->load('clinic.workingDays')),
             ]);
         }
 

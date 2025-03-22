@@ -2,14 +2,34 @@
 
 namespace App\Models;
 
+use Ramsey\Uuid\Uuid;
+use App\Models\Record;
 use App\Trait\HasThumbnail;
+use Carbon\CarbonImmutable;
+use App\Models\Specification;
+use Spatie\MediaLibrary\HasMedia;
+use App\Models\MedicalTransactions;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * Class Ill
+ *
+ * Represents a medical condition or illness in the system.
+ * This model uses UUIDs as primary keys and supports soft deletes.
+ * It also implements media management through Spatie Media Library.
+ *
+ * @property Uuid $id UUID primary key
+ * @property string $name Name of the illness
+ * @property string|null $description Detailed description of the illness
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property CarbonImmutable|null $deleted_at
+ */
 final class Ill extends Model implements HasMedia
 {
     use HasFactory , HasThumbnail , HasUuids , SoftDeletes;
@@ -19,17 +39,33 @@ final class Ill extends Model implements HasMedia
         'description',
     ];
 
+    /**
+     * Get the specifications associated with this illness.
+     *
+     * @return BelongsToMany<Specification, self>
+     */
     public function specifications(): BelongsToMany
     {
         return $this->BelongsToMany(Specification::class);
     }
 
+    /**
+     * Get the medical records associated with this illness.
+     *
+     * @return BelongsToMany<Record, self>
+     */
     public function records(): BelongsToMany
     {
         return $this->belongsToMany(Record::class);
     }
 
-    public function medicalTransactions()
+    /**
+     * Get the medical transactions associated with this illness.
+     * This is a polymorphic relationship.
+     *
+     * @return MorphMany<MedicalTransactions, self>
+     */
+    public function medicalTransactions() : MorphMany
     {
         return $this->morphMany(MedicalTransactions::class , 'model');
     }

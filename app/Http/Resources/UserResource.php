@@ -64,6 +64,7 @@ final class UserResource extends JsonResource
             'username' => $this->when($this->username, $this->username),
             'avatar' => MediaResource::make($this->getFirstMedia('users')),
             'roles' => $this->whenLoaded('roles' , $this->getRoleNames()),
+            'clinic' => ClinicResource::make($this->whenLoaded('clinic'))
         ];
     }
 }

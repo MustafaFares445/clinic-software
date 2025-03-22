@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ClinicWorkingDay;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -49,16 +50,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         description="Type of the clinic"
  *     ),
  *     @OA\Property(
- *         property="start",
- *         type="string",
- *         format="date-time",
- *         description="Opening time of the clinic"
- *     ),
- *     @OA\Property(
- *         property="end",
- *         type="string",
- *         format="date-time",
- *         description="Closing time of the clinic"
+ *         property="workingDays",
+ *         type="array",
+ *         description="Working days and hours of the clinic",
+ *         @OA\Items(ref="#/components/schemas/ClinicWorkingDayResource")
  *     )
  * )
  */
@@ -79,8 +74,7 @@ final class ClinicResource extends JsonResource
             'description' => $this->description,
             'isBanned' => $this->isBanned,
             'type' => $this->type,
-            'start' => $this->start,
-            'end' => $this->end,
+            'workingDays' => ClinicWorkingDayResource::collection($this->whenLoaded('workingDays'))
         ];
     }
 }

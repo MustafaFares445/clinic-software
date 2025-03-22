@@ -3700,15 +3700,43 @@
                         "description": "Type of the clinic",
                         "type": "string"
                     },
-                    "start": {
-                        "description": "Opening time of the clinic",
+                    "workingDays": {
+                        "description": "Working days and hours of the clinic",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ClinicWorkingDayResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ClinicWorkingDayResource": {
+                "title": "Clinic Working Day Resource",
+                "description": "Clinic working day resource",
+                "properties": {
+                    "id": {
+                        "description": "The working day ID",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "day": {
+                        "description": "The day of the week",
                         "type": "string",
-                        "format": "date-time"
+                        "example": "Monday",
+                        "nullable": true
+                    },
+                    "start": {
+                        "description": "Start time of working hours",
+                        "type": "string",
+                        "example": "09:00",
+                        "nullable": true
                     },
                     "end": {
-                        "description": "Closing time of the clinic",
+                        "description": "End time of working hours",
                         "type": "string",
-                        "format": "date-time"
+                        "example": "17:00",
+                        "nullable": true
                     }
                 },
                 "type": "object"

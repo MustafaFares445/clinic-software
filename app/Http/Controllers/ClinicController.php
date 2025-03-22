@@ -39,7 +39,9 @@ final class ClinicController extends Controller
      */
     public function index(): ClinicResource
     {
-        return ClinicResource::make(Auth::user()->clinic);
+        /** @var User $user */
+        $user = Auth::user();
+        return ClinicResource::make($user->clinic->load('workingDays'));
     }
 
     /**

@@ -2,37 +2,46 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use App\Models\Plan;
 use App\Models\User;
+use Ramsey\Uuid\Uuid;
 use App\Models\Coupon;
+use App\Enums\ClinicTypes;
 use App\Trait\HasThumbnail;
+use Carbon\CarbonImmutable;
 use App\Models\Specification;
 use App\Models\ClinicWorkingDay;
 use Spatie\MediaLibrary\HasMedia;
 use Database\Factories\ClinicFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * Clinic model representing a medical clinic
  *
- * @property string $id
+ * @property Uuid $id
  * @property string $name
  * @property string $address
  * @property float $longitude
  * @property float $latitude
  * @property string|null $description
  * @property bool $is_banned
- * @property string $type
- * @property Carbon $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
+ * @property ClinicTypes $type
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property CarbonImmutable|null $deleted_at
+ * @property-read Plan|null $currentPlan
+ * @property-read Collection<Plan> $plans
+ * @property-read Collection<Coupon> $coupons
+ * @property-read Collection<Specification> $specifications
+ * @property-read Collection<User> $users
+ * @property-read Collection<ClinicWorkingDay> $workingDays
  */
 final class Clinic extends Model implements HasMedia
 {
@@ -58,7 +67,7 @@ final class Clinic extends Model implements HasMedia
     /**
      * Get the clinic's current active plan
      *
-     * @return HasOne<Plan>
+     * @return HasOne<Plan, self>
      */
     public function currentPlan(): HasOne
     {
@@ -71,7 +80,7 @@ final class Clinic extends Model implements HasMedia
     /**
      * Get all plans associated with the clinic
      *
-     * @return BelongsToMany<Plan>
+     * @return BelongsToMany<Plan, self>
      */
     public function plans(): BelongsToMany
     {
@@ -81,7 +90,7 @@ final class Clinic extends Model implements HasMedia
     /**
      * Get all coupons associated with the clinic
      *
-     * @return BelongsToMany<Coupon>
+     * @return BelongsToMany<Coupon, self>
      */
     public function coupons(): BelongsToMany
     {
@@ -91,7 +100,7 @@ final class Clinic extends Model implements HasMedia
     /**
      * Get all specifications associated with the clinic
      *
-     * @return BelongsToMany<Specification>
+     * @return BelongsToMany<Specification, self>
      */
     public function specifications(): BelongsToMany
     {
@@ -101,7 +110,7 @@ final class Clinic extends Model implements HasMedia
     /**
      * Get all users associated with the clinic
      *
-     * @return HasMany<User>
+     * @return HasMany<User, self>
      */
     public function users(): HasMany
     {
@@ -109,9 +118,19 @@ final class Clinic extends Model implements HasMedia
     }
 
     /**
+     * Get all records associated with the clinic
+     *
+     * @return HasMany<Clinic, self>
+     */
+    public function records(): HasMany
+    {
+        return $this->hasMany(Clinic::class);
+    }
+
+    /**
      * Get the clinic's working days
      *
-     * @return HasMany<ClinicWorkingDay>
+     * @return HasMany<ClinicWorkingDay, self>
      */
     public function workingDays(): HasMany
     {

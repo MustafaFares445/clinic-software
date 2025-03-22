@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignUuid('patient_id')->constrained('patients');
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->foreignUuid('reservation_id')->nullable()->constrained('reservations');
-            $table->longText('description');
             $table->enum('type', array_column(RecordTypes::cases(), 'value'))->default(RecordTypes::APPOINTMENT->value)->index();
             $table->dateTime('dateTime');
             $table->longText('notes')->nullable();

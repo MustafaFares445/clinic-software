@@ -59,23 +59,45 @@ final class User extends Authenticatable implements HasMedia
         ];
     }
 
+    /**
+     * Boot function from Laravel.
+     * Adds a global scope to filter users by clinic_id for non-super admin users.
+     */
     protected static function booted(): void
     {
-        if (Auth::check() && ! Auth::user()->hasRole('super admin')) {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if (Auth::check() && ! $user->hasRole('super admin')) {
             self::query()->where('clinic_id', Auth::user()->clinic_id);
         }
     }
 
+    /**
+     * Get the clinic that the user belongs to.
+     *
+     * @return BelongsTo<Clinic, User>
+     */
     public function clinic(): BelongsTo
     {
         return $this->belongsTo(Clinic::class, 'clinic_id');
     }
 
+    /**
+     * Get the clinics where the user works as a doctor.
+     *
+     * @return BelongsToMany<Clinic>
+     */
     public function doctorClinics(): BelongsToMany
     {
         return $this->belongsToMany(Clinic::class, 'clinic_doctor', 'doctor_id', 'clinic_id');
     }
 
+    /**
+     * Get the medical specifications/specialties of the doctor.
+     *
+     * @return BelongsToMany<Specification>
+     */
     public function doctorSpecifications(): BelongsToMany
     {
         return $this->belongsToMany(Specification::class, 'doctor_specification', 'doctor_id', 'specification_id');
