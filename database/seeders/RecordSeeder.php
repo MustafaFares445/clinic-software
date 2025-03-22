@@ -25,7 +25,7 @@ final class RecordSeeder extends Seeder
             'patient_id' => Patient::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
-            'description' => 'وصف موجز',
+            'notes' => 'ملاحظة موجزة',
             'type' => RecordTypes::APPOINTMENT,
             'dateTime' => now(),
         ]);
@@ -63,7 +63,7 @@ final class RecordSeeder extends Seeder
             'patient_id' => Patient::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
-            'description' => 'وصف موجز',
+            'notes' => 'ملاحظة موجزة',
             'type' => RecordTypes::SURGERY,
             'dateTime' => now(),
         ]);
@@ -91,7 +91,7 @@ final class RecordSeeder extends Seeder
             'patient_id' => Patient::query()->inRandomOrder()->first()->id,
             'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
             'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
-            'description' => 'وصف موجز',
+            'notes' => 'ملاحظة',
             'type' => RecordTypes::INSPECTION,
             'dateTime' => now(),
         ]);
