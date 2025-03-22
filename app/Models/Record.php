@@ -52,7 +52,6 @@ final class Record extends Model implements HasMedia
         'patient_id',
         'clinic_id',
         'reservation_id',
-        'description',
         'type',
         'dateTime',
         'notes'
