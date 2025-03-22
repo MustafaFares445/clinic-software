@@ -18,6 +18,7 @@ final class RecordObserver
         }
 
         $record->dateTime = $reservation?->created_at ?? now();
-        $record->clinic_id = request()->input('clinicId') ?? Auth::user()->clinic_id;
+        if(Auth::check())
+            $record->clinic_id = request()->input('clinicId') ?? Auth::user()->clinic_id;
     }
 }
