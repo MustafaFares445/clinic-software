@@ -76,8 +76,8 @@ final class ReservationController extends Controller
 
         // Adjust start and end dates based on clinic working hours
         if ($startTime && $endTime) {
-            $startDate = $startDate->setTimeFromTimeString($clinic->start);
-            $endDate = $endDate->setTimeFromTimeString($clinic->end);
+            $startDate = $startDate->setTimeFromTimeString($startTime);
+            $endDate = $endDate->setTimeFromTimeString($endTime);
         } else {
             $startDate = $startDate->startOfDay();
             $endDate = $endDate->endOfDay();
