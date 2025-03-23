@@ -3013,6 +3013,12 @@
                             "inspection"
                         ]
                     },
+                    "notes": {
+                        "description": "notes of records",
+                        "type": "string",
+                        "example": "notes example",
+                        "nullable": true
+                    },
                     "price": {
                         "description": "Price of the service",
                         "type": "integer",
@@ -3715,10 +3721,10 @@
                         "example": "res_123456789",
                         "nullable": true
                     },
-                    "description": {
-                        "description": "Description of the record",
+                    "notes": {
+                        "description": "notes of records",
                         "type": "string",
-                        "example": "Regular checkup",
+                        "example": "notes example",
                         "nullable": true
                     },
                     "type": {

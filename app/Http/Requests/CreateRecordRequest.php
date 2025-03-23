@@ -43,6 +43,13 @@ use Illuminate\Contracts\Validation\ValidationRule;
  *         description="Type of the record",
  *         enum={"surgery", "appointment", "inspection"}
  *     ),
+ *    @OA\Property(
+ *         property="notes",
+ *         type="string",
+ *         nullable=true,
+ *         description="notes of records",
+ *         example="notes example"
+ *     ),
  *     @OA\Property(
  *         property="price",
  *         type="integer",
@@ -107,6 +114,7 @@ final class CreateRecordRequest extends FormRequest
             'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
             'reservationId' => ['nullable', 'string', Rule::exists('reservations', 'id')],
             'type' => ['required', 'string', Rule::in(array_values(RecordTypes::cases()))],
+            'notes' => ['nullable' , 'string' , 'min:1' , 'max:255'],
             'price' => ['nullable', 'integer' , 'min:1'],
             'doctorsIds' => ['nullable', 'array', 'min:1'],
             'doctorsIds.*' => ['required', 'string', Rule::exists('users', 'id')],

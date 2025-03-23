@@ -34,12 +34,12 @@ use Illuminate\Foundation\Http\FormRequest;
  *         description="ID of the reservation",
  *         example="res_123456789"
  *     ),
- *     @OA\Property(
- *         property="description",
+ *    @OA\Property(
+ *         property="notes",
  *         type="string",
  *         nullable=true,
- *         description="Description of the record",
- *         example="Regular checkup"
+ *         description="notes of records",
+ *         example="notes example"
  *     ),
  *     @OA\Property(
  *         property="type",
@@ -100,7 +100,7 @@ final class UpdateRecordRequest extends FormRequest
             'patientId' => ['sometimes', 'string', Rule::exists('patients', 'id')],
             'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
             'reservationId' => ['nullable', 'string', Rule::exists('reservations', 'id')],
-            'description' => ['nullable', 'string', 'min:2', 'max:255'],
+            'notes' => ['nullable', 'string', 'min:2', 'max:255'],
             'type' => ['sometimes', 'string', Rule::in(array_values(RecordTypes::cases()))],
             'price' => ['nullable', 'integer', 'min:1'],
             'doctorsIds' => ['nullable', 'array', 'min:1'],
