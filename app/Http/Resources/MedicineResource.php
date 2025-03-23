@@ -59,7 +59,7 @@ final class MedicineResource extends JsonResource
             'specifications' => SpecificationResource::collection($this->whenLoaded('specifications')),
             'notes' => $this->when(
                 $this->hasPivotLoaded('medicine_record') || $this->hasPivotLoaded('medicine_patient'),
-                $this->pivot->notes
+                $this->pivot?->notes,
             ),
         ];
     }

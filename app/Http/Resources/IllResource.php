@@ -61,7 +61,7 @@ final class IllResource extends JsonResource
             'description' => $this->when($this->description, $this->description),
             'notes' => $this->when(
                 $this->hasPivotLoaded('ill_patient') || $this->hasPivotLoaded('ill_record'),
-                $this->pivot->notes
+                $this->pivot?->notes
             ),
             'specifications' => SpecificationResource::collection($this->whenLoaded('specifications')),
             'recordsCount' => $this->when($this->records_count, $this->records_count)
