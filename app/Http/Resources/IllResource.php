@@ -54,7 +54,6 @@ final class IllResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         return [
             'id' => $this->when($this->id, $this->id),
             'name' => $this->when($this->name, $this->name),

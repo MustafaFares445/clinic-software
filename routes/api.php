@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillingTransactionController;
 use App\Http\Controllers\ClinicController;
 use App\Http\Controllers\FileManagerController;
+use App\Http\Controllers\IllController;
 use App\Http\Controllers\MedicalTransactionController;
 use App\Http\Controllers\MedicineController;
 use App\Http\Controllers\OverviewController;
@@ -63,7 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Medicines - ills routes
     Route::apiResource('/medicines' , MedicineController::class)->only(['index' , 'store']);
-    Route::apiResource('/ills' , MedicineController::class)->only(['index' , 'store']);
+    Route::apiResource('/ills' , IllController::class)->only(['index' , 'store']);
 
     // Overview routes
     Route::prefix('overview')->group(function () {
