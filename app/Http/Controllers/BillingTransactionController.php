@@ -29,6 +29,13 @@ class BillingTransactionController extends Controller
      *         required=false,
      *         @OA\Schema(type="string")
      *     ),
+     *     @OA\Parameter(
+     *         name="year",
+     *         in="query",
+     *         description="Filter by year of transaction",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -48,6 +55,9 @@ class BillingTransactionController extends Controller
             ])->when(
                 $request->has('type'),
                 fn($query) => $query->where('type', $request->input('type'))
+            )->when(
+                $request->has('year'),
+                fn($query) => $query->whereYear('created_at', $request->input('year'))
             )->paginate()
         );
     }

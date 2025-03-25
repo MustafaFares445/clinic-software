@@ -687,23 +687,37 @@ final class PatientController extends Controller
      *
      *          @OA\Schema(type="string", format="uuid")
      *     ),
+     *     @OA\Parameter(
+     *          name="collection",
+     *          in="query",
+     *          description="Filter by media collection",
+     *          required=false,
+     *
+     *          @OA\Schema(type="string")
+     *     ),
      *
      *     @OA\Response(
      *        response=200,
-     *         description="Profile image uploaded successfully",
+     *         description="Files retrieved successfully",
      *
      *         @OA\JsonContent(ref="#/components/schemas/MediaResource")
      *     ),
      * )
      */
-    public function getFiles(Patient $patient): AnonymousResourceCollection
+    public function getFiles(Patient $patient, Request $request): AnonymousResourceCollection
     {
         $patient->load('media');
         $profileImage = $patient->getFirstMedia('profile');
 
+        $mediaQuery = $patient->media()
+            ->when($request->has('collection'), function ($query) use ($request) {
+                $query->where('collection_name', $request->input('collection'));
+            })
+            ->orderBy('created_at', 'desc');
+
         return MediaResource::collection(
-            $patient->media()->orderBy('created_at', 'desc')->get()->when($profileImage, function ($collection) use ($profileImage) {
-                $collection->reject(function ($media) use ($profileImage) {
+            $mediaQuery->get()->when($profileImage, function ($collection) use ($profileImage) {
+                return $collection->reject(function ($media) use ($profileImage) {
                     return $media->id === $profileImage->id;
                 });
             })

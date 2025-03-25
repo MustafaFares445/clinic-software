@@ -4,6 +4,6 @@ namespace App\Enums;
 
 enum RecordIllsTypes: string
 {
-    case TRANSIENT = 'transient';
-    case DIAGNOSED = 'diagnosed';
+    case TRANSIENT = 'transient'; // عابر
+    case DIAGNOSED = 'diagnosed'; // تم تشخيصه
 }

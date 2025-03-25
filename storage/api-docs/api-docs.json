@@ -158,6 +158,15 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter by year of transaction",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -2131,11 +2140,20 @@
                             "type": "string",
                             "format": "uuid"
                         }
+                    },
+                    {
+                        "name": "collection",
+                        "in": "query",
+                        "description": "Filter by media collection",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Profile image uploaded successfully",
+                        "description": "Files retrieved successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
