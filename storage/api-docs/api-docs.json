@@ -2461,7 +2461,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "$ref": "#/components/schemas/MediaRequest"
                             }
@@ -3142,12 +3142,18 @@
                         "description": "Type of medical media collection",
                         "type": "string",
                         "enum": [
-                            "images",
-                            "videos",
-                            "audios",
-                            "files"
+                            "x-ray",
+                            "tests",
+                            "mri-scans",
+                            "ct-scans",
+                            "ultrasound",
+                            "lab-reports",
+                            "medical-reports",
+                            "patient-history",
+                            "prescriptions",
+                            "ecg-records"
                         ],
-                        "example": "images"
+                        "example": "x-ray"
                     }
                 },
                 "type": "object"
@@ -4369,7 +4375,7 @@
                             "collection": {
                                 "summary": "Invalid collection type",
                                 "value": {
-                                    "message": "The collection must be one of: images, videos, audios, files"
+                                    "message": "The collection must be one of: x-ray, tests, mri-scans, ct-scans, ultrasound, lab-reports, medical-reports, patient-history, prescriptions, ecg-records"
                                 }
                             }
                         }

@@ -52,7 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('records', RecordController::class)->except(['index']);
     Route::prefix('/records')->group(function(){
         Route::post('/{record}/files', [RecordController::class, 'addFile']);
-        Route::delete('/{record}/files' , [RecordController::class , 'deleteFile']);
+        Route::delete('/{record}/files/{file}' , [RecordController::class , 'deleteFile']);
     });
 
     // File management routes

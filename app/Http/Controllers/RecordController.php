@@ -248,7 +248,10 @@ final class RecordController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/MediaRequest")
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(ref="#/components/schemas/MediaRequest")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,

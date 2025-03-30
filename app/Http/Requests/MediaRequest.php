@@ -13,6 +13,7 @@ use Illuminate\Validation\Rule;
  *     title="Media Upload Request",
  *     description="Request validation rules for medical media uploads",
  *     required={"upload" , "collection"},
+ *     type="object",
  *     @OA\Property(
  *         property="upload",
  *         type="string",
@@ -24,8 +25,8 @@ use Illuminate\Validation\Rule;
  *         property="collection",
  *         type="string",
  *         description="Type of medical media collection",
- *         enum={"images", "videos", "audios", "files"},
- *         example="images"
+ *         enum={"x-ray", "tests", "mri-scans", "ct-scans", "ultrasound", "lab-reports", "medical-reports", "patient-history", "prescriptions", "ecg-records"},
+ *         example="x-ray"
  *     )
  * )
  */
@@ -60,7 +61,7 @@ final class MediaRequest extends FormRequest
      *         ),
      *         @OA\Examples(
      *             example="collection",
-     *             value={"message": "The collection must be one of: images, videos, audios, files"},
+     *             value={"message": "The collection must be one of: x-ray, tests, mri-scans, ct-scans, ultrasound, lab-reports, medical-reports, patient-history, prescriptions, ecg-records"},
      *             summary="Invalid collection type"
      *         )
      *     )

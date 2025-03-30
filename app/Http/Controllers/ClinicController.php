@@ -110,6 +110,7 @@ final class ClinicController extends Controller
     public function update(UpdateClinicRequest $request): ClinicResource
     {
         $clinic = Auth::user()->clinic;
+
         $clinic->update($request->validated());
 
         return ClinicResource::make($clinic);
@@ -130,7 +131,9 @@ final class ClinicController extends Controller
     public function destroy(): Response
     {
         $clinic = Auth::user()->clinic;
+
         User::query()->where('clinic_id', $clinic->id)->delete();
+        
         $clinic->delete();
 
         return response()->noContent();
