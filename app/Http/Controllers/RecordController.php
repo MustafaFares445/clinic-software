@@ -235,8 +235,8 @@ final class RecordController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/records/{record}/media",
-     *     summary="Add media to a medical record",
+     *     path="/api/records/{record}/files",
+     *     summary="Add files to a medical record",
      *     tags={"Records"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
@@ -248,13 +248,7 @@ final class RecordController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(
-     *                 @OA\Property(property="image", type="file", description="The media file to upload"),
-     *                 @OA\Property(property="collection", type="string", enum={"files","images","audios","videos","x-ray","tests"}, description="Media collection name")
-     *             )
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/MediaRequest")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -271,16 +265,16 @@ final class RecordController extends Controller
      *     )
      * )
      */
-    public function addMedia(Record $record, MediaRequest $request): MediaResource
+    public function addFile(Record $record, MediaRequest $request): MediaResource
     {
         return MediaResource::make(
-            $this->mediaService->handleMediaUpload($record, $request->file('image'), $request->input('collection'))
+            $this->handleMediaUpload($request->file('upload') , $record , $request->input('collection'))
         );
     }
 
     /**
      * @OA\Delete(
-     *     path="/api/records/{record}/media/{media}",
+     *     path="/api/records/{record}/files/{file}",
      *     summary="Delete media from a medical record",
      *     description="Removes a specific media file associated with a medical record. Only media belonging to the specified record can be deleted.",
      *     tags={"Records"},
@@ -350,14 +344,11 @@ final class RecordController extends Controller
      *     )
      * )
      */
-    public function deleteMedia(Record $record, Media $media): MediaResource|JsonResponse
+    public function deleteFile(Record $record, Media $file): MediaResource|JsonResponse
     {
-        if ($media->getMorphClass() !== $record) {
+        if(!$this->handleMediaDeletion($record , $file))
             return response()->json(['message' => 'not Allowed.'], ResponseAlias::HTTP_FORBIDDEN);
-        }
 
-        $media->delete();
-
-        return MediaResource::make($media);
+        return MediaResource::make($file);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\HandlesMedia;
 use OpenApi\Annotations as OA;
 
 /**
@@ -17,4 +18,7 @@ use OpenApi\Annotations as OA;
  *    scheme="bearer"
  * )
  */
-abstract class Controller {}
+abstract class Controller
+{
+    use HandlesMedia;
+}

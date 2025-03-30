@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MedicineRequest;
 use App\Http\Resources\MedicineResource;
 use App\Models\Medicine;
-use Illuminate\Http\Request;
 
 /**
  * @OA\Tag(

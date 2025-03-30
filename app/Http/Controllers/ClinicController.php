@@ -28,7 +28,7 @@ final class ClinicController extends Controller
      * @OA\Get(
      *     path="/api/clinics",
      *     summary="Get current clinic details",
-     *     tags={"Clinic"},
+     *     tags={"Clinics"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
@@ -48,7 +48,7 @@ final class ClinicController extends Controller
      * @OA\Post(
      *     path="/api/clinics/subscription",
      *     summary="Create a new clinic subscription",
-     *     tags={"Clinic"},
+     *     tags={"Clinics"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/ClinicSubscriptionRequest")
@@ -94,7 +94,7 @@ final class ClinicController extends Controller
      * @OA\Put(
      *     path="/api/clinics",
      *     summary="Update clinic details",
-     *     tags={"Clinic"},
+     *     tags={"Clinics"},
      *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
@@ -119,7 +119,7 @@ final class ClinicController extends Controller
      * @OA\Delete(
      *     path="/api/clinics",
      *     summary="Delete clinic and associated users",
-     *     tags={"Clinic"},
+     *     tags={"Clinics"},
      *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=204,

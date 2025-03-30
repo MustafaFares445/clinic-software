@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\Record;
+use App\Models\Reservation;
 use App\Observers\RecordObserver;
+use App\Observers\ReservationObserver;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -19,5 +21,6 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Record::observe(RecordObserver::class);
+        Reservation::observe(ReservationObserver::class);
     }
 }

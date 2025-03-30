@@ -347,7 +347,7 @@
         "/api/clinics": {
             "get": {
                 "tags": [
-                    "Clinic"
+                    "Clinics"
                 ],
                 "summary": "Get current clinic details",
                 "operationId": "dab93c930a17b3b823e8febfca5512f4",
@@ -371,7 +371,7 @@
             },
             "put": {
                 "tags": [
-                    "Clinic"
+                    "Clinics"
                 ],
                 "summary": "Update clinic details",
                 "operationId": "dd25c7ce5c163cc2083b86f0c008f38c",
@@ -405,7 +405,7 @@
             },
             "delete": {
                 "tags": [
-                    "Clinic"
+                    "Clinics"
                 ],
                 "summary": "Delete clinic and associated users",
                 "operationId": "c26fb56dd9d19552e8f3bc06416f45b6",
@@ -424,7 +424,7 @@
         "/api/clinics/subscription": {
             "post": {
                 "tags": [
-                    "Clinic"
+                    "Clinics"
                 ],
                 "summary": "Create a new clinic subscription",
                 "operationId": "7163d55f843d9c086cc0882e58c60e53",
@@ -2438,13 +2438,13 @@
                 }
             }
         },
-        "/api/records/{record}/media": {
+        "/api/records/{record}/files": {
             "post": {
                 "tags": [
                     "Records"
                 ],
-                "summary": "Add media to a medical record",
-                "operationId": "196dfbe0851610f467de64eb60d9cf2a",
+                "summary": "Add files to a medical record",
+                "operationId": "5da6b9125d4f542226bd9784249435ad",
                 "parameters": [
                     {
                         "name": "record",
@@ -2461,27 +2461,9 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
-                                "properties": {
-                                    "image": {
-                                        "description": "The media file to upload",
-                                        "type": "file"
-                                    },
-                                    "collection": {
-                                        "description": "Media collection name",
-                                        "type": "string",
-                                        "enum": [
-                                            "files",
-                                            "images",
-                                            "audios",
-                                            "videos",
-                                            "x-ray",
-                                            "tests"
-                                        ]
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/MediaRequest"
                             }
                         }
                     }
@@ -2511,14 +2493,14 @@
                 ]
             }
         },
-        "/api/records/{record}/media/{media}": {
+        "/api/records/{record}/files/{file}": {
             "delete": {
                 "tags": [
                     "Records"
                 ],
                 "summary": "Delete media from a medical record",
                 "description": "Removes a specific media file associated with a medical record. Only media belonging to the specified record can be deleted.",
-                "operationId": "e6d7904132fbac7e3e899d5941e1705b",
+                "operationId": "c5bcb10a2a05fbbdd9ef5d87540c06da",
                 "parameters": [
                     {
                         "name": "record",
@@ -3144,133 +3126,28 @@
             },
             "MediaRequest": {
                 "title": "Media Upload Request",
-                "description": "Request validation rules for various types of medical media uploads",
+                "description": "Request validation rules for medical media uploads",
+                "required": [
+                    "upload",
+                    "collection"
+                ],
                 "properties": {
-                    "files": {
-                        "description": "General media files (max 10 files, 50MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 10
+                    "upload": {
+                        "description": "Medical file to upload. Supported formats: jpeg, png, jpg, gif, mp3, wav, ogg, mp4, mov, avi, wmv, dicom, dcm, nii, nii.gz, pdf, doc, docx, xlsx, csv, xml, json. Max size: 50MB",
+                        "type": "string",
+                        "format": "binary",
+                        "example": "example.jpg"
                     },
-                    "images": {
-                        "description": "Image files (jpeg, png, jpg, gif - max 20 files, 5MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 20
-                    },
-                    "audios": {
-                        "description": "Audio files (mp3, wav, ogg - max 5 files, 10MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 5
-                    },
-                    "videos": {
-                        "description": "Video files (mp4, mov, avi, wmv - max 3 files, 50MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 3
-                    },
-                    "x-ray": {
-                        "description": "X-ray files (dicom, dcm, jpeg, png - max 10 files, 20MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 10
-                    },
-                    "mri-scans": {
-                        "description": "MRI scan files (dicom, dcm, nii, nii.gz - max 15 files, 50MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 15
-                    },
-                    "ct-scans": {
-                        "description": "CT scan files (dicom, dcm, nii, nii.gz - max 15 files, 50MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 15
-                    },
-                    "ultrasound": {
-                        "description": "Ultrasound files (dicom, dcm, mp4, avi - max 10 files, 30MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 10
-                    },
-                    "tests": {
-                        "description": "Test documents (pdf, doc, docx - max 15 files, 5MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 15
-                    },
-                    "lab-reports": {
-                        "description": "Lab reports (pdf, doc, docx, xlsx, csv - max 20 files, 10MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 20
-                    },
-                    "prescriptions": {
-                        "description": "Prescriptions (pdf, jpg, png - max 10 files, 2MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 10
-                    },
-                    "medical-reports": {
-                        "description": "Medical reports (pdf, doc, docx - max 20 files, 15MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 20
-                    },
-                    "patient-history": {
-                        "description": "Patient history files (pdf, doc, docx - max 5 files, 20MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 5
-                    },
-                    "ecg-records": {
-                        "description": "ECG records (pdf, dcm, xml, json - max 10 files, 10MB each)",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "format": "binary"
-                        },
-                        "maxItems": 10
+                    "collection": {
+                        "description": "Type of medical media collection",
+                        "type": "string",
+                        "enum": [
+                            "images",
+                            "videos",
+                            "audios",
+                            "files"
+                        ],
+                        "example": "images"
                     }
                 },
                 "type": "object"
@@ -3786,8 +3663,8 @@
                                 "type": {
                                     "type": "string",
                                     "enum": [
-                                        "prescription",
-                                        "recommendation"
+                                        "diagnosis",
+                                        "transient"
                                     ]
                                 }
                             },
@@ -3813,7 +3690,7 @@
                                     "type": "string",
                                     "enum": [
                                         "diagnosis",
-                                        "symptom"
+                                        "transient"
                                     ]
                                 }
                             },
@@ -4470,6 +4347,36 @@
                 "type": "object"
             }
         },
+        "responses": {
+            "422": {
+                "description": "Validation error",
+                "content": {
+                    "application/json": {
+                        "schema": {},
+                        "examples": {
+                            "file_size": {
+                                "summary": "File size exceeds limit",
+                                "value": {
+                                    "message": "The file must not exceed 50MB"
+                                }
+                            },
+                            "file_type": {
+                                "summary": "Invalid file type",
+                                "value": {
+                                    "message": "The file must be one of these types: jpeg, png, jpg, gif, mp3, wav, ogg, mp4, mov, avi, wmv, dicom, dcm, nii, nii.gz, pdf, doc, docx, xlsx, csv, xml, json"
+                                }
+                            },
+                            "collection": {
+                                "summary": "Invalid collection type",
+                                "value": {
+                                    "message": "The collection must be one of: images, videos, audios, files"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
@@ -4479,8 +4386,16 @@
     },
     "tags": [
         {
+            "name": "Auth",
+            "description": "Authentication endpoints"
+        },
+        {
             "name": "Billing Transactions",
             "description": "Operations related to billing transactions"
+        },
+        {
+            "name": "Clinics",
+            "description": "Operations related to Clinics"
         },
         {
             "name": "File Manager",
@@ -4511,16 +4426,8 @@
             "description": "API Endpoints for managing medical records"
         },
         {
-            "name": "Auth",
-            "description": "Auth"
-        },
-        {
-            "name": "Clinic",
-            "description": "Clinic"
-        },
-        {
             "name": "Reservation",
-            "description": "Reservation"
+            "description": "Operations related to reservations"
         }
     ]
 }

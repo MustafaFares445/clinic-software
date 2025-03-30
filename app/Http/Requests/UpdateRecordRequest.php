@@ -70,7 +70,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *             type="object",
  *             @OA\Property(property="id", type="string", example="med_123456789"),
  *             @OA\Property(property="notes", type="string", nullable=true, example="Take after meals"),
- *             @OA\Property(property="type", type="string", enum={"prescription", "recommendation"})
+ *             @OA\Property(property="type", type="string", enum={"diagnosis", "transient"})
  *         )
  *     ),
  *     @OA\Property(
@@ -82,7 +82,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *             type="object",
  *             @OA\Property(property="id", type="string", example="ill_123456789"),
  *             @OA\Property(property="notes", type="string", nullable=true, example="Chronic condition"),
- *             @OA\Property(property="type", type="string", enum={"diagnosis", "symptom"})
+ *             @OA\Property(property="type", type="string", enum={"diagnosis", "transient"})
  *         )
  *     )
  * )

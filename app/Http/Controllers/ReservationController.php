@@ -14,6 +14,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @OA\Tag(
+ *     name="Reservation",
+ *     description="Operations related to reservations"
+ * )
+ */
 final class ReservationController extends Controller
 {
     /**

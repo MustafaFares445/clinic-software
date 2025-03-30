@@ -50,6 +50,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Record routes
     Route::apiResource('records', RecordController::class)->except(['index']);
+    Route::prefix('/records')->group(function(){
+        Route::post('/{record}/files', [RecordController::class, 'addFile']);
+        Route::delete('/{record}/files' , [RecordController::class , 'deleteFile']);
+    });
 
     // File management routes
     Route::apiResource('/file-manager', FileManagerController::class)->except(['update', 'show']);
