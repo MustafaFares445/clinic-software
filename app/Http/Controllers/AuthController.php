@@ -51,6 +51,7 @@ final class AuthController extends Controller
         $user = User::query()->create($request->validated());
 
         $token = $user->createToken('auth_token');
+        
         return response()->json([
             'accessToken' => $token->plainTextToken,
             'tokenType' => 'Bearer',

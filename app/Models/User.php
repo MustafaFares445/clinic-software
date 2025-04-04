@@ -3,19 +3,46 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Clinic;
 use App\Trait\HasThumbnail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Specification;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\MediaLibrary\HasMedia;
+use Spatie\Permission\Models\Role;
+use Database\Factories\UserFactory;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\PersonalAccessToken;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @property-read string $id
+ * @property-read string $uuid
+ * @property-read string $firstName
+ * @property-read string $lastName
+ * @property-read string $email
+ * @property-read string $username
+ * @property-read string $clinic_id
+ * @property-read bool $is_banned
+ * @property-read CarbonImmutable|null $email_verified_at
+ * @property-read CarbonImmutable $created_at
+ * @property-read CarbonImmutable|null $updated_at
+ * @property-read Clinic $clinic
+ * @property-read Collection<Clinic> $doctorClinics
+ * @property-read Collection<Specification> $doctorSpecifications
+ * @property-read Collection<Role> $roles
+ * @property-read Collection<Permission> $permissions
+ * @property-read Collection<DatabaseNotification> $notifications
+ * @property-read Collection<PersonalAccessToken> $tokens
+ */
 final class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */

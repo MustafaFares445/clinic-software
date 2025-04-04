@@ -29,7 +29,7 @@ trait HandlesMedia
      *
      * @param UploadedFile|array<UploadedFile> $media The media file(s) to upload
      * @param Model $model The model to associate the media with
-     * @param MedicalMediaCollection|string $collection The media collection name (default: 'default')
+     * @param string $collection The media collection name (default: 'default')
      * @return Media|array<Media> Returns the created media object(s)
      */
     public function handleMediaUpdate(UploadedFile|array $media, Model $model, string $collection = 'default'): Media|array
@@ -60,7 +60,7 @@ trait HandlesMedia
      */
     public function handleMediaDeletion(Model $model, Media $media): bool
     {
-        if (!$media->model->is($model)) 
+        if (!$media->model->is($model))
             return false;
 
         return $media->delete();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MedicalMediaCollection;
 use App\Http\Requests\MediaRequest;
 use App\Http\Resources\MediaResource;
 use App\Models\FileManager;
@@ -87,7 +88,7 @@ final class FileManagerController extends Controller
      */
     public function getMedicalCollections(): JsonResponse
     {
-        return response()->json(MediaService::$medicalMediaCollections);
+        return response()->json(MedicalMediaCollection::values());
     }
 
     /**
