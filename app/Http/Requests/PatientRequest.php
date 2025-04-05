@@ -119,6 +119,12 @@ final class PatientRequest extends FormRequest
             'birth' => ['sometimes', 'nullable', 'string'],
             'gender' => ['sometimes', 'nullable', 'string', Rule::in(['female', 'male'])],
             'clinicId' => ['sometimes', 'nullable', 'string', Rule::exists('clinics', 'id')],
+            'permanentMedicines' => ['sometimes', 'nullable', 'array'],
+            'permanentMedicines.*.id' => ['exists:medicines,id'],
+            'permanentMedicines.*.notes' => ['nullable', 'string'],
+            'permanentIlls' => ['sometimes', 'nullable', 'array'],
+            'permanentIlls.*.id' => ['exists:ills,id'],
+            'permanentIlls.*.notes' => ['nullable', 'string'],
         ];
 
         if ($this->isMethod('POST')) {

@@ -7,6 +7,7 @@ use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Actions\PatientsOrder;
+use App\DTOs\PatientDTO;
 use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
 use App\Services\RecordQueryService;
@@ -21,6 +22,7 @@ use App\Http\Requests\PatientRecordsRequest;
 use App\Http\Requests\PatientReservationRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Services\ReservationQueryService;
+use App\Services\PatientService;
 
 /**
  * @OA\Tag(
@@ -31,10 +33,12 @@ use App\Services\ReservationQueryService;
 final class PatientController extends Controller
 {
     protected MediaService $mediaService;
+    protected PatientService $patientService;
 
     public function __construct()
     {
         $this->mediaService = new MediaService;
+        $this->patientService = new PatientService;
     }
 
     /**
@@ -183,9 +187,11 @@ final class PatientController extends Controller
      */
     public function store(PatientRequest $request): PatientResource
     {
-        $patient = Patient::query()->create($request->validated());
+        $patient = $this->patientService->createPatient(PatientDTO::fromArray($request->validated()));
 
-        return PatientResource::make($patient->load('media'));
+        return PatientResource::make(
+            $patient->load(['media', 'permanentMedicines', 'permanentIlls'])
+        );
     }
 
     /**
@@ -232,7 +238,9 @@ final class PatientController extends Controller
      */
     public function show(Patient $patient): PatientResource
     {
-        return PatientResource::make($patient->load(['permanentIlls', 'permanentMedicines']));
+        return PatientResource::make(
+            $patient->load(['media', 'permanentMedicines', 'permanentIlls'])
+        );
     }
 
     /**
@@ -537,9 +545,11 @@ final class PatientController extends Controller
      */
     public function update(PatientRequest $request, Patient $patient): PatientResource
     {
-        $patient->update($request->validated());
+        $patient = $this->patientService->updatePatient($patient, PatientDTO::fromArray($request->validated()));
 
-        return PatientResource::make($patient);
+        return PatientResource::make(
+            $patient->load(['media', 'permanentMedicines', 'permanentIlls'])
+        );
     }
 
     /**
@@ -570,6 +580,7 @@ final class PatientController extends Controller
      */
     public function destroy(Patient $patient): Response
     {
+        $patient->clearMediaCollection();
         $patient->delete();
 
         return response()->noContent();
