@@ -86,6 +86,28 @@ use Illuminate\Validation\Rule;
  *         type="string",
  *         nullable=true,
  *         description="The ID of the clinic the patient belongs to"
+ *     ),
+ *     @OA\Property(
+ *         property="permanentMedicines",
+ *         type="array",
+ *         nullable=true,
+ *         description="Array of permanent medicines for the patient",
+ *         @OA\Items(
+ *             type="object",
+ *             @OA\Property(property="id", type="string", description="Medicine ID"),
+ *             @OA\Property(property="notes", type="string", nullable=true, description="Notes about the medicine")
+ *         )
+ *     ),
+ *     @OA\Property(
+ *         property="permanentIlls",
+ *         type="array",
+ *         nullable=true,
+ *         description="Array of permanent illnesses for the patient",
+ *         @OA\Items(
+ *             type="object",
+ *             @OA\Property(property="id", type="string", description="Illness ID"),
+ *             @OA\Property(property="notes", type="string", nullable=true, description="Notes about the illness")
+ *         )
  *     )
  * )
  */
