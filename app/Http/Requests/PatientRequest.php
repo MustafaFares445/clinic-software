@@ -152,6 +152,7 @@ final class PatientRequest extends FormRequest
         if ($this->isMethod('POST')) {
             $rules['firstName'] = ['required', 'string'];
             $rules['lastName'] = ['required', 'string'];
+            $rules['nationalNumber'] = ['required', 'string'];
         }
 
         return $rules;

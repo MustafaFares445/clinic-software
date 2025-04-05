@@ -23,6 +23,7 @@ class MedicineController extends Controller
      *     description="Returns list of all medicines",
      *     operationId="getMedicinesList",
      *     tags={"Medicines"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -47,6 +48,7 @@ class MedicineController extends Controller
      *     description="Creates a new medicine with the provided data",
      *     operationId="storeMedicine",
      *     tags={"Medicines"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/MedicineRequest")

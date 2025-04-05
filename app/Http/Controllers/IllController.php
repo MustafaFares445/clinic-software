@@ -23,6 +23,7 @@ class IllController extends Controller
      *     path="/api/ills",
      *     summary="Get list of ills",
      *     tags={"Ills"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -45,6 +46,7 @@ class IllController extends Controller
      *     path="/api/ills",
      *     summary="Create a new ill",
      *     tags={"Ills"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/IllRequest")
