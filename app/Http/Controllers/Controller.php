@@ -20,5 +20,5 @@ use OpenApi\Annotations as OA;
  */
 abstract class Controller
 {
-    use HandlesMedia;
+   use HandlesMedia;
 }

@@ -37,8 +37,8 @@ final class PatientController extends Controller
 
     public function __construct()
     {
-        $this->mediaService = new MediaService;
-        $this->patientService = new PatientService;
+        $this->mediaService = new MediaService();
+        $this->patientService = new PatientService();
     }
 
     /**
@@ -317,7 +317,7 @@ final class PatientController extends Controller
         $records = RecordQueryService::make()
             ->filterByPatient($patient->id)
             ->filterByDateRange($request->validated('startDate'), $request->validated('endDate'))
-            ->filterBySearchTerm($request->input('search'))
+            ->filterBySearchTerm($request->validated('search'))
             ->withRelations([
                 'media', 'ills', 'medicines', 'doctors',
                 'reservation' => fn($query) => $query->select(['id'  , 'created_at'])
@@ -428,9 +428,9 @@ final class PatientController extends Controller
         $reservations = ReservationQueryService::make()
             ->filterByPatient($patient->id)
             ->filterByType($request->validated('type'))
-            ->filterByDateRange($request->validated('startDate') , $request->input('endDate'))
+            ->filterByDateRange($request->validated('startDate') , $request->validated('endDate'))
             ->filterByDoctors($request->validated('doctorsIds'))
-            ->filterByPatientName($request->input('search'))
+            ->filterByPatientName($request->validated('search'))
             ->withRelations(['media', 'doctor'])
             ->sortBy($request->validated('sortBy' , 'start'), $request->validated('sortOrder' , 'desc'))
             ->getQuery()

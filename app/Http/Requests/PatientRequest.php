@@ -132,10 +132,9 @@ final class PatientRequest extends FormRequest
             'firstName' => ['sometimes', 'string'],
             'lastName' => ['sometimes', 'string'],
             'phone' => ['sometimes', 'nullable', 'string'],
-            'age' => ['sometimes', 'nullable', 'numeric'],
             'fatherName' => ['sometimes', 'nullable', 'string'],
             'motherName' => ['sometimes', 'nullable', 'string'],
-            'nationalNumber' => ['sometimes', 'nullable', 'string'],
+            'nationalNumber' => ['sometimes', 'nullable', 'string' , Rule::unique('patients' , 'nationalNumber')],
             'address' => ['sometimes', 'nullable', 'string'],
             'notes' => ['sometimes', 'nullable', 'string'],
             'birth' => ['sometimes', 'nullable', 'string'],
@@ -147,21 +146,15 @@ final class PatientRequest extends FormRequest
             'permanentIlls' => ['sometimes', 'nullable', 'array'],
             'permanentIlls.*.id' => ['exists:ills,id'],
             'permanentIlls.*.notes' => ['nullable', 'string'],
+            'profileImage' => ['sometimes' , 'image' , 'mimes:png,jpg,webp']
         ];
 
         if ($this->isMethod('POST')) {
             $rules['firstName'] = ['required', 'string'];
             $rules['lastName'] = ['required', 'string'];
-            $rules['nationalNumber'] = ['required', 'string'];
+            $rules['nationalNumber'] = ['required', 'string' , Rule::unique('patients' , 'nationalNumber')];
         }
 
         return $rules;
-    }
-
-    public function validated($key = null, $default = null)
-    {
-        return array_merge(parent::validated($key, $default), [
-            'clinic_id' => $this->input('clinicId') ?? Auth::user()->clinic_id,
-        ]);
     }
 }

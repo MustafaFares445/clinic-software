@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,12 +16,11 @@ return new class extends Migration
             $table->string('firstName');
             $table->string('lastName');
             $table->string('phone')->nullable();
-            $table->unsignedSmallInteger('age')->nullable();
             $table->string('fatherName')->nullable();
             $table->string('motherName')->nullable();
-            $table->string('nationalNumber')->nullable();
+            $table->string('nationalNumber')->unique();
             $table->string('address')->nullable();
-            $table->string('birth')->nullable();
+            $table->date('birth')->nullable();
             $table->enum('gender', ['male', 'female'])->index()->nullable();
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->longText('notes')->nullable();

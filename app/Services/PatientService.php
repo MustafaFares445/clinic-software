@@ -2,16 +2,18 @@
 
 namespace App\Services;
 
-use App\DTOs\PatientCreateDTO;
 use App\DTOs\PatientDTO;
-use App\DTOs\PatientUpdateDTO;
 use App\Models\Patient;
+use App\Traits\HandlesMedia;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Service class for handling patient-related operations
  */
 class PatientService
 {
+    use HandlesMedia;
+
     /**
      * Create a new patient with associated permanent medicines and ills
      *
@@ -20,12 +22,17 @@ class PatientService
      */
     public function createPatient(PatientDTO $dto): Patient
     {
-        $patient = Patient::query()->create($dto->toArray());
+        return DB::transaction(function() use ($dto){
+            $patient = Patient::query()->create($dto->toArray());
 
-        $this->syncPermanentMedicines($patient, $dto->permanentMedicines);
-        $this->syncPermanentIlls($patient, $dto->permanentIlls);
+            $this->syncPermanentMedicines($patient, $dto->permanentMedicines);
+            $this->syncPermanentIlls($patient, $dto->permanentIlls);
 
-        return $patient;
+            if($dto->profileImage)
+                $this->handleMediaUpload($dto->profileImage , $patient , 'profiles');
+
+            return $patient;
+        });
     }
 
     /**
@@ -37,19 +44,24 @@ class PatientService
      */
     public function updatePatient(Patient $patient, PatientDTO $dto): Patient
     {
-        $patient->update($dto->toArray());
+        return DB::transaction(function () use ($patient , $dto){
+            $patient->update($dto->toArray());
 
-        $this->syncPermanentMedicines($patient, $dto->permanentMedicines);
-        $this->syncPermanentIlls($patient, $dto->permanentIlls);
+            $this->syncPermanentMedicines($patient, $dto->permanentMedicines);
+            $this->syncPermanentIlls($patient, $dto->permanentIlls);
 
-        return $patient;
+            if($dto->profileImage)
+                $this->handleMediaUpdate($dto->profileImage , $patient , 'profiles');
+
+            return $patient;
+        });
     }
 
     /**
      * Sync permanent medicines for a patient
      *
      * @param Patient $patient The patient to sync medicines for
-     * @param array $data Input data containing optional permanentMedicines array
+     * @param array $medicines Input data containing optional permanentMedicines array
      */
     protected function syncPermanentMedicines(Patient $patient, ?array $medicines): void
     {
@@ -61,6 +73,12 @@ class PatientService
         }
     }
 
+      /**
+     * Sync permanent medicines for a patient
+     *
+     * @param Patient $patient The patient to sync medicines for
+     * @param array $ills Input data containing optional permanentMedicines array
+     */
     protected function syncPermanentIlls(Patient $patient, ?array $ills): void
     {
         if ($ills) {

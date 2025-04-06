@@ -24,7 +24,6 @@ final class Patient extends Model implements HasMedia
         'firstName',
         'lastName',
         'phone',
-        'age',
         'fatherName',
         'motherName',
         'nationalNumber',
