@@ -699,7 +699,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -747,7 +752,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/transactions/medical": {
@@ -954,7 +964,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -984,7 +999,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/overview/patients/gender/count": {
@@ -3354,6 +3374,44 @@
                     "clinicId": {
                         "description": "The ID of the clinic the patient belongs to",
                         "type": "string",
+                        "nullable": true
+                    },
+                    "permanentMedicines": {
+                        "description": "Array of permanent medicines for the patient",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "description": "Medicine ID",
+                                    "type": "string"
+                                },
+                                "notes": {
+                                    "description": "Notes about the medicine",
+                                    "type": "string",
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "nullable": true
+                    },
+                    "permanentIlls": {
+                        "description": "Array of permanent illnesses for the patient",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "description": "Illness ID",
+                                    "type": "string"
+                                },
+                                "notes": {
+                                    "description": "Notes about the illness",
+                                    "type": "string",
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        },
                         "nullable": true
                     }
                 },
