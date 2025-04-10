@@ -255,6 +255,7 @@ final class FileManagerController extends Controller
     {
         $filePath = 'application/HakimInstaller.exe';
 
+        dd(Storage::disk('public')->path($filePath));
         if (!Storage::disk('public')->exists($filePath)) {
             abort(404, 'File not found');
         }
