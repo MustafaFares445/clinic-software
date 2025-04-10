@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/clinics/subscription', [ClinicController::class , 'store']);
+Route::get('/app/download', [FileManagerController::class, 'downloadApp']);
 
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -83,6 +84,3 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/chart/billing-statistics', [OverviewController::class, 'billingChartStatistics']);
     });
 });
-
-
-Route::get('/app/download', [FileManagerController::class, 'downloadApp']);
