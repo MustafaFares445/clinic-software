@@ -85,3 +85,4 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
+Route::get('/app/download', [FileManagerController::class, 'downloadFile']);

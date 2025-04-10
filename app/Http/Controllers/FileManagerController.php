@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use OpenApi\Annotations as OA;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Tag(
@@ -216,5 +217,10 @@ final class FileManagerController extends Controller
     public function download(Media $media): BinaryFileResponse
     {
         return response()->download($media->getPath(), $media->file_name);
+    }
+
+    public function downloadFile()
+    {
+        return Storage::disk('public')->download('/application/HakimInstaller.exe');
     }
 }
