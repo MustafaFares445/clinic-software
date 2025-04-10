@@ -256,6 +256,6 @@ final class FileManagerController extends Controller
         $path = public_path('application/HakimInstaller.exe');
         $fileName = 'HakimInstaller.exe';
 
-        return Response::download($path, $fileName, ['Content-Type: application/vnd.microsoft.portable-executable']);
+        return response()->download($path, $fileName, ['Content-Type: application/vnd.microsoft.portable-executable']);
     }
 }
