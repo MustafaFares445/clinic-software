@@ -219,7 +219,7 @@ final class FileManagerController extends Controller
         return response()->download($media->getPath(), $media->file_name);
     }
 
-    public function downloadFile()
+    public function downloadApp()
     {
         return Storage::disk('public')->download('/application/HakimInstaller.exe');
     }
