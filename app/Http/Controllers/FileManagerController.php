@@ -219,8 +219,46 @@ final class FileManagerController extends Controller
         return response()->download($media->getPath(), $media->file_name);
     }
 
-    public function downloadApp()
+    /**
+     * @OA\Get(
+     *     path="/api/app/download",
+     *     summary="Download application installer",
+     *     tags={"File Manager"},
+     *     security={{ "bearerAuth": {} }},
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Application installer download",
+     *
+     *         @OA\Header(
+     *             header="Content-Type",
+     *             description="File MIME type",
+     *
+     *             @OA\Schema(type="string")
+     *         ),
+     *
+     *         @OA\Header(
+     *             header="Content-Disposition",
+     *             description="File attachment information",
+     *
+     *             @OA\Schema(type="string")
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=404,
+     *         description="File not found"
+     *     )
+     * )
+     */
+    public function downloadApp(): BinaryFileResponse
     {
-        return Storage::disk('public')->download('/application/HakimInstaller.exe');
+        $filePath = 'application/HakimInstaller.exe';
+
+        if (!Storage::disk('public')->exists($filePath)) {
+            abort(404, 'File not found');
+        }
+
+        return Storage::disk('public')->download($filePath , 'HakimInstaller.exe');
     }
 }
