@@ -188,7 +188,7 @@ final class ClinicSubscriptionRequest extends FormRequest
             'numberOfDoctors' => ['nullable' , 'integer' , 'min:0'],
             'numberOfSecretariat' => ['nullable' , 'integer' , 'min:0'],
 
-            'workingDays' => ['required', 'array'],
+            'workingDays' => ['nullable', 'array'],
             'workingDays.*.day' => ['required', 'string', Rule::in(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'])],
             'workingDays.*.start' => ['required', 'date_format:H:i'],
             'workingDays.*.end' => ['required', 'date_format:H:i', 'after:working_days.*.start'],
