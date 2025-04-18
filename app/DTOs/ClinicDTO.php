@@ -1,7 +1,7 @@
 <?php
-namespace App\DTO;
+namespace App\DTOs;
 
-class ClinicDTO
+class ClinicDTO implements DtoInterface
 {
     public function __construct(
         public string $name,

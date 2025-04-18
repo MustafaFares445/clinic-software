@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use App\Trait\HasThumbnail;
+use App\Traits\HasThumbnail;
 use Database\Factories\PatientFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,28 +34,23 @@ final class Patient extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        if (Auth::check() && ! Auth::user()->hasRole('super admin') && ! request()->has('clinicId')) {
-            self::query()->where('clinic_id', Auth::user()->clinic_id);
+        /** @var User $user */
+        $user = Auth::user();
+
+        if (Auth::check() && !$user->hasRole('super Admin')) {
+            self::query()->whereRelation('clinics', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
         }
 
-        if (request()->has('clinicId')) {
-            self::query()->where('clinic_id', request()->input('clinicId'));
-        }
-
-        if (request()->has('clinicId') && Auth::user()->hasRole('doctor')) {
+        if ($user->hasAllRoles('doctor')) {
             self::query()
-                ->whereHas('records', function (Builder $query) {
-                    $query->where('doctor_id', Auth::id());
-                })
-                ->orWhereHas('reservations', function (Builder $query) {
-                    $query->where('doctor_id', Auth::id());
-                });
+                ->whereRelation('records.doctors', 'doctor_id', Auth::id())
+                ->orWhereRelation('reservations', 'doctor_id',  Auth::id());
         }
     }
 
-    public function clinic(): BelongsTo
+    public function clinic(): BelongsToMany
     {
-        return $this->belongsTo(Clinic::class);
+        return $this->belongsToMany(Clinic::class);
     }
 
     public function records(): HasMany

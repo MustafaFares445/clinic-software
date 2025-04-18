@@ -2,11 +2,11 @@
 
 namespace App\Actions;
 
-use App\DTO\UserDTO;
-use App\Models\User;
-use App\DTO\ClinicDTO;
+use App\DTOs\ClinicDTO;
+use App\DTOs\ClinicWorkingDayDTO;
+use App\DTOs\UserDTO;
 use App\Models\Clinic;
-use App\DTO\ClinicWorkingDayDTO;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

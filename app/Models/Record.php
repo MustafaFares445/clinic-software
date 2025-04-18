@@ -62,16 +62,15 @@ final class Record extends Model implements HasMedia
      */
     protected static function booted(): void
     {
-        if (Auth::check() && ! Auth::user()->hasRole('super admin') && ! request()->has('clinicId')) {
-            self::query()->where('clinic_id', Auth::user()->clinic_id);
-        }
+         /** @var User $user */
+         $user = Auth::user();
 
-        if (request()->has('clinicId')) {
-            self::query()->where('clinic_id', request()->input('clinicId'));
-        }
+         if (Auth::check() && !$user->hasRole('super Admin')) {
+             self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
+         }
 
-        if (Auth::check() && Auth::user()->hasRole('doctor')) {
-            self::query()->whereRelation('doctors', 'doctor_id', '=', Auth::id());
+        if (Auth::check() && $user->hasAllRoles('doctor')) {
+            self::query()->whereRelation('doctors', 'doctor_id',  Auth::id());
         }
     }
 

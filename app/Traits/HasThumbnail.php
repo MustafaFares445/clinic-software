@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Trait;
+namespace App\Traits;
 
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;

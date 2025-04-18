@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->date('birth')->nullable();
             $table->enum('gender', ['male', 'female'])->index()->nullable();
-            $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->longText('notes')->nullable();
             $table->timestamps();
             $table->softDeletes();

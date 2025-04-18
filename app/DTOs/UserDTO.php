@@ -1,8 +1,8 @@
 <?php
 
-namespace App\DTO;
+namespace App\DTOs;
 
-class UserDTO
+class UserDTO implements DtoInterface
 {
     public function __construct(
         public string $firstName,

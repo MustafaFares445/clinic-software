@@ -2,19 +2,16 @@
 
 namespace App\Models;
 
-use Ramsey\Uuid\Uuid;
-use App\Models\Clinic;
-use App\Trait\HasThumbnail;
+use App\Traits\HasThumbnail;
 use Carbon\CarbonImmutable;
-use App\Models\Specification;
-use Spatie\MediaLibrary\HasMedia;
-use App\Models\MedicalTransactions;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Ramsey\Uuid\Uuid;
+use Spatie\MediaLibrary\HasMedia;
 
 /**
  * Class Medicine

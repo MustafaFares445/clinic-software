@@ -2,25 +2,20 @@
 
 namespace App\Models;
 
-use App\Models\Plan;
-use App\Models\User;
-use Ramsey\Uuid\Uuid;
-use App\Models\Coupon;
 use App\Enums\ClinicTypes;
-use App\Trait\HasThumbnail;
+use App\Traits\HasThumbnail;
 use Carbon\CarbonImmutable;
-use App\Models\Specification;
-use App\Models\ClinicWorkingDay;
-use Spatie\MediaLibrary\HasMedia;
 use Database\Factories\ClinicFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Ramsey\Uuid\Uuid;
+use Spatie\MediaLibrary\HasMedia;
 
 /**
  * Clinic model representing a medical clinic

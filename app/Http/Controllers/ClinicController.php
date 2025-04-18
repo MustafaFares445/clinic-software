@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\DTO\UserDTO;
-use App\Models\User;
-use App\DTO\ClinicDTO;
-use Illuminate\Http\Response;
-use App\DTO\ClinicWorkingDayDTO;
-use Illuminate\Http\JsonResponse;
-use App\Http\Resources\UserResource;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\ClinicResource;
 use App\Actions\CreateClinicSubscription;
-use App\Http\Requests\UpdateClinicRequest;
+use App\DTOs\ClinicDTO;
+use App\DTOs\ClinicWorkingDayDTO;
+use App\DTOs\UserDTO;
 use App\Http\Requests\ClinicSubscriptionRequest;
+use App\Http\Requests\UpdateClinicRequest;
+use App\Http\Resources\ClinicResource;
+use App\Http\Resources\UserResource;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 
 /**
@@ -133,7 +133,7 @@ final class ClinicController extends Controller
         $clinic = Auth::user()->clinic;
 
         User::query()->where('clinic_id', $clinic->id)->delete();
-        
+
         $clinic->delete();
 
         return response()->noContent();

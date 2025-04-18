@@ -77,10 +77,8 @@ final class BillingTransaction extends Model implements HasMedia
         /** @var User|null $user */
         $user = Auth::user();
 
-        if ($user && ! $user->hasRole('super admin')) {
-            static::addGlobalScope('clinic', function ($builder) use ($user) {
-                $builder->where('clinic_id', $user->clinic_id);
-            });
+        if (Auth::check() && !$user->hasRole('super Admin')) {
+            self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
         }
     }
 

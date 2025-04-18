@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Trait\HasThumbnail;
+use App\Traits\HasThumbnail;
 use Database\Factories\PlanFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

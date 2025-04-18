@@ -72,17 +72,13 @@ final class Reservation extends Model implements HasMedia
         /** @var User|null $user */
         $user = Auth::user();
 
-        if (Auth::check() && ! $user->hasRole('super admin') && ! request()->has('clinicId')) {
-            self::query()->where('clinic_id', $user->clinic_id);
+        if (Auth::check() && !$user->hasRole('super Admin')) {
+            self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
         }
 
-        if (request()->has('clinicId')) {
-            self::query()->where('clinic_id', request()->input('clinicId'));
-        }
-
-        if (Auth::check() && $user->hasRole('doctor')) {
-            self::query()->where('doctor_id', $user->id);
-        }
+       if (Auth::check() && $user->hasAllRoles('doctor')) {
+           self::query()->whereRelation('doctors', 'doctor_id',  Auth::id());
+       }
     }
 
     /**

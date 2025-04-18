@@ -1,7 +1,7 @@
 <?php
-namespace App\DTO;
+namespace App\DTOs;
 
-class ClinicWorkingDayDTO
+class ClinicWorkingDayDTO implements DtoInterface
 {
     public function __construct(
         public string $day,
