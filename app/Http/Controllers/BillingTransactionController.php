@@ -6,7 +6,7 @@ use App\Http\Resources\BillingTransactionResource;
 use App\Models\BillingTransaction;
 use App\Http\Requests\CreateBillingTransactionRequest;
 use App\Http\Requests\UpdateBillingTransactionRequest;
-use Illuminate\Http\Request;
+use App\Http\Requests\IndexBillingTransactionRequest;
 
 /**
  * @OA\Tag(
@@ -46,12 +46,13 @@ class BillingTransactionController extends Controller
      *     )
      * )
      */
-    public function index(Request $request)
+    public function index(IndexBillingTransactionRequest $request)
     {
         return BillingTransactionResource::collection(
             BillingTransaction::with([
                 'user' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
-                'model'
+                'patient' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
+                'reservation' => fn($query) => $query->select(['id' , 'start' , 'end'])
             ])->when(
                 $request->has('type'),
                 fn($query) => $query->where('type', $request->input('type'))
@@ -81,9 +82,13 @@ class BillingTransactionController extends Controller
      */
     public function store(CreateBillingTransactionRequest $request)
     {
-        return BillingTransactionResource::make(
-            BillingTransaction::create($request->validated())
-        );
+        $billing = BillingTransaction::query()->create($request->validated());
+
+        return BillingTransactionResource::make($billing->load([
+            'user' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
+            'patient' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
+            'reservation' => fn($query) => $query->select(['id' , 'start' , 'end'])
+        ]));
     }
 
     /**
@@ -112,7 +117,11 @@ class BillingTransactionController extends Controller
      */
     public function show(BillingTransaction $billing)
     {
-        return BillingTransactionResource::make($billing->load('user'));
+        return BillingTransactionResource::make($billing->load([
+            'user' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
+            'patient' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
+            'reservation' => fn($query) => $query->select(['id' , 'start' , 'end'])
+        ]));
     }
 
     /**
@@ -147,7 +156,11 @@ class BillingTransactionController extends Controller
     {
         $billing->update($request->validated());
 
-        return BillingTransactionResource::make($billing->refresh());
+        return BillingTransactionResource::make($billing->refresh()->load([
+            'user' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
+            'patient' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
+            'reservation' => fn($query) => $query->select(['id' , 'start' , 'end'])
+        ]));
     }
 
     /**

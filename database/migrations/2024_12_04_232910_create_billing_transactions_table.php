@@ -15,8 +15,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('clinic_id')->constrained('clinics');
-            $table->uuidMorphs('model');
-            $table->enum('type', ['in', 'out'])->index();
+            $table->foreignUuid('patient_id')->constrained('patients');
+            $table->foreignUuid('reservation_id')->constrained('reservations')->nullable();
+            $table->enum('type', ['recorded ', 'paid'])->index();
             $table->unsignedBigInteger('amount');
             $table->text('description')->nullable();
             $table->timestamps();
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('billing_transactions');
     }
 };

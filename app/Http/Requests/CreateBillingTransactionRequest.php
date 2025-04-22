@@ -2,17 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Reservation;
 use Illuminate\Validation\Rule;
-use App\Models\MedicalTransactions;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
+ * Class CreateBillingTransactionRequest
+ *
+ * @package App\Http\Requests
+ *
  * @OA\Schema(
  *     schema="CreateBillingTransactionRequest",
- *     required={"type", "amount"},
+ *     required={"type", "amount", "patientId"},
  *     @OA\Property(
  *         property="clinicId",
  *         type="string",
@@ -21,7 +22,8 @@ use Illuminate\Foundation\Http\FormRequest;
  *     @OA\Property(
  *         property="type",
  *         type="string",
- *         description="Type of the transaction (e.g., in, out)"
+ *         enum={"recorded", "paid"},
+ *         description="Type of the transaction (e.g., recorded, paid)"
  *     ),
  *     @OA\Property(
  *         property="amount",
@@ -46,63 +48,63 @@ use Illuminate\Foundation\Http\FormRequest;
  *         enum={"medicalTransaction", "reservation"},
  *         description="Type of the related model"
  *     ),
+ *     @OA\Property(
+ *         property="patientId",
+ *         type="string",
+ *         description="UUID of the patient associated with the transaction"
+ *     ),
+ *     @OA\Property(
+ *         property="reservationId",
+ *         type="string",
+ *         description="UUID of the reservation associated with the transaction",
+ *         nullable=true
+ *     ),
  * )
  */
 class CreateBillingTransactionRequest extends FormRequest
 {
-    private $types = [
-        'medicalTransaction' => MedicalTransactions::class,
-        'reservation' => Reservation::class
-    ];
-
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
     public function authorize()
     {
         return true;
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
     public function rules()
     {
         return [
             'clinicId' => ['nullable', 'string' , Rule::exists('clinics' , 'id')],
-            'type' => ['required', 'string', 'in:out,in'],
+            'type' => ['required', 'string', Rule::in(['recorded' , 'paid'])],
             'amount' => ['required', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
-            'modelId' => ['required', 'string'],
-            'modelType' => ['required', 'string', Rule::in(['reservation' , 'medicalTransaction'])],
+            'patientId' => ['required', 'string', Rule::exists('patients' , 'id')],
+            'reservationId' => ['nullable', 'string', Rule::exists('reservations' , 'id')],
+
         ];
     }
 
+    /**
+     * Get the validated data from the request.
+     *
+     * @param string|null $key
+     * @param mixed $default
+     * @return array
+     */
     public function validated($key = null, $default = null)
     {
         return array_merge(parent::validated($key, $default), [
             'clinic_id' => $this->input('clinicId') ?? Auth::user()->clinic_id,
             'user_id' => Auth::id(),
-            'model_id' => $this->safe()->modelId,
-            'model_type' => $this->types[$this->safe()->modelType],
+            'patient_id' => $this->safe()->patientId,
+            'reservation_id' => $this->safe()->reservationId,
         ]);
-    }
-
-
-    public function after() :array
-    {
-        return [
-            function (Validator $validator){
-                if($validator->errors()->any()) return;
-
-                if($this->types[$this->safe()->modelType] === Reservation::class && Reservation::query()->where('id' , $this->safe()->modelId)->doesntExist()){
-                    $validator->errors()->add(
-                        'modelId',
-                        'This reservation doe not exists in our records'
-                    );
-                }
-
-                if($this->types[$this->safe()->modelType] === MedicalTransactions::class && MedicalTransactions::query()->where('id' , $this->safe()->modelId)->doesntExist()){
-                    $validator->errors()->add(
-                        'modelId',
-                        'This medical transaction doe not exists in our records'
-                    );
-                }
-            }
-        ];
     }
 }

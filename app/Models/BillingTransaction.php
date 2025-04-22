@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Database\Factories\BillingTransactionFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
@@ -29,11 +28,14 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string $user_id
  * @property string $model_id
  * @property string $model_type Possible values: MedicalTransaction::class, Reservation::class
+ * @property Uuid $patient_id
+ * @property Uuid|null $reservation_id
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read Clinic $clinic
  * @property-read User $user
- * @property-read MedicalTransaction|Reservation $model
+ * @property-read Patient $patient
+ * @property-read Reservation|null $reservation
  * @property-read MediaCollection|Media[] $media
  */
 final class BillingTransaction extends Model implements HasMedia
@@ -52,8 +54,8 @@ final class BillingTransaction extends Model implements HasMedia
         'amount',
         'description',
         'user_id',
-        'model_id',
-        'model_type',
+        'patient_id',
+        'reservation_id',
     ];
 
     /**
@@ -85,7 +87,7 @@ final class BillingTransaction extends Model implements HasMedia
     /**
      * Get the clinic that owns the transaction.
      *
-     * @return BelongsTo<Clinic, self>
+     * @return null|BelongsTo<Clinic, self>
      */
     public function clinic(): BelongsTo
     {
@@ -103,12 +105,22 @@ final class BillingTransaction extends Model implements HasMedia
     }
 
     /**
-     * Get the associated model.
+     * Get the patient associated with the transaction.
      *
-     * @return MorphTo<Model, self>
+     * @return BelongsTo<Patient, self>
      */
-    public function model(): MorphTo
+    public function patient(): BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(Patient::class);
+    }
+
+    /**
+     * Get the reservation associated with the transaction.
+     *
+     * @return null|BelongsTo<Reservation, self>
+     */
+    public function reservation(): BelongsTo
+    {
+        return $this->belongsTo(Reservation::class);
     }
 }

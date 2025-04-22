@@ -16,7 +16,8 @@ use Illuminate\Validation\Rule;
  *     @OA\Property(
  *         property="type",
  *         type="string",
- *         description="Type of the transaction (e.g., in, out)"
+ *         enum={"recorded", "paid"},
+ *         description="Type of the transaction (e.g., recorded, paid)"
  *     ),
  *     @OA\Property(
  *         property="amount",
@@ -51,7 +52,7 @@ class UpdateBillingTransactionRequest extends FormRequest
     {
         return [
             'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
-            'type' => ['sometimes', 'string', 'in:out,in'],
+            'type' => ['sometimes', 'string', Rule::in(['recorded' , 'paid'])],
             'amount' => ['sometimes', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
         ];
@@ -60,6 +61,8 @@ class UpdateBillingTransactionRequest extends FormRequest
     /**
      * Get only the validated data that was actually provided in the request
      *
+     * @param string|null $key
+     * @param mixed $default
      * @return array
      */
     public function validated($key = null, $default = null): array
