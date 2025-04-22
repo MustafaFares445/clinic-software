@@ -41,7 +41,7 @@ final class Patient extends Model implements HasMedia
             self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
         }
 
-        if ($user->hasAllRoles('doctor')) {
+        if (Auth::check() && $user->hasAllRoles('doctor')) {
             self::query()
                 ->whereRelation('records.doctors', 'doctor_id', Auth::id())
                 ->orWhereRelation('reservations', 'doctor_id',  Auth::id());
