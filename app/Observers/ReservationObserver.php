@@ -12,6 +12,6 @@ class ReservationObserver
      */
     public function creating(Reservation $reservation): void
     {
-         $reservation->clinic_id = request()->input('clinicId') ?? Auth::user()->clinic_id;
+        if(Auth::check()) $reservation->clinic_id = request()->input('clinicId') ?? Auth::user()->clinic_id;
     }
 }
