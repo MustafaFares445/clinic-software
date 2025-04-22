@@ -123,6 +123,16 @@ final class Clinic extends Model implements HasMedia
     }
 
     /**
+     * Get all records associated with the clinic
+     *
+     * @return HasMany<Patient, self>
+     */
+    public function patients(): HasMany
+    {
+        return $this->hasMany(Patient::class);
+    }
+
+    /**
      * Get the clinic's working days
      *
      * @return HasMany<ClinicWorkingDay, self>

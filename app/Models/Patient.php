@@ -38,7 +38,7 @@ final class Patient extends Model implements HasMedia
         $user = Auth::user();
 
         if (Auth::check() && !$user->hasRole('super Admin')) {
-            self::query()->whereRelation('clinics', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
+            self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
         }
 
         if ($user->hasAllRoles('doctor')) {
@@ -48,9 +48,9 @@ final class Patient extends Model implements HasMedia
         }
     }
 
-    public function clinic(): BelongsToMany
+    public function clinic(): BelongsTo
     {
-        return $this->belongsToMany(Clinic::class);
+        return $this->belongsTo(Clinic::class);
     }
 
     public function records(): HasMany

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('number_of_doctors')->default(1);
             $table->unsignedSmallInteger('number_of_secretariat')->default(1);
             $table->enum('type', array_column(ClinicTypes::cases(), 'value'))->default(ClinicTypes::CLINIC->value);
+            $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->timestamps();
             $table->softDeletes();
         });
