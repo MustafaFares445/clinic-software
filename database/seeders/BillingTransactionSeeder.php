@@ -7,6 +7,7 @@ use App\Models\Clinic;
 use App\Models\Equipment;
 use App\Models\MedicalTransactions;
 use App\Models\Medicine;
+use App\Models\Patient;
 use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Database\Seeder;
