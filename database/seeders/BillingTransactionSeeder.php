@@ -35,7 +35,7 @@ class BillingTransactionSeeder extends Seeder
             BillingTransaction::query()->create([
                 'user_id' => User::query()->inRandomOrder()->first()->id,
                 'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-               'patient_id' => Patient::query()->inRandomOrder()->first()->id,
+                'patient_id' => Patient::query()->inRandomOrder()->first()->id,
                 'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
                 'type' => 'recorded',
                 'amount' => rand(1 , 100),
