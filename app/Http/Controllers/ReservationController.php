@@ -64,10 +64,6 @@ final class ReservationController extends Controller
      */
     public function index(ReservationIndexRequest $request): AnonymousResourceCollection|JsonResponse
     {
-        // Determine the clinic ID to use
-        $clinicId = $request->validated('clinicId') ?? Auth::user()->clinic_id;
-        $clinic = Clinic::query()->select(['id'])->find($clinicId);
-
         // Update reservation statuses from 'income' to 'check' if they have ended
         Reservation::query()
             ->where('status', ReservationStatuses::INCOME)
