@@ -19,7 +19,7 @@ class BillingTransactionSeeder extends Seeder
      */
     public function run(): void
     {
-        for($i = 0 ; $i <= 10 ; $i++){
+        for($i = 0 ; $i <= 30 ; $i++){
             BillingTransaction::query()->create([
                 'user_id' => User::query()->inRandomOrder()->first()->id,
                 'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
@@ -32,7 +32,7 @@ class BillingTransactionSeeder extends Seeder
         }
 
 
-        for($i = 0 ; $i <= 5 ; $i++){
+        for($i = 0 ; $i <= 15 ; $i++){
             BillingTransaction::query()->create([
                 'user_id' => User::query()->inRandomOrder()->first()->id,
                 'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,

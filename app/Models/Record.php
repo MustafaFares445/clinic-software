@@ -7,8 +7,11 @@ use App\Models\User;
 use App\Models\Clinic;
 use App\Models\Patient;
 use App\Models\Medicine;
+use App\Enums\RecordTypes;
 use App\Models\Reservation;
+use Carbon\CarbonImmutable;
 use Spatie\MediaLibrary\HasMedia;
+use App\Models\Scopes\RecordScope;
 use App\Models\MedicalTransactions;
 use Illuminate\Support\Facades\Auth;
 use Database\Factories\RecordFactory;
@@ -20,8 +23,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Enums\RecordTypes;
-use Carbon\CarbonImmutable;
 // use Laravel\Scout\Searchable;
 
 /**
@@ -62,16 +63,7 @@ final class Record extends Model implements HasMedia
      */
     protected static function booted(): void
     {
-         /** @var User $user */
-         $user = Auth::user();
-
-         if (Auth::check() && !$user->hasRole('super Admin')) {
-             self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
-         }
-
-        if (Auth::check() && $user->hasAllRoles('doctor')) {
-            self::query()->whereRelation('doctors', 'doctor_id',  Auth::id());
-        }
+        static::addGlobalScope(new RecordScope());
     }
 
     /**

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->foreignUuid('patient_id')->constrained('patients');
-            $table->foreignUuid('reservation_id')->constrained('reservations')->nullable();
+            $table->foreignUuid('reservation_id')->nullable()->constrained('reservations');
             $table->enum('type', ['recorded ', 'paid'])->index();
             $table->unsignedBigInteger('amount');
             $table->text('description')->nullable();

@@ -33,7 +33,7 @@ class MedicalTransactionResource extends JsonResource
             'quantity' => $this->quantity,
             'type' => $this->type,
             'description' => $this->description,
-            'created_at' => $this->created_at->toDateTimeString(),
+            'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
             'doctor' => UserResource::make($this->whenLoaded('doctor')),
             'record' => RecordResource::make($this->whenLoaded('record'))

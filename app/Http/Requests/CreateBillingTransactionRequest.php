@@ -38,17 +38,6 @@ use Illuminate\Foundation\Http\FormRequest;
  *         nullable=true
  *     ),
  *     @OA\Property(
- *         property="modelId",
- *         type="string",
- *         description="ID of the related model (medical transaction or reservation)"
- *     ),
- *     @OA\Property(
- *         property="modelType",
- *         type="string",
- *         enum={"medicalTransaction", "reservation"},
- *         description="Type of the related model"
- *     ),
- *     @OA\Property(
  *         property="patientId",
  *         type="string",
  *         description="UUID of the patient associated with the transaction"

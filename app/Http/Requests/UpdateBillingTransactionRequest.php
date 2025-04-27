@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * @OA\Schema(
@@ -51,7 +52,9 @@ class UpdateBillingTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'patientId' => ['nullable', 'string', Rule::exists('patients' , 'id')],
             'clinicId' => ['nullable', 'string', Rule::exists('clinics', 'id')],
+            'reservationId' => ['nullable', 'string', Rule::exists('reservations' , 'id')],
             'type' => ['sometimes', 'string', Rule::in(['recorded' , 'paid'])],
             'amount' => ['sometimes', 'numeric', 'min:0'],
             'description' => ['nullable', 'string'],
@@ -67,9 +70,11 @@ class UpdateBillingTransactionRequest extends FormRequest
      */
     public function validated($key = null, $default = null): array
     {
-        $validated = parent::validated($key, $default);
-
-        // Filter out values that weren't actually in the request
-        return array_filter($validated, fn($value, $key) => $this->has($key), ARRAY_FILTER_USE_BOTH);
+        return array_merge(parent::validated($key, $default), [
+            'clinic_id' => $this->input('clinicId') ?? Auth::user()->clinic_id,
+            'user_id' => Auth::id(),
+            'patient_id' => $this->safe()->patientId,
+            'reservation_id' => $this->safe()->reservationId,
+        ]);
     }
 }

@@ -21,99 +21,105 @@ final class RecordSeeder extends Seeder
      */
     public function run(): void
     {
-        $record = Record::query()->create([
-            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
-            'notes' => 'ملاحظة موجزة',
-            'type' => RecordTypes::APPOINTMENT,
-            'dateTime' => now(),
-        ]);
+        $recordsData = [
+            [
+                'type' => RecordTypes::APPOINTMENT,
+                'notes' => 'ملاحظة موجزة',
+                'ills' => true,
+                'medicines' => true,
+            ],
+            [
+                'type' => RecordTypes::SURGERY,
+                'notes' => 'ملاحظة موجزة',
+                'ills' => true,
+                'medicines' => false,
+            ],
+            [
+                'type' => RecordTypes::INSPECTION,
+                'notes' => 'ملاحظة',
+                'ills' => false,
+                'medicines' => true,
+            ],
+            [
+                'type' => RecordTypes::APPOINTMENT,
+                'notes' => 'زيارة متابعة للحالة',
+                'ills' => false,
+                'medicines' => false,
+            ],
+            [
+                'type' => RecordTypes::SURGERY,
+                'notes' => 'عملية جراحية ناجحة',
+                'ills' => true,
+                'medicines' => true,
+            ],
+            [
+                'type' => RecordTypes::INSPECTION,
+                'notes' => 'فحص روتيني',
+                'ills' => true,
+                'medicines' => false,
+            ],
+            [
+                'type' => RecordTypes::APPOINTMENT,
+                'notes' => 'استشارة طبية',
+                'ills' => true,
+                'medicines' => true,
+            ],
+            [
+                'type' => RecordTypes::SURGERY,
+                'notes' => 'عملية بسيطة',
+                'ills' => false,
+                'medicines' => true,
+            ],
+            [
+                'type' => RecordTypes::INSPECTION,
+                'notes' => 'مراجعة نتائج التحاليل',
+                'ills' => false,
+                'medicines' => false,
+            ],
+        ];
 
-        $record->ills()->attach(Ill::query()->inRandomOrder()->first()->id, [
-            'type' => RecordIllsTypes::DIAGNOSED,
-        ]);
+        foreach ($recordsData as $data) {
+            $record = Record::query()->create([
+                'patient_id' => Patient::query()->inRandomOrder()->first()->id,
+                'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+                'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
+                'notes' => $data['notes'],
+                'type' => $data['type'],
+                'dateTime' => now(),
+            ]);
 
-        $record->ills()->attach(Ill::query()->inRandomOrder()->first()->id, [
-            'type' => RecordIllsTypes::TRANSIENT,
-        ]);
+            if ($data['ills']) {
+                $record->ills()->attach(Ill::query()->inRandomOrder()->first()->id, [
+                    'type' => RecordIllsTypes::DIAGNOSED,
+                ]);
+                $record->ills()->attach(Ill::query()->inRandomOrder()->first()->id, [
+                    'type' => RecordIllsTypes::TRANSIENT,
+                ]);
+            }
 
-        $record->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
-            'type' => RecordMedicinesTypes::DIAGNOSED,
-            'notes' => '200 gm من الدواء ثلاث مرات باليوم لمدة أسبوع',
-        ]);
+            if ($data['medicines']) {
+                $record->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
+                    'type' => RecordMedicinesTypes::DIAGNOSED,
+                    'notes' => '200 gm من الدواء ثلاث مرات باليوم لمدة أسبوع',
+                ]);
+                $record->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
+                    'type' => RecordMedicinesTypes::TRANSIENT,
+                    'notes' => '400 gm من الدواء 5 مرات باليوم لمدة شهر',
+                ]);
+            }
 
-        $record->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
-            'type' => RecordMedicinesTypes::TRANSIENT,
-            'notes' => '400 gm من الدواء 5 مرات باليوم لمدة شهر',
-        ]);
+            $record->doctors()->sync(
+                User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray()
+            );
 
-        $record->doctors()->sync(User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray());
-
-        $record->transactions()->create([
-            'medicine_id' => Medicine::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'type' => 'out',
-            'quantity' => 5,
-            'description' => null,
-            'doctor_id' => User::query()->inRandomOrder()->first()->id,
-        ]);
-
-        $record2 = Record::query()->create([
-            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
-            'notes' => 'ملاحظة موجزة',
-            'type' => RecordTypes::SURGERY,
-            'dateTime' => now(),
-        ]);
-
-        $record2->ills()->attach(Ill::query()->inRandomOrder()->first()->id, [
-            'type' => RecordIllsTypes::DIAGNOSED,
-        ]);
-
-        $record2->ills()->attach(Ill::query()->inRandomOrder()->first()->id, [
-            'type' => RecordIllsTypes::TRANSIENT,
-        ]);
-
-        $record2->doctors()->sync(User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray());
-
-        $record2->transactions()->create([
-            'medicine_id' => Medicine::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'type' => 'out',
-            'quantity' => 5,
-            'description' => null,
-            'doctor_id' => User::query()->inRandomOrder()->first()->id,
-        ]);
-
-        $record3 = Record::query()->create([
-            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
-            'notes' => 'ملاحظة',
-            'type' => RecordTypes::INSPECTION,
-            'dateTime' => now(),
-        ]);
-
-        $record3->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
-            'type' => RecordMedicinesTypes::DIAGNOSED,
-        ]);
-
-        $record3->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
-            'type' => RecordMedicinesTypes::TRANSIENT,
-            'notes' => '400 gm من الدواء 5 مرات باليوم لمدة شهر',
-        ]);
-
-        $record3->doctors()->sync(User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray());
-
-        $record3->transactions()->create([
-            'medicine_id' => Medicine::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-            'type' => 'out',
-            'quantity' => 5,
-            'description' => null,
-            'doctor_id' => User::query()->inRandomOrder()->first()->id,
-        ]);
+            $record->transactions()->create([
+                'medicine_id' => Medicine::query()->inRandomOrder()->first()->id,
+                'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
+                'type' => 'out',
+                'quantity' => 5,
+                'description' => null,
+                'doctor_id' => User::query()->inRandomOrder()->first()->id,
+            ]);
+        }
     }
 }

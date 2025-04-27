@@ -677,6 +677,42 @@
                 ]
             }
         },
+        "/api/app/download": {
+            "get": {
+                "tags": [
+                    "File Manager"
+                ],
+                "summary": "Download application installer",
+                "operationId": "2e951c7f134c57a2c17da60c192b19a8",
+                "responses": {
+                    "200": {
+                        "description": "Application installer download",
+                        "headers": {
+                            "Content-Type": {
+                                "description": "File MIME type",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            "Content-Disposition": {
+                                "description": "File attachment information",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "File not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/ills": {
             "get": {
                 "tags": [
@@ -2963,7 +2999,8 @@
             "CreateBillingTransactionRequest": {
                 "required": [
                     "type",
-                    "amount"
+                    "amount",
+                    "patientId"
                 ],
                 "properties": {
                     "clinicId": {
@@ -2971,8 +3008,12 @@
                         "type": "string"
                     },
                     "type": {
-                        "description": "Type of the transaction (e.g., in, out)",
-                        "type": "string"
+                        "description": "Type of the transaction (e.g., recorded, paid)",
+                        "type": "string",
+                        "enum": [
+                            "recorded",
+                            "paid"
+                        ]
                     },
                     "amount": {
                         "description": "Transaction amount",
@@ -2984,17 +3025,14 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "modelId": {
-                        "description": "ID of the related model (medical transaction or reservation)",
+                    "patientId": {
+                        "description": "UUID of the patient associated with the transaction",
                         "type": "string"
                     },
-                    "modelType": {
-                        "description": "Type of the related model",
+                    "reservationId": {
+                        "description": "UUID of the reservation associated with the transaction",
                         "type": "string",
-                        "enum": [
-                            "medicalTransaction",
-                            "reservation"
-                        ]
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -3139,6 +3177,23 @@
                         "items": {
                             "type": "string"
                         },
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "IndexBillingTransactionRequest": {
+                "properties": {
+                    "type": {
+                        "description": "The type of billing transaction",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "year": {
+                        "description": "The year of the billing transaction",
+                        "type": "integer",
+                        "maximum": 2023,
+                        "minimum": 1900,
                         "nullable": true
                     }
                 },
@@ -3545,8 +3600,12 @@
                         "type": "string"
                     },
                     "type": {
-                        "description": "Type of the transaction (e.g., in, out)",
-                        "type": "string"
+                        "description": "Type of the transaction (e.g., recorded, paid)",
+                        "type": "string",
+                        "enum": [
+                            "recorded",
+                            "paid"
+                        ]
                     },
                     "amount": {
                         "description": "Transaction amount",
@@ -3784,25 +3843,24 @@
                         "type": "string",
                         "example": "Monthly subscription"
                     },
-                    "user_id": {
-                        "type": "integer",
-                        "example": 123
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
                     },
-                    "created_at": {
+                    "createdAt": {
                         "type": "string",
                         "format": "date-time",
                         "example": "2023-01-01 12:00:00"
                     },
-                    "updated_at": {
+                    "updatedAt": {
                         "type": "string",
                         "format": "date-time",
                         "example": "2023-01-01 12:00:00"
                     },
-                    "deleted_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2023-01-01 12:00:00",
-                        "nullable": true
+                    "reservation": {
+                        "$ref": "#/components/schemas/ReservationResource"
+                    },
+                    "patient": {
+                        "$ref": "#/components/schemas/PatientResource"
                     }
                 },
                 "type": "object"

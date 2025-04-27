@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\MedicalTransactions;
-use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,10 +13,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="type", type="string", example="payment"),
  *     @OA\Property(property="amount", type="number", format="float", example=100.50),
  *     @OA\Property(property="description", type="string", example="Monthly subscription"),
- *     @OA\Property(property="user_id", type="integer", example=123),
- *     @OA\Property(property="created_at", type="string", format="date-time", example="2023-01-01 12:00:00"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", example="2023-01-01 12:00:00"),
- *     @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true, example="2023-01-01 12:00:00")
+ *     @OA\Property(property="user", ref="#/components/schemas/UserResource"),
+ *     @OA\Property(property="createdAt", type="string", format="date-time", example="2023-01-01 12:00:00"),
+ *     @OA\Property(property="updatedAt", type="string", format="date-time", example="2023-01-01 12:00:00"),
+ *     @OA\Property(property="reservation", ref="#/components/schemas/ReservationResource"),
+ *     @OA\Property(property="patient", ref="#/components/schemas/PatientResource"),
  * )
  */
 class BillingTransactionResource extends JsonResource
@@ -30,22 +29,16 @@ class BillingTransactionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data =  [
+        return [
             'id' => $this->when($this->id , $this->id),
             'type' => $this->when($this->type , $this->type),
             'amount' => $this->when($this->amount , $this->amount),
             'description' => $this->when($this->description , $this->description),
             'user' => UserResource::make($this->whenLoaded('user')),
-            // 'createdAt' => $this->created_at,
-            // 'updatedAt' => $this->when($this->updated_at, $this->updated_at->toDateTimeString()),
+            'createdAt' => $this->when($this->created_at, $this->created_at?->toDateTimeString()),
+            'updatedAt' => $this->when($this->updated_at, $this->updated_at?->toDateTimeString()),
+            'reservation' => ReservationResource::make($this->whenLoaded('reservation')),
+            'patient' => PatientResource::make($this->whenLoaded('patient')),
         ];
-
-        if($this->model_type === Reservation::class)
-            $data['reservation'] = ReservationResource::make($this->model);
-
-        if($this->model_type === MedicalTransactions::class)
-            $data['medicalTransaction'] = MedicalTransactionResource::make($this->model);
-
-        return $data;
     }
 }

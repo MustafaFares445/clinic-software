@@ -2,17 +2,22 @@
 
 namespace App\Models;
 
+use App\Models\Ill;
+use App\Models\Clinic;
+use App\Models\Record;
+use App\Models\Medicine;
+use App\Models\Reservation;
 use App\Traits\HasThumbnail;
-use Database\Factories\PatientFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
+use Database\Factories\PatientFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Scopes\PatientClinicScope;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 
 
@@ -37,18 +42,7 @@ final class Patient extends Model implements HasMedia
 
     protected static function booted(): void
     {
-        /** @var User $user */
-        $user = Auth::user();
-
-        if (Auth::check() && !$user->hasRole('super Admin')) {
-            self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
-        }
-
-        if (Auth::check() && $user->hasAllRoles('doctor')) {
-            self::query()
-                ->whereRelation('records.doctors', 'doctor_id', Auth::id())
-                ->orWhereRelation('reservations', 'doctor_id',  Auth::id());
-        }
+        static::addGlobalScope(new PatientClinicScope());
     }
 
     public function clinic(): BelongsTo

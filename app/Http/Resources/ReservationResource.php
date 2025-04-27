@@ -91,7 +91,7 @@ final class ReservationResource extends JsonResource
             'patient' => PatientResource::make($this->whenLoaded('patient')),
             'doctor' => $this->when($this->doctor_id, DoctorResource::make($this->whenLoaded('doctor'))),
             'specification' => $this->when($this->specification_id, SpecificationResource::make($this->whenLoaded('specification'))),
-            'createdAt' => $this->when($this->created_at , $this->created_at->toDateTimeString()),
+            'createdAt' => $this->when($this->created_at , $this->created_at?->toDateTimeString()),
             'pastReservationsCount' => $this->when($this->pastReservationsCount, $this->pastReservationsCount),
             'upComingReservationCount' => $this->when($this->upComingReservationCount, $this->upComingReservationCount),
         ];

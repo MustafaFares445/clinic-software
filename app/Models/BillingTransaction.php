@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use Ramsey\Uuid\Uuid;
 use App\Models\User;
+use Ramsey\Uuid\Uuid;
 use App\Models\Clinic;
 use Carbon\CarbonImmutable;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Scopes\ClinicDataScope;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Database\Factories\BillingTransactionFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 /**
  * Represents a billing transaction in the system.
@@ -76,13 +77,9 @@ final class BillingTransaction extends Model implements HasMedia
      */
     protected static function booted(): void
     {
-        /** @var User|null $user */
-        $user = Auth::user();
-
-        if (Auth::check() && !$user->hasRole('super Admin')) {
-            self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
-        }
+        static::addGlobalScope(new ClinicDataScope());
     }
+
 
     /**
      * Get the clinic that owns the transaction.

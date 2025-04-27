@@ -21,7 +21,7 @@ final class TransactionResource extends JsonResource
             'amount' => $this->when($this->amount, $this->amount),
             'from' => $this->when($this->from, $this->from),
             'description' => $this->when($this->description, $this->description),
-            'createdAt' => $this->when($this->created_at , $this->created_at->toDateTimeString()),
+            'createdAt' => $this->when($this->created_at , $this->created_at?->toDateTimeString()),
         ];
     }
 }
