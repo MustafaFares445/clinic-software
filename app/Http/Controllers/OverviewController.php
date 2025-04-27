@@ -334,16 +334,17 @@ final class OverviewController extends Controller
         ]);
 
         $year = $request->input('year', now()->year);
+        $date = \Carbon\Carbon::create($year, 12, 31);
 
         return response()->json([
             'adults' => Patient::query()
                 ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
-                ->where('age', '>=', 18)
+                ->whereRaw('TIMESTAMPDIFF(YEAR, birth, ?) >= 18', [$date])
                 ->count(),
 
             'children' => Patient::query()
                 ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
-                ->where('age', '<', 18)
+                ->whereRaw('TIMESTAMPDIFF(YEAR, birth, ?) < 18', [$date])
                 ->count(),
         ]);
     }
