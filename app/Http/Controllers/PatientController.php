@@ -126,6 +126,7 @@ final class PatientController extends Controller
                 'patients.created_at',
                 'next_reservation.start as next_reservation_date',
                 'last_reservation.start as last_reservation_date',
+                'address',
                 'created_at',
             ])
             ->leftJoinSub(

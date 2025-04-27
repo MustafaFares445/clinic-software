@@ -9,13 +9,13 @@ final class PatientsOrder
     public function order(Builder &$patientQuery): void
     {
         if (request()->input('orderBy') === 'firstName') {
-            $patientQuery->orderBy('patients.firstName', request()->input('orderType', 'ASC'));
+            $patientQuery->orderBy('patients.firstName', request()->input('orderType') ?? 'ASC');
         }
         if (request()->input('orderBy') === 'lastName') {
-            $patientQuery->orderBy('patients.lastName', request()->input('orderType', 'ASC'));
+            $patientQuery->orderBy('patients.lastName', request()->input('orderType') ?? 'ASC');
         }
         if (request()->input('orderBy') === 'registeredAt') {
-            $patientQuery->orderBy('patients.created_at', request()->input('orderType', 'ASC'));
+            $patientQuery->orderBy('patients.created_at', request()->input('orderType') ?? 'ASC');
         } else {
             $this->reservationOrder($patientQuery, request()->input('orderBy'));
         }
