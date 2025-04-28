@@ -41,9 +41,9 @@ class BillingTransactionSearchService
     public function filterByPatient(?string $patientName): self
     {
         if ($patientName) {
-            $searchTerm = "%{$patientName}%";
+            $searchTerm = "%".preg_replace('/\s+/', '%', $patientName)."%";
             $this->query->whereHas('patient', function($q) use ($searchTerm) {
-                $q->whereRaw("CONCAT_WS(' ', firstName, lastName) LIKE ?", [$searchTerm]);
+                $q->whereRaw("LOWER(full_name) LIKE LOWER(?) COLLATE utf8mb4_unicode_ci", [$searchTerm]);
             });
         }
 
