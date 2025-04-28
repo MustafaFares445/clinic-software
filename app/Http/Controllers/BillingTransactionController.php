@@ -21,29 +21,78 @@ class BillingTransactionController extends Controller
     /**
      * @OA\Get(
      *     path="/api/transactions/billing",
-     *     summary="List all billing transactions",
+     *     summary="List all billing transactions with filters",
      *     tags={"Billing Transactions"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="type",
      *         in="query",
-     *         description="Filter by transaction type",
+     *         description="Filter by transaction type (payment or charge)",
      *         required=false,
-     *         @OA\Schema(type="string")
+     *         @OA\Schema(type="string", example="payment")
      *     ),
      *     @OA\Parameter(
      *         name="year",
      *         in="query",
-     *         description="Filter by year of transaction",
+     *         description="Filter by transaction year",
      *         required=false,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="integer", example=2023)
+     *     ),
+     *     @OA\Parameter(
+     *         name="patientName",
+     *         in="query",
+     *         description="Filter by patient ID",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="startDate",
+     *         in="query",
+     *         description="Start date for date range filter (YYYY-MM-DD)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date", example="2023-01-01")
+     *     ),
+     *     @OA\Parameter(
+     *         name="endDate",
+     *         in="query",
+     *         description="End date for date range filter (YYYY-MM-DD)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date", example="2023-12-31")
+     *     ),
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         description="Items per page (default: 15)",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=20)
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/BillingTransactionResource")
+     *             type="object",
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/BillingTransactionResource")
+     *             ),
+     *             @OA\Property(property="links"),
+     *             @OA\Property(property="meta")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Unauthenticated.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object")
      *         )
      *     )
      * )
