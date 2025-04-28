@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\BillingTransactionResource;
 use App\Models\BillingTransaction;
+use App\Services\BillingTransactionQueryService;
+use App\Services\BillingTransactionSearchService;
+use App\Http\Resources\BillingTransactionResource;
+use App\Http\Requests\IndexBillingTransactionRequest;
 use App\Http\Requests\CreateBillingTransactionRequest;
 use App\Http\Requests\UpdateBillingTransactionRequest;
-use App\Http\Requests\IndexBillingTransactionRequest;
 
 /**
  * @OA\Tag(
@@ -49,17 +51,18 @@ class BillingTransactionController extends Controller
     public function index(IndexBillingTransactionRequest $request)
     {
         return BillingTransactionResource::collection(
-            BillingTransaction::with([
-                'user' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
-                'patient' => fn($query) => $query->select(['id' , 'firstName' , 'lastName']),
-                'reservation' => fn($query) => $query->select(['id' , 'start' , 'end'])
-            ])->when(
-                $request->has('type'),
-                fn($query) => $query->where('type', $request->input('type'))
-            )->when(
-                $request->has('year'),
-                fn($query) => $query->whereYear('created_at', $request->input('year'))
-            )->paginate()
+            BillingTransactionSearchService::make()
+                ->filterByType($request->string('type'))
+                ->filterByYear($request->integer('year'))
+                ->filterByPatient($request->integer('patientName'))
+                ->filterByDuration($request->string('startDate') , $request->string('endDate'))
+                ->getQuery()
+                ->with([
+                    'user' => fn($query) => $query->select(['id', 'firstName', 'lastName']),
+                    'patient' => fn($query) => $query->select(['id', 'firstName', 'lastName']),
+                    'reservation' => fn($query) => $query->select(['id', 'start', 'end'])
+                ])
+                ->paginate(request()->integer('perPage' , 15))
         );
     }
 

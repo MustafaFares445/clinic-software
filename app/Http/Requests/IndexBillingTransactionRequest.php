@@ -47,6 +47,7 @@ class IndexBillingTransactionRequest extends FormRequest
         return [
             'type' => ['nullable' , 'string' , Rule::in(['paid' , 'recorded'])],
             'year' => 'nullable|integer|min:1900|max:' . date('Y'),
+            
         ];
     }
 }
