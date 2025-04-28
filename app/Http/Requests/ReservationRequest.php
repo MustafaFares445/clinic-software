@@ -7,6 +7,9 @@ use App\Enums\ReservationTypes;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Models\Reservation;
+use Illuminate\Support\Facades\Auth;
+use App\Actions\CheckReservationConflict;
 
 /**
  * @OA\Schema(
@@ -130,7 +133,25 @@ final class ReservationRequest extends FormRequest
             $rules['patientId'] = ['required', 'uuid', Rule::exists('patients', 'id')];
         }
 
+        if (isset($rules['start'])) {
+            $rules['start'][] = [$this, 'validateTimeConflict'];
+        }
+
         return $rules;
+    }
+
+    private function validateTimeConflict($attribute, $value, $fail)
+    {
+        $conflictExists = app(CheckReservationConflict::class)->handle(
+            $this->input('clinicId'),
+            $this->input('start'),
+            $this->input('end'),
+            $this->route('reservation')
+        );
+
+        if ($conflictExists) {
+            $fail('There is already a reservation in this time slot for the selected clinic and doctor.');
+        }
     }
 
     public function validated($key = null, $default = null)

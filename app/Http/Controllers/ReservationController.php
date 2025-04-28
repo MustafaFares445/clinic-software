@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ReservationStatuses;
-use App\Http\Requests\ReservationIndexRequest;
-use App\Http\Requests\ReservationRequest;
-use App\Http\Resources\ReservationResource;
+use Carbon\Carbon;
 use App\Models\Clinic;
 use App\Models\Reservation;
-use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Enums\ReservationStatuses;
 use Illuminate\Support\Facades\Auth;
+use App\Actions\CheckReservationConflict;
+use App\Http\Requests\ReservationRequest;
+use App\Http\Resources\ReservationResource;
+use App\Http\Requests\ReservationIndexRequest;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Http\Requests\CheckReservationConflictRequest;
 
 /**
  * @OA\Tag(
@@ -92,6 +94,43 @@ final class ReservationController extends Controller
 
         // Return the collection of reservations
         return ReservationResource::collection($reservationQuery->get());
+    }
+
+
+     /**
+     * @OA\Post(
+     *     path="/api/reservations/check-conflict",
+     *     summary="Check for reservation conflicts",
+     *     security={ {"bearerAuth": {} }},
+     *     tags={"Reservation"},
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Data to check for conflicts",
+     *         @OA\JsonContent(ref="#/components/schemas/CheckReservationConflictRequest")
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Conflict check result",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="conflict_exists", type="boolean", example=true)
+     *         )
+     *     )
+     * )
+     */
+    public function checkConflict(CheckReservationConflictRequest $request)
+    {
+        $validated = $request->validated();
+
+        $conflictExists = (new CheckReservationConflict())->handle(
+            $validated['clinicId'] ?? Auth::user()->clinic_id,
+            $validated['start'],
+            $validated['end'],
+            $validated['reservationId'] ?? null
+        );
+
+        return response()->json(['conflict_exists' => $conflictExists]);
     }
 
     /**

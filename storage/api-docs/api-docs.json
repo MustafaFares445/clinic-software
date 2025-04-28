@@ -153,11 +153,11 @@
                     {
                         "name": "type",
                         "in": "query",
-                        "description": "Filter by transaction type (payment or charge)",
+                        "description": "Filter by transaction type (paid or recorded)",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "payment"
+                            "example": "paid"
                         }
                     },
                     {
@@ -176,8 +176,8 @@
                         "description": "Filter by patient ID",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "string",
+                            "example": "John Doe"
                         }
                     },
                     {
@@ -2718,6 +2718,49 @@
                 ]
             }
         },
+        "/api/reservations/check-conflict": {
+            "post": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Check for reservation conflicts",
+                "operationId": "906d0c3c44c4f3a7bba61f459837ac20",
+                "requestBody": {
+                    "description": "Data to check for conflicts",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CheckReservationConflictRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Conflict check result",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "conflict_exists": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/reservations": {
             "post": {
                 "tags": [
@@ -2906,6 +2949,37 @@
                         "maxLength": 255,
                         "minLength": 3,
                         "example": "johndoe"
+                    }
+                },
+                "type": "object"
+            },
+            "CheckReservationConflictRequest": {
+                "required": [
+                    "start",
+                    "end"
+                ],
+                "properties": {
+                    "clinicId": {
+                        "description": "The ID of the clinic",
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "start": {
+                        "description": "The start time of the reservation",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-01T09:00:00Z"
+                    },
+                    "end": {
+                        "description": "The end time of the reservation",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-01T10:00:00Z"
+                    },
+                    "reservationId": {
+                        "description": "The ID of the reservation (nullable for new reservations)",
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
                     }
                 },
                 "type": "object"

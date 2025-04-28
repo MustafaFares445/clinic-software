@@ -27,9 +27,9 @@ class BillingTransactionController extends Controller
      *     @OA\Parameter(
      *         name="type",
      *         in="query",
-     *         description="Filter by transaction type (payment or charge)",
+     *         description="Filter by transaction type (paid or recorded)",
      *         required=false,
-     *         @OA\Schema(type="string", example="payment")
+     *         @OA\Schema(type="string", example="paid")
      *     ),
      *     @OA\Parameter(
      *         name="year",
@@ -43,7 +43,7 @@ class BillingTransactionController extends Controller
      *         in="query",
      *         description="Filter by patient ID",
      *         required=false,
-     *         @OA\Schema(type="integer", example=1)
+     *         @OA\Schema(type="string", example="John Doe")
      *     ),
      *     @OA\Parameter(
      *         name="startDate",
@@ -103,7 +103,7 @@ class BillingTransactionController extends Controller
             BillingTransactionSearchService::make()
                 ->filterByType($request->string('type'))
                 ->filterByYear($request->integer('year'))
-                ->filterByPatient($request->integer('patientName'))
+                ->filterByPatient($request->string('patientName'))
                 ->filterByDuration($request->string('startDate') , $request->string('endDate'))
                 ->getQuery()
                 ->with([

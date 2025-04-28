@@ -296,9 +296,9 @@ final class OverviewController extends Controller
         $query = BillingTransaction::query();
 
         return response()->json([
-            'totalTransactions' => (float) $query->where('type' , $request->input('type' , 'in'))->sum('amount'),
+            'totalTransactions' => (float) $query->where('type' , 'paid')->sum('amount'),
             'totalInMonth' => (float) $query
-                ->where('type' , $request->input('type' , 'in'))
+                ->where('type' , 'paid')
                 ->whereMonth('created_at' , Carbon::now()->month)
                 ->sum('amount'),
         ]);
@@ -396,15 +396,13 @@ final class OverviewController extends Controller
     {
         $request->validate([
             'year' => ['nullable', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
-            'input' => ['required' , 'string' , Rule::in(['in' , 'out'])]
         ]);
 
         $year = $request->input('year', now()->year);
-        $type = $request->input('type');
 
         $monthlyTotals = BillingTransaction::query()
             ->whereYear('created_at', $year)
-            ->where('type', $type)
+            ->where('type', 'paid')
             ->get(['id' , 'amount' , 'created_at'])
             ->groupBy(fn($transaction) => $transaction->created_at->month)
             ->map(fn($transactions) => $transactions->sum('amount'));

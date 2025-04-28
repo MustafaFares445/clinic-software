@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Reservation routes
     Route::apiResource('/reservations', ReservationController::class);
+    Route::post('/reservations/check-conflict', [ReservationController::class, 'checkConflict']);
 
     // Record routes
     Route::apiResource('records', RecordController::class)->except(['index']);
