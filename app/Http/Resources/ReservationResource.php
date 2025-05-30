@@ -51,9 +51,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         description="Doctor associated with the reservation"
  *     ),
  *     @OA\Property(
- *         property="specification",
- *         ref="#/components/schemas/SpecificationResource",
- *         description="Specification associated with the reservation"
+ *         property="medicalCase",
+ *         ref="#/components/schemas/MedicalCaseResource",
+ *         description="medical Case associated with the reservation"
  *     ),
  *     @OA\Property(
  *         property="createdAt",
@@ -90,7 +90,7 @@ final class ReservationResource extends JsonResource
             'status' => $this->when($this->status, $this->status),
             'patient' => PatientResource::make($this->whenLoaded('patient')),
             'doctor' => $this->when($this->doctor_id, DoctorResource::make($this->whenLoaded('doctor'))),
-            'specification' => $this->when($this->specification_id, SpecificationResource::make($this->whenLoaded('specification'))),
+            'medicalCase' => $this->when($this->medical_case_id, MedicalCaseResource::make($this->MedicalCase)),
             'createdAt' => $this->when($this->created_at , $this->created_at?->toDateTimeString()),
             'pastReservationsCount' => $this->when($this->pastReservationsCount, $this->pastReservationsCount),
             'upComingReservationCount' => $this->when($this->upComingReservationCount, $this->upComingReservationCount),

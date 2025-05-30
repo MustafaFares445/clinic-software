@@ -15,6 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->longText('description');
+            $table->foreignUuid('patient_id')->constrained('patients')->references('id');
+            $table->foreignUuid('created_by_id')->constrained('users')->references('id');
             $table->foreignUuid('clinic_id')->constrained('clinics')->references('id');
             $table->double('total')->default(0);
             $table->date('date');

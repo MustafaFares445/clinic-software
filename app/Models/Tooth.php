@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tooth extends Model
 {
     /** @use HasFactory<\Database\Factories\ToothFactory> */
-    use HasFactory;
+    use HasFactory , HasUuids;
 
     protected $table = 'teeth';
 
@@ -22,4 +23,9 @@ class Tooth extends Model
     protected $casts = [
         'id' => 'string',
     ];
+
+    public function records()
+    {
+        return $this->hasMany(Record::class);
+    }
 }

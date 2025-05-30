@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ChronicDiseas;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -65,6 +66,6 @@ class ChronicDiseasesSeeder extends Seeder
             ],
         ];
 
-        DB::table('chronic_diseases')->insert($diseases);
+        ChronicDiseas::query()->insert($diseases);
     }
 }

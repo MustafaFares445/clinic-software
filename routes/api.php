@@ -1,19 +1,24 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BillingTransactionController;
-use App\Http\Controllers\ClinicController;
-use App\Http\Controllers\FileManagerController;
-use App\Http\Controllers\IllController;
-use App\Http\Controllers\MedicalTransactionController;
-use App\Http\Controllers\MedicineController;
-use App\Http\Controllers\OverviewController;
-use App\Http\Controllers\PatientController;
-use App\Http\Controllers\RecordController;
-use App\Http\Controllers\ReservationController;
-use App\Http\Resources\UserResource;
+use App\Http\Controllers\Api\MedicalCaseController;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClinicController;
+use App\Http\Controllers\RecordController;
+use App\Http\Controllers\PatientController;
+use App\Http\Controllers\OverviewController;
+use App\Http\Controllers\FileManagerController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ChronicDiseasController;
+use App\Http\Controllers\ChronicMedicationController;
+use App\Http\Controllers\BillingTransactionController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\FillingMaterialController;
+use App\Http\Controllers\LaboratoryController;
+use App\Http\Controllers\MedicalSessionController;
+use App\Http\Controllers\TreatmentController;
 
 // Public routes
 Route::post('/auth/login', [AuthController::class, 'login']);
@@ -26,25 +31,30 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return UserResource::make($request->user());
     });
+
     Route::prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/logout', [AuthController::class, 'logout']);
     });
+
+    Route::post('/feedback' , [FeedbackController::class , 'store']);
 
     // Clinic routes
     Route::apiResource('/clinics', ClinicController::class)->except(['store']);
 
     // Patient routes
     Route::apiResource('/patients', PatientController::class);
-    
     Route::prefix('/patients')->group(function () {
-        Route::get('/{patient}/records', [PatientController::class, 'patientRecords']);
+        Route::get('/mini', [PatientController::class , 'mini']);
+        Route::get('/{patient}/medical/cases', [PatientController::class , 'patientMedicalCases']);
+        Route::get('/{patient}/teeth', [PatientController::class , 'getPatientTeeth']);
         Route::get('/{patient}/reservations', [PatientController::class, 'patientReservations']);
         Route::get('/{patient}/reservations/count', [PatientController::class, 'patientReservationsCount']);
         Route::post('/{patient}/profile-image', [PatientController::class, 'addProfileImage']);
         Route::delete('/{patient}/profile-image', [PatientController::class, 'deleteProfileImage']);
         Route::get('/{patient}/files', [PatientController::class, 'getFiles']);
         Route::post('/{patient}/file', [PatientController::class, 'addFile']);
+        Route::delete('/{patient}/file/{media}', [PatientController::class, 'deleteFile']);
     });
 
     // Reservation routes
@@ -58,20 +68,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/{record}/files/{file}' , [RecordController::class , 'deleteFile']);
     });
 
-    // File management routes
-    Route::apiResource('/file-manager', FileManagerController::class)->except(['update', 'show']);
-    Route::prefix('/file-manager')->group(function () {
-        Route::get('/{media}/download', [FileManagerController::class, 'download']);
-        Route::get('/medical-collections', [FileManagerController::class, 'getMedicalCollections']);
-    });
 
     // Transaction routes
-    Route::apiResource('/transactions/medical', MedicalTransactionController::class);
     Route::apiResource('/transactions/billing', BillingTransactionController::class);
-
-    //Medicines - ills routes
-    Route::apiResource('/medicines' , MedicineController::class)->only(['index' , 'store']);
-    Route::apiResource('/ills' , IllController::class)->only(['index' , 'store']);
 
     // Overview routes
     Route::prefix('overview')->group(function () {
@@ -85,4 +84,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/age-statistics', [OverviewController::class, 'getAgeStatistics']);
         Route::get('/chart/billing-statistics', [OverviewController::class, 'billingChartStatistics']);
     });
+
+
+    Route::prefix('/chronics' ,function(){
+        Route::apiResource('/medications', ChronicMedicationController::class);
+        Route::apiResource('/diseases', ChronicDiseasController::class);
+    });
+
+    Route::apiResource('/treatments' , TreatmentController::class);
+    Route::apiResource('/laboratories' , LaboratoryController::class);
+    Route::apiResource('/filling/materials' , FillingMaterialController::class);
+    Route::apiResource('/medical/cases' , MedicalCaseController::class)->except(['index' , 'show']);
+    Route::apiResource('/mediclal/seesions' , MedicalSessionController::class)->except(['index' , 'show']);
 });

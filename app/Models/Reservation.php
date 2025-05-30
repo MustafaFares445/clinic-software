@@ -2,18 +2,22 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Ramsey\Uuid\Uuid;
-use Database\Factories\ReservationFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Auth;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Models\Clinic;
 use DateTimeInterface;
+use App\Models\Patient;
+use App\Models\MedicalCase;
 use App\Enums\ReservationTypes;
+use Spatie\MediaLibrary\HasMedia;
 use App\Enums\ReservationStatuses;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
+use Database\Factories\ReservationFactory;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Class Reservation
@@ -32,7 +36,7 @@ use App\Enums\ReservationStatuses;
  * @property-read Patient $patient The associated patient
  * @property-read Clinic $clinic The associated clinic
  * @property-read User $doctor The associated doctor
- * @property-read Specification $specification The associated medical specification
+ * @property-read MedicalCase|null $medicalCase The associated medical case
  */
 final class Reservation extends Model implements HasMedia
 {
@@ -49,12 +53,12 @@ final class Reservation extends Model implements HasMedia
     protected $fillable = [
         'start',
         'end',
-        'specification_id',
         'patient_id',
         'clinic_id',
         'doctor_id',
         'type',
         'status',
+        'medical_case_id'
     ];
 
     /**
@@ -84,7 +88,7 @@ final class Reservation extends Model implements HasMedia
     /**
      * Get the patient associated with the reservation.
      *
-     * @return BelongsTo<Patient, Reservation>
+     * @return BelongsTo<Patient, self>
      */
     public function patient(): BelongsTo
     {
@@ -94,7 +98,7 @@ final class Reservation extends Model implements HasMedia
     /**
      * Get the clinic associated with the reservation.
      *
-     * @return BelongsTo<Clinic, Reservation>
+     * @return BelongsTo<Clinic, self>
      */
     public function clinic(): BelongsTo
     {
@@ -104,7 +108,7 @@ final class Reservation extends Model implements HasMedia
     /**
      * Get the doctor associated with the reservation.
      *
-     * @return BelongsTo<User, Reservation>
+     * @return BelongsTo<User, self>
      */
     public function doctor(): BelongsTo
     {
@@ -112,12 +116,12 @@ final class Reservation extends Model implements HasMedia
     }
 
     /**
-     * Get the medical specification associated with the reservation.
+     * Get the medical case associated with the reservation.
      *
-     * @return BelongsTo<Specification, Reservation>
+    //  * @return BelongsTo<MedicalCase, self>
      */
-    public function specification(): BelongsTo
+    public function medicalCase(): BelongsTo
     {
-        return $this->belongsTo(Specification::class);
+        return $this->belongsTo(MedicalCase::class , 'medical_case_id');
     }
 }

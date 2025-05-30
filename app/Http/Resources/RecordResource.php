@@ -13,83 +13,58 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     type="object",
  *     title="Record Resource",
  *     description="Record resource representation",
- *
  *     @OA\Property(
  *         property="id",
  *         type="integer",
- *         description="Unique identifier for the record",
- *         example=1
- *     ),
- *     @OA\Property(
- *         property="description",
- *         type="string",
- *         description="Description of the record",
- *         example="This is a sample record description."
+ *         description="The unique identifier of the record"
  *     ),
  *     @OA\Property(
  *         property="type",
  *         type="string",
- *         description="Type of the record",
- *         example="Medical"
+ *         description="The type of the record"
  *     ),
  *     @OA\Property(
- *         property="dateTime",
+ *         property="description",
  *         type="string",
- *         format="date-time",
- *         description="Date and time of the record",
- *         example="2023-10-01T12:34:56Z"
+ *         description="The description of the record"
  *     ),
  *     @OA\Property(
- *         property="notes",
- *         type="string",
- *         description="Additional notes for the record",
- *         example="Patient showed improvement"
+ *         property="tooth",
+ *         ref="#/components/schemas/ToothResource",
+ *         description="The tooth associated with the record"
  *     ),
  *     @OA\Property(
- *         property="reservation",
- *         ref="#/components/schemas/ReservationResource",
- *         description="Reservation associated with the record"
+ *         property="treatment",
+ *         ref="#/components/schemas/TreatmentResource",
+ *         description="The treatment associated with the record"
+ *     ),
+ *     @OA\Property(
+ *         property="fillingMaterial",
+ *         ref="#/components/schemas/FillingMaterialResource",
+ *         description="The filling material associated with the record"
+ *     ),
+ *     @OA\Property(
+ *         property="medicalSession",
+ *         ref="#/components/schemas/MedicalSessionResource",
+ *         description="The medical session associated with the record"
  *     ),
  *     @OA\Property(
  *         property="doctors",
  *         type="array",
- *         @OA\Items(ref="#/components/schemas/DoctorResource"),
- *         description="List of doctors associated with the record"
+ *         @OA\Items(ref="#/components/schemas/UserResource"),
+ *         description="The doctors associated with the record"
  *     ),
  *     @OA\Property(
- *         property="ills",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/IllResource"),
- *         description="List of diagnosed illnesses associated with the record"
+ *         property="createdAt",
+ *         type="string",
+ *         format="date",
+ *         description="The creation date of the record"
  *     ),
  *     @OA\Property(
- *         property="transientIlls",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/IllResource"),
- *         description="List of transient illnesses associated with the record"
- *     ),
- *     @OA\Property(
- *         property="medicines",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/MedicineResource"),
- *         description="List of prescribed medicines associated with the record"
- *     ),
- *     @OA\Property(
- *         property="transientMedicines",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/MedicineResource"),
- *         description="List of transient medicines associated with the record"
- *     ),
- *     @OA\Property(
- *         property="media",
- *         type="array",
- *         @OA\Items(ref="#/components/schemas/MediaResource"),
- *         description="List of media files associated with the record"
- *     ),
- *     @OA\Property(
- *         property="patient",
- *         ref="#/components/schemas/PatientResource",
- *         description="Patient associated with the record"
+ *         property="updatedAt",
+ *         type="string",
+ *         format="date",
+ *         description="The last update date of the record"
  *     )
  * )
  */
@@ -98,32 +73,21 @@ final class RecordResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
      */
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
         return [
-            'id' => $this->when($this->id, $this->id),
-            'description' => $this->when($this->description, $this->description),
-            'type' => $this->when($this->type, $this->type),
-            'dateTime' => $this->when($this->dateTime, $this->dateTime),
-            'notes' => $this->when($this->notes , $this->notes),
-            'reservation' => ReservationResource::make($this->whenLoaded('reservation')),
-            'doctors' => DoctorResource::collection($this->whenLoaded('doctors')),
-            'ills' => IllResource::collection($this->whenLoaded('ills', function () {
-                return $this->ills->where('pivot.type', RecordIllsTypes::DIAGNOSED);
-            })),
-            'transientIlls' => IllResource::collection($this->whenLoaded('ills', function () {
-                return $this->ills->where('pivot.type', RecordIllsTypes::TRANSIENT);
-            })),
-            'medicines' => MedicineResource::collection($this->whenLoaded('medicines', function () {
-                return $this->medicines->where('pivot.type', RecordIllsTypes::DIAGNOSED);
-            })),
-            'transientMedicines' => MedicineResource::collection($this->whenLoaded('medicines', function () {
-                return $this->medicines->where('pivot.type', RecordIllsTypes::TRANSIENT);
-            })),
-            'media' => MediaResource::collection($this->whenLoaded('media')),
-            'patient' => PatientResource::make($this->whenLoaded('patient')),
+            'id' => $this->id,
+            'type' => $this->type,
+            'description' => $this->description,
+            'tooth' => ToothResource::make($this->whenLoaded('tooth')),
+            'treatment' => TreatmentResource::make($this->whenLoaded('treatment')),
+            'fillingMaterial' => FillingMaterialResource::make($this->whenLoaded('fillingMaterial')),
+            'doctors' => UserResource::collection($this->whenLoaded('doctors')),
+            'createdAt' => $this->created_at?->toDateString(),
+            'updatedAt' => $this->updated_at?->toDateString(),
         ];
     }
 }

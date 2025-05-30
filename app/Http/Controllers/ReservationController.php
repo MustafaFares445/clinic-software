@@ -3,20 +3,15 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\Clinic;
 use App\Models\Reservation;
 use Carbon\CarbonInterface;
 use Illuminate\Http\JsonResponse;
 use App\Enums\ReservationStatuses;
-use Illuminate\Support\Facades\Auth;
-use App\Actions\CheckReservationConflict;
 use App\Http\Requests\ReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Http\Requests\ReservationIndexRequest;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Requests\CheckReservationConflictRequest;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * @OA\Tag(
@@ -72,7 +67,7 @@ final class ReservationController extends Controller
         Reservation::query()
             ->where('status', ReservationStatuses::INCOME)
             ->whereDate('end', '<', now())
-            ->update(['status' => ReservationStatuses::CHECK]);
+            ->update(['status' => ReservationStatuses::DISMISS]);
 
         // Determine the start and end dates for the query
         $startDate = $request->has('start') ? Carbon::parse($request->validated('start')) : now()->startOfWeek(CarbonInterface::SATURDAY)->startOfDay();
@@ -81,15 +76,14 @@ final class ReservationController extends Controller
         // Build the reservation query with necessary filters and sorting
         $reservationQuery = Reservation::query()
             ->with(['patient' => function ($query) {
-                $query->select(['id', 'firstName', 'lastName']);
+                $query->with('media')->select(['id', 'firstName', 'lastName']);
             }])
             ->with(['doctor' => function ($query) {
-                $query->select(['id', 'firstName' , 'lastName']);
+                $query->with('media')->select(['id', 'firstName' , 'lastName']);
             }])
-            ->with(['specification' => function ($query) {
-                $query->select(['id', 'name']);
+            ->with(['medicalCase' => function ($query) {
+                $query->select(['id', 'name' , 'date']);
             }])
-            ->with(['patient.media' , 'doctor.media' , 'specification.media'])
             ->whereDate('start', '>=', $startDate)
             ->whereDate('end', '<=', $endDate)
             ->orderBy('start');
@@ -121,16 +115,9 @@ final class ReservationController extends Controller
      *     )
      * )
      */
-    public function checkConflict(CheckReservationConflictRequest $request , CheckReservationConflict $action)
+    public function checkConflict(CheckReservationConflictRequest $request)
     {
-        $conflictExists = $action->handle(
-            $request->string('clinicId')->value() ?? Auth::user()->clinic_id,
-            $request->string('start')->value(),
-            $request->string('end')->value(),
-            $request->string('reservationId')->value() ?? null
-        );
-
-        return response()->json(['conflictExists' => $conflictExists]);
+        return response()->noContent();
     }
 
     /**
@@ -154,21 +141,11 @@ final class ReservationController extends Controller
      *     )
      * )
      */
-    public function store(ReservationRequest $request , CheckReservationConflict $action): ReservationResource|JsonResponse
+    public function store(ReservationRequest $request): ReservationResource|JsonResponse
     {
-        $conflictExists = $action->handle(
-            $request->string('clinicId')->value() ?? Auth::user()->clinic_id,
-            $request->string('start')->value(),
-            $request->string('end')->value(),
-        );
-
-        if($conflictExists){
-            return response()->json(['message' => 'invalide start end data.'] , Response::HTTP_BAD_REQUEST);
-        }
-
         $reservation = Reservation::query()->create($request->validated());
 
-        return ReservationResource::make($reservation->load(['patient', 'doctor', 'specification']));
+        return ReservationResource::make($reservation->load(['patient', 'doctor', 'medicalCase']));
     }
 
     /**
@@ -197,7 +174,7 @@ final class ReservationController extends Controller
      */
     public function show(Reservation $reservation): ReservationResource
     {
-        return ReservationResource::make($reservation->load(['patient', 'doctor', 'specification']));
+        return ReservationResource::make($reservation->load(['patient', 'doctor', 'medicalCase']));
     }
 
     /**
@@ -230,22 +207,11 @@ final class ReservationController extends Controller
      *     )
      * )
      */
-    public function update(ReservationRequest $request, Reservation $reservation , CheckReservationConflict $action): ReservationResource|JsonResponse
+    public function update(ReservationRequest $request, Reservation $reservation): ReservationResource|JsonResponse
     {
-        $conflictExists = $action->handle(
-            $request->string('clinicId')->value() ?? Auth::user()->clinic_id,
-            $request->string('start')->value(),
-            $request->string('end')->value(),
-            $reservation->id
-        );
-
-        if($conflictExists){
-            return response()->json(['message' => 'invalide start end data.'] , Response::HTTP_BAD_REQUEST);
-        }
-
         $reservation->update($request->validated());
 
-        return ReservationResource::make($reservation->load(['patient', 'doctor', 'specification']));
+        return ReservationResource::make($reservation->load(['patient', 'doctor', 'medicalCase']));
     }
 
     /**

@@ -11,7 +11,7 @@ final class MediaService
 {
     public static array $mediaCollections = ['files', 'images', 'audios', 'videos'];
 
-    public function handleMediaUpload(Model $model, $media, MedicalMediaCollection $collection): ?Media
+    public function handleMediaUpload(Model $model, $media, MedicalMediaCollection $collection , ): ?Media
     {
         if ($media) {
             return $model->addMedia($media)->usingName($media->hashName())->toMediaCollection($collection);

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ChronicMedication;
 use App\Models\Patient;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -43,6 +44,6 @@ class ChronicMedicationSeeder extends Seeder
             ];
         }
 
-        DB::table('chronic_medications')->insert($chronicMdications);
+        ChronicMedication::query()->insert($chronicMdications);
     }
 }

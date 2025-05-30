@@ -22,11 +22,11 @@ class PatientClinicScope implements Scope
             $query->whereRelation('clinic', 'id', $clinicId);
         }
 
-        if (Auth::check() && $user->hasAllRoles('doctor')) {
-            $query->where(function ($q) use ($user) {
-                $q->whereRelation('records.doctors', 'doctor_id', $user->id)
-                  ->orWhereRelation('reservations', 'doctor_id', $user->id);
-            });
-        }
+        // if (Auth::check() && $user->hasAllRoles('doctor')) {
+        //     $query->where(function ($q) use ($user) {
+        //         $q->whereRelation('records.doctors', 'doctor_id', $user->id)
+        //           ->orWhereRelation('reservations', 'doctor_id', $user->id);
+        //     });
+        // }
     }
 }

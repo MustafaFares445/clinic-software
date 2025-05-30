@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('medical_sessions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->date('date');
-            $table->foreignUuid('clinic_id')->constrained('clinics')->references('id');
-            $table->foreignUuid('patient_id')->constrained('patients')->references('id');
+            $table->foreignUuid('medical_case_id')->constrained('medical_cases')->references('id');
             $table->timestamps();
         });
     }

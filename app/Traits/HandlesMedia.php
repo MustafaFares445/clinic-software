@@ -2,66 +2,132 @@
 
 namespace App\Traits;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 trait HandlesMedia
 {
+    public array $fileTypes = ['image', 'video', 'file', 'audio'];
+    public array $multipleFileTypes = ['images', 'videos', 'files', 'audios'];
+
     /**
-     * Handle media upload for single or multiple images
+     * Handle media upload for single or multiple files
      *
-     * @param UploadedFile|array<UploadedFile> $media The media file(s) to upload
-     * @param Model $model The model to associate the media with
-     * @param string $collection The media collection name (default: 'default')
-     * @return Media|array<Media> Returns the created media object(s)
+     * @param Request $request The incoming request containing files
+     * @param HasMedia $model The model to associate the media with
+     * @param string|null $collection The media collection name (default: null)
+     * @param string|null $name The media name (default: null)
+     * @return void
      */
-    public function handleMediaUpload(UploadedFile|array $media, Model $model, string $collection = 'default'): Media|array
+    public function handleMediaUpload(Request $request, HasMedia $model, ?string $collection = null , ?string $name = null): void
     {
-        return is_array($media)
-            ? array_map(fn($file) => $model->addMedia($file)->toMediaCollection($collection), $media)
-            : $model->addMedia($media)->toMediaCollection($collection);
+        $this->processFiles(request: $request, model: $model, collection: $collection, isMultiple: false , name: $name);
+        $this->processFiles(request: $request, model: $model, collection: $collection, isMultiple: true);
+
     }
 
     /**
      * Update media by clearing existing collection and uploading new files
      *
-     * @param UploadedFile|array<UploadedFile> $media The media file(s) to upload
-     * @param Model $model The model to associate the media with
+     * @param Request $request The incoming request containing files
+     * @param HasMedia $model The model to associate the media with
      * @param string $collection The media collection name (default: 'default')
-     * @return Media|array<Media> Returns the created media object(s)
+     * @return void
      */
-    public function handleMediaUpdate(UploadedFile|array $media, Model $model, string $collection = 'default'): Media|array
+    public function handleMediaUpdate(Request $request, HasMedia $model, ?string $collection = null): void
     {
-        $model->clearMediaCollection($collection);
-
-        return $this->handleMediaUpload($media, $model, $collection);
+        if ($request->hasAny(array_merge($this->fileTypes, $this->multipleFileTypes))) {
+            $this->clearCollections($request, $model, $collection);
+            $this->handleMediaUpload($request, $model, $collection);
+        }
     }
 
     /**
      * Delete all media in a collection
      *
-     * @param Model $model The model containing the media collection
+     * @param HasMedia $model The model containing the media collection
      * @param string $collection The media collection name (default: 'default')
      * @return void
      */
-    public function handleMediaCollectionDeletion(Model $model, string $collection = 'default'): void
+    public function handleMediaDeletion(HasMedia $model, string $collection = 'default'): void
     {
         $model->clearMediaCollection($collection);
     }
 
-    /**
+     /**
      * Delete a specific media item after verifying it belongs to the model
      *
-     * @param Model $model The model to verify ownership against
+     * @param HasMedia $model The model to verify ownership against
      * @param Media $media The media item to delete
      * @return bool Returns true if deletion was successful, false if media doesn't belong to model
      */
-    public function handleMediaDeletion(Model $model, Media $media): bool
+    public function handleMediaDelete(HasMedia $model, Media $media): bool
     {
         if (!$media->model->is($model))
             return false;
 
         return $media->delete();
+    }
+
+    /**
+     * Process file uploads for single or multiple files
+     *
+     * @param Request $request The incoming request containing files
+     * @param HasMedia $model The model to associate the media with
+     * @param string|null $collection The media collection name
+     * @param bool $isMultiple Whether to process multiple files or single file
+     * @param string|null $collection The media collection name (default: null)
+     * @return void
+     */
+    private function processFiles(Request $request, HasMedia $model, ?string $collection, bool $isMultiple , ?string $name = null): void
+    {
+        $types = $isMultiple ? $this->multipleFileTypes : $this->fileTypes;
+
+        foreach ($types as $type) {
+            if ($request->hasFile($type)) {
+                /** @var Model $model */
+                $collectionName = $collection ?? $model->getTable() . '-' . ($isMultiple ? $type : $type . 's');
+
+                /** @var array<UploadedFile>. $files */
+                $files = $isMultiple ? $request->file($type) : [$request->file($type)];
+
+                foreach ($files as $file) {
+                    $model->addMedia($file)
+                        ->usingFileName($name ?? $file->getFilename())
+                        ->toMediaCollection($collectionName);
+                }
+
+            }
+        }
+    }
+
+    /**
+     * Clear media collections based on request files
+     *
+     * @param Request $request The incoming request containing files
+     * @param HasMedia $model The model containing the media collections
+     * @param string|null $collection The specific collection to clear (null clears all relevant collections)
+     * @return void
+     */
+    private function clearCollections(Request $request, HasMedia $model, ?string $collection): void
+    {
+        if ($collection) {
+            $model->clearMediaCollection($collection);
+            return;
+        }
+
+        $types = array_merge($this->fileTypes, $this->multipleFileTypes);
+
+        foreach ($types as $type) {
+            if ($request->hasFile($type)) {
+                /** @var Model $model */
+                $collectionName = $model->getTable() . '-' . (in_array($type, $this->fileTypes) ? $type . 's' : $type);
+
+                $model->clearMediaCollection($collectionName);
+            }
+        }
     }
 }

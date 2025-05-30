@@ -27,6 +27,7 @@ class Laboratory extends Model
         'address',
         'phone',
         'whatsapp',
+        'clinic_id'
     ];
 
     /**
@@ -34,8 +35,13 @@ class Laboratory extends Model
      *
      * @return HasMany
      */
-    public function fillings(): HasMany
+    public function fillingMaterials(): HasMany
     {
-        return $this->hasMany(Filling::class);
+        return $this->hasMany(fillingMaterial::class);
+    }
+
+    public function clinic()
+    {
+        return $this->belongsTo(Clinic::class);
     }
 }

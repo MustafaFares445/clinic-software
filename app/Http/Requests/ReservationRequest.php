@@ -8,11 +8,14 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use App\Actions\CheckReservationConflict;
+use App\Rules\ReservationConflictRule;
 
 /**
  * @OA\Schema(
  *     schema="ReservationRequest",
  *     type="object",
+ *     required={"start", "end", "type", "patientId"},
+ *     description="Request data for creating or updating a reservation",
  *
  *     @OA\Property(
  *         property="start",
@@ -58,11 +61,11 @@ use App\Actions\CheckReservationConflict;
  *         description="Doctor UUID"
  *     ),
  *     @OA\Property(
- *         property="specificationId",
+ *         property="medicalCaseId",
  *         type="string",
  *         format="uuid",
  *         example="550e8400-e29b-41d4-a716-446655440002",
- *         description="Specification UUID"
+ *         description="Medical Case UUID"
  *     ),
  *     @OA\Property(
  *         property="clinicId",
@@ -93,7 +96,11 @@ final class ReservationRequest extends FormRequest
         $rules = [];
 
         if ($this->has('start')) {
-            $rules['start'] = ['date_format:Y-m-d H:i:s', 'after_or_equal:'.now()->subMinute()];
+            $rules['start'] = [
+                'date_format:Y-m-d H:i:s',
+                'after_or_equal:'.now()->subMinute(),
+                new ReservationConflictRule($this->input('clinicId'), $this->route('reservation'))
+            ];
         }
 
         if ($this->has('end')) {
@@ -116,23 +123,25 @@ final class ReservationRequest extends FormRequest
             $rules['doctorId'] = ['uuid', Rule::exists('users', 'id')];
         }
 
-        if ($this->has('specificationId')) {
-            $rules['specificationId'] = ['uuid', Rule::exists('specifications', 'id')];
+        if ($this->has('medicalCaseId')) {
+            $rules['medicalCaseId'] = ['uuid', Rule::exists('medical_cases', 'id')];
         }
 
         if ($this->has('clinicId')) {
             $rules['clinicId'] = ['uuid', Rule::exists('clinics', 'id')];
         }
 
+
         if ($this->isMethod('POST')) {
-            $rules['start'] = ['required', 'date_format:Y-m-d H:i:s', 'after_or_equal:now'];
+            $rules['start'] = [
+                'required',
+                'date_format:Y-m-d H:i:s',
+                'after_or_equal:'.now()->subMinute(),
+                new ReservationConflictRule($this->input('clinicId'), $this->route('reservation'))
+            ];
             $rules['end'] = ['required', 'date_format:Y-m-d H:i:s', 'after:start'];
             $rules['type'] = ['required', Rule::in(array_values(ReservationTypes::cases()))];
             $rules['patientId'] = ['required', 'uuid', Rule::exists('patients', 'id')];
-        }
-
-        if (isset($rules['start'])) {
-            $rules['start'][] = [$this, 'validateTimeConflict'];
         }
 
         return $rules;
@@ -154,8 +163,8 @@ final class ReservationRequest extends FormRequest
             $transformedData['doctor_id'] = $this->input('doctorId');
         }
 
-        if ($this->has('specificationId')) {
-            $transformedData['specification_id'] = $this->input('specificationId');
+        if ($this->has('medicalCaseId')) {
+            $transformedData['medical_case_id'] = $this->input('medicalCaseId');
         }
 
         if ($this->has('clinicId')) {

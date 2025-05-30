@@ -13,9 +13,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  *     @OA\Property(
  *         property="id",
- *         type="integer",
+ *         type="string",
+ *         format="uuid",
  *         description="Unique identifier for the patient",
- *         example=1
+ *         example="550e8400-e29b-41d4-a716-446655440000",
  *     ),
  *     @OA\Property(
  *         property="firstName",
@@ -153,6 +154,7 @@ final class PatientResource extends JsonResource
             'lastName' => $this->when($this->lastName, $this->lastName),
             'avatar' => MediaResource::make($firstMedia),
             'age' => $this->when($this->age, $this->age),
+            'profile' => MediaResource::make($firstMedia),
             'fatherName' => $this->when($this->fatherName, $this->fatherName),
             'motherName' => $this->when($this->motherName, $this->motherName),
             'birth' => $this->when($this->birth, $this->birth),
@@ -166,8 +168,8 @@ final class PatientResource extends JsonResource
             'nextReservation' => $this->when($this->next_reservation_date, Carbon::parse($this->next_reservation_date)->toDateTimeString()),
             'lastReservation' => $this->when($this->last_reservation_date, Carbon::parse($this->last_reservation_date)->toDateTimeString()),
 
-            'permanentIlls' => IllResource::collection($this->whenLoaded('permanentIlls')),
-            'permanentMedicines' => MedicineResource::collection($this->whenLoaded('permanentMedicines')),
+            'chronicDiseases' => ChronicDiseasResource::collection($this->whenLoaded('chronicDiseases')),
+            'chronicMedication' => ChronicMedicationResource::collection($this->whenLoaded('chronicMedications')),
 
             'media' => $this->whenLoaded('media', function () use ($firstMedia) {
                 $mediaCollection = $this->media;

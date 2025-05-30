@@ -430,6 +430,294 @@
                 ]
             }
         },
+        "/api/chronics/diseases": {
+            "get": {
+                "tags": [
+                    "Chronic Diseases"
+                ],
+                "summary": "Get all chronic diseases for a patient",
+                "operationId": "5c534e5e7e7a566ba5c2913815f89994",
+                "parameters": [
+                    {
+                        "name": "patientId",
+                        "in": "query",
+                        "description": "ID of the patient",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of chronic diseases",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ChronicDiseasResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Chronic Diseases"
+                ],
+                "summary": "Create a new chronic disease",
+                "operationId": "01311df30adb996e87e20f58f474becc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChronicDiseaseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Chronic disease created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChronicDiseasResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/chronics/diseases/{chronicDisease}": {
+            "put": {
+                "tags": [
+                    "Chronic Diseases"
+                ],
+                "summary": "Update a chronic disease",
+                "operationId": "460202695902e5d760959b266a109304",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the chronic disease to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChronicDiseaseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Chronic disease updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChronicDiseasResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chronic disease not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Chronic Diseases"
+                ],
+                "summary": "Delete a chronic disease",
+                "operationId": "c2884877017d0420b4247bf71603ae00",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the chronic disease to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "description": "Chronic disease not found"
+                    }
+                }
+            }
+        },
+        "/api/chronics/medications": {
+            "get": {
+                "tags": [
+                    "Chronic Medications"
+                ],
+                "summary": "Get all chronic medications for a patient",
+                "operationId": "f3f89be00b34130d4ed54ca10e0b1a41",
+                "parameters": [
+                    {
+                        "name": "patientId",
+                        "in": "query",
+                        "description": "ID of the patient",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of chronic medications",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ChronicMedicationResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Chronic Medications"
+                ],
+                "summary": "Create a new chronic medication",
+                "operationId": "598917d63b208df7a45a3c5e55171773",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChronicMedicationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Chronic medication created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChronicMedicationResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/chronics/medications/{chronicMedication}": {
+            "put": {
+                "tags": [
+                    "Chronic Medications"
+                ],
+                "summary": "Update a chronic medication",
+                "operationId": "ba803953963e995de9599e5d9916bc2c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the chronic medication to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ChronicMedicationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Chronic medication updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChronicMedicationResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chronic medication not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Chronic Medications"
+                ],
+                "summary": "Delete a chronic medication",
+                "operationId": "8c04cb44c22fea10e061353a0fe13389",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the chronic medication to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "404": {
+                        "description": "Chronic medication not found"
+                    }
+                }
+            }
+        },
         "/api/clinics": {
             "get": {
                 "tags": [
@@ -564,6 +852,42 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/api/feedback": {
+            "post": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Create a new feedback",
+                "operationId": "73567c0c6ca97cd1fcb79ddac458d4ce",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "description"
+                                ],
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "example": "This is a sample feedback description"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Feedback created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 }
             }
@@ -799,6 +1123,176 @@
                 ]
             }
         },
+        "/api/filling/materials": {
+            "get": {
+                "tags": [
+                    "Filling Materials"
+                ],
+                "summary": "Get all filling materials",
+                "operationId": "c12d3d234dfe3c3f1d0d0c2e58bb28b0",
+                "responses": {
+                    "200": {
+                        "description": "List of filling materials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/FillingMaterialResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Filling Materials"
+                ],
+                "summary": "Create a new filling material",
+                "operationId": "1fc59fbd81ddcbcd00048ac8dfc132ab",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Composite Resin"
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "example": "White"
+                                    },
+                                    "laboratoryId": {
+                                        "type": "string",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Filling material created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FillingMaterialResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/filling/materials/{fillingMaterial}": {
+            "put": {
+                "tags": [
+                    "Filling Materials"
+                ],
+                "summary": "Update a filling material",
+                "operationId": "84a1ff145f190815cbf4dc47cf8ff229",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the filling material",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Composite Resin"
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "example": "White"
+                                    },
+                                    "laboratoryId": {
+                                        "type": "string",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Filling material updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FillingMaterialResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Filling material not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Filling Materials"
+                ],
+                "summary": "Delete a filling material",
+                "operationId": "e22b2c26767b55e1292be1b9668abf8a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the filling material",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Filling material deleted"
+                    },
+                    "404": {
+                        "description": "Filling material not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
         "/api/ills": {
             "get": {
                 "tags": [
@@ -880,6 +1374,395 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/laboratories": {
+            "get": {
+                "tags": [
+                    "Laboratories"
+                ],
+                "summary": "Get all laboratories",
+                "operationId": "c7eca5a9cc6e00f23d32abc88e37e34e",
+                "responses": {
+                    "200": {
+                        "description": "List of laboratories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/LaboratoryResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Laboratories"
+                ],
+                "summary": "Create a new laboratory",
+                "operationId": "f0951ee964181228b4085abff6beaad4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "address",
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Lab Name"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "123 Lab Street"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "1234567890"
+                                    },
+                                    "whatsapp": {
+                                        "type": "string",
+                                        "example": "1234567890",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Laboratory created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LaboratoryResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/laboratories/{laboratory}": {
+            "get": {
+                "tags": [
+                    "Laboratories"
+                ],
+                "summary": "Get a specific laboratory",
+                "operationId": "465c63822fc5452f22545d122981aee5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Laboratory details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LaboratoryResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Laboratories"
+                ],
+                "summary": "Update a laboratory",
+                "operationId": "685b61cc0e21437839ef4b8298748bd5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Lab Name"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "456 Updated Lab Street"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "0987654321"
+                                    },
+                                    "whatsapp": {
+                                        "type": "string",
+                                        "example": "0987654321",
+                                        "nullable": true
+                                    },
+                                    "clinic_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Laboratory updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LaboratoryResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Laboratories"
+                ],
+                "summary": "Delete a laboratory",
+                "operationId": "2ce1844236edf31677da9b0f704887d1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Laboratory deleted"
+                    }
+                }
+            }
+        },
+        "/api/medical/cases": {
+            "post": {
+                "tags": [
+                    "Medical Cases"
+                ],
+                "summary": "Create a new medical case",
+                "description": "Store a newly created medical case in storage.",
+                "operationId": "e8466fd43780d0d7f923b4743b2bfbaa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreMedicalCaseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Medical case created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicalCaseResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/medical-cases/{id}": {
+            "put": {
+                "tags": [
+                    "Medical Cases"
+                ],
+                "summary": "Update a specific medical case",
+                "description": "Update the specified medical case in storage.",
+                "operationId": "da184fdc279bd411ba4e6927c7c627bf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the medical case to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateMedicalCaseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Medical case updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicalCaseResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Medical Cases"
+                ],
+                "summary": "Delete a specific medical case",
+                "description": "Remove the specified medical case from storage.",
+                "operationId": "77eafcf81316938c01a9935f800bde66",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the medical case to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Medical case deleted"
+                    }
+                }
+            }
+        },
+        "/api/medical/sessions": {
+            "post": {
+                "tags": [
+                    "Medical Sessions"
+                ],
+                "summary": "Create a new medical session",
+                "operationId": "6f12bffb96fb98ba4335c5fb0cdeb04c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MedicalSessionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Medical session created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicalSessionResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/medical/sessions/{medicalSession}": {
+            "put": {
+                "tags": [
+                    "Medical Sessions"
+                ],
+                "summary": "Update a specific medical session",
+                "operationId": "98bd053fcd31bd7d383215f914c270c4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the medical session to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MedicalSessionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Medical session updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MedicalSessionResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Medical Sessions"
+                ],
+                "summary": "Delete a specific medical session",
+                "operationId": "44102222057548b9a3084520c628c844",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the medical session to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Medical session deleted"
+                    }
+                }
             }
         },
         "/api/transactions/medical": {
@@ -1623,7 +2506,7 @@
                     {
                         "name": "orderBy",
                         "in": "query",
-                        "description": "Field to order patients by",
+                        "description": "Field to order patients by. Options: firstName, lastName, nextReservation, lastReservation, registeredAt",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -1640,7 +2523,7 @@
                     {
                         "name": "orderType",
                         "in": "query",
-                        "description": "Order type",
+                        "description": "Order type. Options: DESC, ASC",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -1654,7 +2537,7 @@
                     {
                         "name": "perPage",
                         "in": "query",
-                        "description": "Number of patients per page",
+                        "description": "Number of patients per page. Default: 20",
                         "required": false,
                         "schema": {
                             "type": "integer",
@@ -1728,10 +2611,111 @@
                         }
                     },
                     "400": {
-                        "description": "Bad request"
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Invalid data provided."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "401": {
-                        "description": "Unauthorized"
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/patients/mini": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get a mini list of patients",
+                "description": "Retrieves a paginated list of patients with minimal information, filtered by the provided criteria. This endpoint is useful for quick lookups or dropdowns.",
+                "operationId": "80136ba6571bf91fefbec98f46840724",
+                "parameters": [
+                    {
+                        "name": "clinicId",
+                        "in": "query",
+                        "description": "Filter patients by clinic ID",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "fullName",
+                        "in": "query",
+                        "description": "Filter patients by full name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of patients per page. Default: 20",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PatientResource"
+                                            }
+                                        },
+                                        "links": {
+                                            "description": "Pagination links",
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "description": "Pagination metadata",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1756,16 +2740,8 @@
                         "description": "ID of the patient to retrieve",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "clinicId",
-                        "in": "query",
-                        "description": "Filter reservations by clinic ID",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "format": "uuid"
                         }
                     }
                 ],
@@ -1781,7 +2757,20 @@
                         }
                     },
                     "404": {
-                        "description": "Patient not found"
+                        "description": "Patient not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Patient not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1873,14 +2862,14 @@
                 ]
             }
         },
-        "/api/patients/{patient}/records": {
+        "/api/patients/{patient}/medical/cases": {
             "get": {
                 "tags": [
                     "Patients"
                 ],
-                "summary": "Get patient medical records",
-                "description": "Retrieves all medical records for a specific patient with filtering options",
-                "operationId": "getPatientRecords",
+                "summary": "Get patient medical cases",
+                "description": "Retrieves all medical cases for a specific patient",
+                "operationId": "getPatientMedicalCases",
                 "parameters": [
                     {
                         "name": "patient",
@@ -1890,35 +2879,6 @@
                         "schema": {
                             "type": "string",
                             "format": "uuid"
-                        }
-                    },
-                    {
-                        "name": "startDate",
-                        "in": "query",
-                        "description": "Start date for filtering records (Y-m-d)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    },
-                    {
-                        "name": "endDate",
-                        "in": "query",
-                        "description": "End date for filtering records (Y-m-d), must be after or equal to startDate",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    },
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "description": "Search term to filter records by content",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 ],
@@ -1932,16 +2892,8 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/components/schemas/RecordResource"
+                                                "$ref": "#/components/schemas/MedicalCaseResource"
                                             }
-                                        },
-                                        "links": {
-                                            "description": "Pagination links",
-                                            "type": "object"
-                                        },
-                                        "meta": {
-                                            "description": "Pagination metadata",
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -1951,9 +2903,56 @@
                     },
                     "404": {
                         "description": "Patient not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/patients/{patient}/teeth": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get patient teeth",
+                "description": "Retrieves all teeth records for a specific patient, categorized by type (child or adult).",
+                "operationId": "getPatientTeeth",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "Patient ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ToothResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
-                    "422": {
-                        "description": "Validation error"
+                    "404": {
+                        "description": "Patient not found"
                     }
                 },
                 "security": [
@@ -2109,7 +3108,8 @@
                         "description": "Patient ID",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "uuid"
                         }
                     },
                     {
@@ -2284,9 +3284,9 @@
                         }
                     },
                     {
-                        "name": "collection",
+                        "name": "caption",
                         "in": "query",
-                        "description": "Filter by media collection",
+                        "description": "Filter by media caption",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -2342,8 +3342,8 @@
                                         "type": "string",
                                         "format": "binary"
                                     },
-                                    "collection": {
-                                        "description": "Collection name for the files",
+                                    "name": {
+                                        "description": "Name of the files",
                                         "type": "string"
                                     }
                                 },
@@ -2367,19 +3367,64 @@
                 ]
             }
         },
+        "/api/patients/{patient}/file/{media}": {
+            "delete": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Delete a patient file",
+                "description": "Delete a specific file associated with a patient",
+                "operationId": "deletePatientFile",
+                "parameters": [
+                    {
+                        "name": "patient",
+                        "in": "path",
+                        "description": "Patient ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "media",
+                        "in": "path",
+                        "description": "Media ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "File deleted successfully"
+                    },
+                    "404": {
+                        "description": "File not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/records": {
             "post": {
                 "tags": [
                     "Records"
                 ],
-                "summary": "Create a new medical record",
+                "summary": "Create a new record",
                 "operationId": "b1cb58080b97f1cc484352515a66d98b",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/CreateRecordRequest"
+                                "$ref": "#/components/schemas/StoreRecordRequest"
                             }
                         }
                     }
@@ -2394,9 +3439,6 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
                     },
                     "422": {
                         "description": "Validation error"
@@ -2414,24 +3456,23 @@
                 "tags": [
                     "Records"
                 ],
-                "summary": "Get a specific medical record",
+                "summary": "Get a specific record",
                 "operationId": "47225c01ff19852c8677a75817dfba23",
                 "parameters": [
                     {
                         "name": "record",
                         "in": "path",
-                        "description": "Record UUID",
+                        "description": "Record ID",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "format": "uuid",
-                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                            "format": "uuid"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Record details retrieved successfully",
+                        "description": "Record details",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2439,9 +3480,6 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
                     },
                     "404": {
                         "description": "Record not found"
@@ -2457,13 +3495,13 @@
                 "tags": [
                     "Records"
                 ],
-                "summary": "Update an existing medical record",
+                "summary": "Update a record",
                 "operationId": "655d1da6268656aec3196b2a415ff766",
                 "parameters": [
                     {
                         "name": "record",
                         "in": "path",
-                        "description": "Record UUID",
+                        "description": "Record ID",
                         "required": true,
                         "schema": {
                             "type": "string",
@@ -2498,40 +3536,34 @@
                     "422": {
                         "description": "Validation error"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
                     "Records"
                 ],
-                "summary": "Soft delete a medical record",
+                "summary": "Delete a record",
                 "operationId": "c64288c2e8dee1b0c0e537d8e11422cc",
                 "parameters": [
                     {
                         "name": "record",
                         "in": "path",
-                        "description": "Record UUID",
+                        "description": "Record ID",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "format": "uuid",
-                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                            "format": "uuid"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Record deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RecordResource"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
+                    "204": {
+                        "description": "Record deleted successfully"
                     },
                     "404": {
                         "description": "Record not found"
@@ -2544,59 +3576,22 @@
                 ]
             }
         },
-        "/api/records/{record}/restore": {
+        "/api/records/{record}/file": {
             "post": {
                 "tags": [
                     "Records"
                 ],
-                "summary": "Restore a soft-deleted medical record",
-                "operationId": "17ef4b59be4d8a2a9458c829bccfa33f",
+                "summary": "Upload new file",
+                "operationId": "34fc9dda7fb2178788b67d10d40e0dbb",
                 "parameters": [
                     {
                         "name": "record",
                         "in": "path",
-                        "description": "Record UUID",
+                        "description": "Record ID",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "format": "uuid"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Record restored successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/RecordResource"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Record not found"
-                    }
-                }
-            }
-        },
-        "/api/records/{record}/files": {
-            "post": {
-                "tags": [
-                    "Records"
-                ],
-                "summary": "Add files to a medical record",
-                "operationId": "5da6b9125d4f542226bd9784249435ad",
-                "parameters": [
-                    {
-                        "name": "record",
-                        "in": "path",
-                        "description": "Record UUID",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "format": "uuid",
-                            "example": "550e8400-e29b-41d4-a716-446655440000"
                         }
                     }
                 ],
@@ -2605,24 +3600,25 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/MediaRequest"
+                                "properties": {
+                                    "file": {
+                                        "description": "Files to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "name": {
+                                        "description": "Name of the files",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Media added successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/MediaResource"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
+                    "204": {
+                        "description": "Files uploaded successfully"
                     },
                     "422": {
                         "description": "Validation error"
@@ -2635,80 +3631,42 @@
                 ]
             }
         },
-        "/api/records/{record}/files/{file}": {
+        "/api/records/{record}/file/{media}": {
             "delete": {
                 "tags": [
                     "Records"
                 ],
-                "summary": "Delete media from a medical record",
-                "description": "Removes a specific media file associated with a medical record. Only media belonging to the specified record can be deleted.",
-                "operationId": "c5bcb10a2a05fbbdd9ef5d87540c06da",
+                "summary": "Delete a record file",
+                "description": "Delete a specific file associated with a record",
+                "operationId": "deleteRecordFile",
                 "parameters": [
                     {
                         "name": "record",
                         "in": "path",
-                        "description": "Record UUID",
+                        "description": "Record ID",
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "format": "uuid",
-                            "example": "550e8400-e29b-41d4-a716-446655440000"
+                            "format": "uuid"
                         }
                     },
                     {
                         "name": "media",
                         "in": "path",
-                        "description": "Media ID to be deleted",
+                        "description": "Media ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "format": "int64",
-                            "example": 1
+                            "type": "string",
+                            "format": "uuid"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Media deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/MediaResource"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden - Media does not belong to this record",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "not Allowed."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                    "204": {
+                        "description": "File deleted successfully"
                     },
                     "404": {
-                        "description": "Record or Media not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Not found."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "File not found"
                     }
                 },
                 "security": [
@@ -2916,6 +3874,124 @@
                     }
                 ]
             }
+        },
+        "/api/treatments": {
+            "get": {
+                "tags": [
+                    "Treatments"
+                ],
+                "summary": "Get all treatments",
+                "operationId": "44221bf51fcb8386d991b9bb1fdecebb",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/TreatmentResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Treatments"
+                ],
+                "summary": "Create a new treatment",
+                "operationId": "403a1f741c295377385d7eb7357d4a63",
+                "responses": {
+                    "201": {
+                        "description": "Treatment created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TreatmentResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/treatments/{treatment}": {
+            "put": {
+                "tags": [
+                    "Treatments"
+                ],
+                "summary": "Update a treatment",
+                "operationId": "0c60412a22ee00cd2b048e5cfc88bbc8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Treatment Name"
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "example": "#000000"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Treatment updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TreatmentResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Treatments"
+                ],
+                "summary": "Delete a treatment",
+                "operationId": "092366bdd563ae92463e16887f0465d1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Treatment deleted"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -2980,6 +4056,47 @@
                         "description": "The ID of the reservation (nullable for new reservations)",
                         "type": "string",
                         "example": "123e4567-e89b-12d3-a456-426614174000"
+                    }
+                },
+                "type": "object"
+            },
+            "ChronicDiseaseRequest": {
+                "required": [
+                    "patient_id",
+                    "description"
+                ],
+                "properties": {
+                    "patient_id": {
+                        "description": "The ID of the patient",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "description": {
+                        "description": "Description of the chronic disease",
+                        "type": "string",
+                        "example": "Diabetes"
+                    }
+                },
+                "type": "object"
+            },
+            "ChronicMedicationRequest": {
+                "title": "ChronicMedicationRequest",
+                "description": "Request schema for chronic medication",
+                "required": [
+                    "patient_id",
+                    "description"
+                ],
+                "properties": {
+                    "patient_id": {
+                        "description": "The ID of the patient",
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "description": {
+                        "description": "Description of the chronic medication",
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Daily medication for hypertension"
                     }
                 },
                 "type": "object"
@@ -3393,6 +4510,28 @@
                 },
                 "type": "object"
             },
+            "MedicalSessionRequest": {
+                "title": "MedicalSessionRequest",
+                "description": "Request schema for creating or updating a medical session",
+                "required": [
+                    "medicalCaseId",
+                    "date"
+                ],
+                "properties": {
+                    "medicalCaseId": {
+                        "description": "The ID of the medical case",
+                        "type": "string",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "date": {
+                        "description": "The date of the medical session",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-10-01"
+                    }
+                },
+                "type": "object"
+            },
             "MedicalTransactionRequest": {
                 "required": [
                     "transaction_date",
@@ -3463,17 +4602,38 @@
                 },
                 "type": "object"
             },
-            "PatientIndexRequest": {
-                "title": "Patient Index Request",
-                "description": "Request parameters for indexing patients",
+            "PatientListRequest": {
+                "title": "Patient List Request",
+                "description": "Request parameters for filtering and sorting patient lists",
                 "properties": {
-                    "clinicId": {
-                        "description": "The ID of the clinic. Must exist in the clinics table.",
+                    "firstName": {
+                        "description": "Filter by patient's first name",
                         "type": "string",
-                        "nullable": true
+                        "maxLength": 255
+                    },
+                    "lastName": {
+                        "description": "Filter by patient's last name",
+                        "type": "string",
+                        "format": "uuid",
+                        "maxLength": 255
+                    },
+                    "phone": {
+                        "description": "Filter by patient's phone number",
+                        "type": "string",
+                        "maxLength": 20
+                    },
+                    "clinicId": {
+                        "description": "Filter by clinic ID",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "fullName": {
+                        "description": "Filter by patient's full name",
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "orderBy": {
-                        "description": "The field to order by. Allowed values: firstName, lastName, nextReservation, lastReservation, registeredAt.",
+                        "description": "Field to order the results by",
                         "type": "string",
                         "enum": [
                             "firstName",
@@ -3481,17 +4641,15 @@
                             "nextReservation",
                             "lastReservation",
                             "registeredAt"
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "orderType": {
-                        "description": "The order type. Allowed values: DESC, ASC.",
+                        "description": "Order type (ASC or DESC)",
                         "type": "string",
                         "enum": [
                             "DESC",
                             "ASC"
-                        ],
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -3541,6 +4699,11 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "whatsapp": {
+                        "description": "The WhatsApp number of the patient",
+                        "type": "string",
+                        "nullable": true
+                    },
                     "age": {
                         "description": "The age of the patient",
                         "type": "number",
@@ -3570,6 +4733,7 @@
                     "notes": {
                         "description": "Additional notes about the patient",
                         "type": "string",
+                        "maxLength": 1000,
                         "nullable": true
                     },
                     "birth": {
@@ -3589,44 +4753,13 @@
                     "clinicId": {
                         "description": "The ID of the clinic the patient belongs to",
                         "type": "string",
+                        "format": "uuid",
                         "nullable": true
                     },
-                    "permanentMedicines": {
-                        "description": "Array of permanent medicines for the patient",
-                        "type": "array",
-                        "items": {
-                            "properties": {
-                                "id": {
-                                    "description": "Medicine ID",
-                                    "type": "string"
-                                },
-                                "notes": {
-                                    "description": "Notes about the medicine",
-                                    "type": "string",
-                                    "nullable": true
-                                }
-                            },
-                            "type": "object"
-                        },
-                        "nullable": true
-                    },
-                    "permanentIlls": {
-                        "description": "Array of permanent illnesses for the patient",
-                        "type": "array",
-                        "items": {
-                            "properties": {
-                                "id": {
-                                    "description": "Illness ID",
-                                    "type": "string"
-                                },
-                                "notes": {
-                                    "description": "Notes about the illness",
-                                    "type": "string",
-                                    "nullable": true
-                                }
-                            },
-                            "type": "object"
-                        },
+                    "profileImage": {
+                        "description": "The profile image of the patient",
+                        "type": "string",
+                        "format": "binary",
                         "nullable": true
                     }
                 },
@@ -3691,6 +4824,13 @@
                 "type": "object"
             },
             "ReservationRequest": {
+                "description": "Request data for creating or updating a reservation",
+                "required": [
+                    "start",
+                    "end",
+                    "type",
+                    "patientId"
+                ],
                 "properties": {
                     "start": {
                         "description": "Reservation start time",
@@ -3738,8 +4878,8 @@
                         "format": "uuid",
                         "example": "550e8400-e29b-41d4-a716-446655440001"
                     },
-                    "specificationId": {
-                        "description": "Specification UUID",
+                    "medicalCaseId": {
+                        "description": "Medical Case UUID",
                         "type": "string",
                         "format": "uuid",
                         "example": "550e8400-e29b-41d4-a716-446655440002"
@@ -3749,6 +4889,96 @@
                         "type": "string",
                         "format": "uuid",
                         "example": "550e8400-e29b-41d4-a716-446655440003"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreMedicalCaseRequest": {
+                "title": "Store Medical Case Request",
+                "description": "Request body for storing a medical case",
+                "required": [
+                    "name",
+                    "clinic_id",
+                    "total",
+                    "date",
+                    "patientId"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name of the medical case",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "description": {
+                        "description": "The description of the medical case",
+                        "type": "string"
+                    },
+                    "clinic_id": {
+                        "description": "The ID of the clinic associated with the medical case",
+                        "type": "integer"
+                    },
+                    "total": {
+                        "description": "The total cost of the medical case",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "date": {
+                        "description": "The date of the medical case",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "patientId": {
+                        "description": "The ID of the patient associated with the medical case",
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreRecordRequest": {
+                "required": [
+                    "description",
+                    "type",
+                    "patientId"
+                ],
+                "properties": {
+                    "description": {
+                        "description": "Description of the record",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Type of the record",
+                        "type": "string"
+                    },
+                    "treatmentId": {
+                        "description": "ID of the treatment",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "toothId": {
+                        "description": "ID of the tooth",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "clinicId": {
+                        "description": "ID of the clinic",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "fillingMaterialId": {
+                        "description": "ID of the filling material",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "medicalSessionId": {
+                        "description": "ID of the medical session",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "patientId": {
+                        "description": "ID of the patient",
+                        "type": "string",
+                        "format": "uuid"
                     }
                 },
                 "type": "object"
@@ -3878,108 +5108,81 @@
                 },
                 "type": "object"
             },
-            "UpdateRecordRequest": {
-                "title": "Update Record Request",
-                "description": "Record request body for updating records",
+            "UpdateMedicalCaseRequest": {
+                "title": "Update Medical Case Request",
+                "description": "Request body for updating a medical case",
+                "required": [],
                 "properties": {
+                    "name": {
+                        "description": "The name of the medical case",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "description": {
+                        "description": "The description of the medical case",
+                        "type": "string"
+                    },
+                    "clinic_id": {
+                        "description": "The ID of the clinic associated with the medical case",
+                        "type": "integer"
+                    },
+                    "total": {
+                        "description": "The total cost of the medical case",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "date": {
+                        "description": "The date of the medical case",
+                        "type": "string",
+                        "format": "date"
+                    },
                     "patientId": {
-                        "description": "ID of the patient",
+                        "description": "The ID of the patient associated with the medical case",
                         "type": "string",
-                        "example": "pat_123456789"
-                    },
-                    "clinicId": {
-                        "description": "ID of the clinic",
-                        "type": "string",
-                        "example": "cli_123456789",
-                        "nullable": true
-                    },
-                    "reservationId": {
-                        "description": "ID of the reservation",
-                        "type": "string",
-                        "example": "res_123456789",
-                        "nullable": true
-                    },
-                    "notes": {
-                        "description": "notes of records",
-                        "type": "string",
-                        "example": "notes example",
-                        "nullable": true
+                        "format": "uuid"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateRecordRequest": {
+                "properties": {
+                    "description": {
+                        "description": "The description of the record",
+                        "type": "string"
                     },
                     "type": {
-                        "description": "Type of the record",
+                        "description": "The type of the record",
+                        "type": "string"
+                    },
+                    "treatmentId": {
+                        "description": "The ID of the treatment associated with the record",
                         "type": "string",
-                        "enum": [
-                            "consultation",
-                            "examination",
-                            "treatment"
-                        ]
+                        "format": "uuid"
                     },
-                    "price": {
-                        "description": "Price of the record",
-                        "type": "integer",
-                        "example": 5000,
-                        "nullable": true
+                    "toothId": {
+                        "description": "The ID of the tooth associated with the record",
+                        "type": "string",
+                        "format": "uuid"
                     },
-                    "doctorsIds": {
-                        "description": "Array of doctor IDs",
-                        "type": "array",
-                        "items": {
-                            "type": "string",
-                            "example": "doc_123456789"
-                        },
-                        "nullable": true
+                    "clinicId": {
+                        "description": "The ID of the clinic associated with the record",
+                        "type": "string",
+                        "format": "uuid"
                     },
-                    "medicines": {
-                        "description": "Array of medicines",
-                        "type": "array",
-                        "items": {
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "example": "med_123456789"
-                                },
-                                "notes": {
-                                    "type": "string",
-                                    "example": "Take after meals",
-                                    "nullable": true
-                                },
-                                "type": {
-                                    "type": "string",
-                                    "enum": [
-                                        "diagnosis",
-                                        "transient"
-                                    ]
-                                }
-                            },
-                            "type": "object"
-                        },
-                        "nullable": true
+                    "fillingMaterialId": {
+                        "description": "The ID of the filling material associated with the record",
+                        "type": "string",
+                        "format": "uuid"
                     },
-                    "ills": {
-                        "description": "Array of illnesses",
-                        "type": "array",
-                        "items": {
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "example": "ill_123456789"
-                                },
-                                "notes": {
-                                    "type": "string",
-                                    "example": "Chronic condition",
-                                    "nullable": true
-                                },
-                                "type": {
-                                    "type": "string",
-                                    "enum": [
-                                        "diagnosis",
-                                        "transient"
-                                    ]
-                                }
-                            },
-                            "type": "object"
-                        },
-                        "nullable": true
+                    "medicalSessionId": {
+                        "description": "The ID of the medical session associated with the record",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "patientId": {
+                        "description": "The ID of the patient associated with the record",
+                        "type": "string",
+                        "format": "uuid"
                     }
                 },
                 "type": "object"
@@ -4021,6 +5224,42 @@
                     },
                     "patient": {
                         "$ref": "#/components/schemas/PatientResource"
+                    }
+                },
+                "type": "object"
+            },
+            "ChronicDiseasResource": {
+                "title": "Chronic Disease Resource",
+                "description": "Chronic Disease resource representation",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the chronic disease",
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "description": {
+                        "description": "The description of the chronic disease",
+                        "type": "string",
+                        "example": "Diabetes"
+                    }
+                },
+                "type": "object"
+            },
+            "ChronicMedicationResource": {
+                "title": "Chronic Medciation Resource",
+                "description": "Chronic Disease resource representation",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the chronic medciation",
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "description": {
+                        "description": "The description of the chronic disease",
+                        "type": "string",
+                        "example": "Diabetes"
                     }
                 },
                 "type": "object"
@@ -4118,6 +5357,24 @@
                 },
                 "type": "object"
             },
+            "FillingMaterialResource": {
+                "title": "Filling Material Resource",
+                "description": "Filling Material resource representation",
+                "properties": {
+                    "name": {
+                        "description": "The name of the filling material",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "The color of the filling material",
+                        "type": "string"
+                    },
+                    "laboratory": {
+                        "$ref": "#/components/schemas/LaboratoryResource"
+                    }
+                },
+                "type": "object"
+            },
             "IllResource": {
                 "title": "Ill Resource",
                 "description": "Ill resource representation",
@@ -4146,6 +5403,40 @@
                     },
                     "image": {
                         "$ref": "#/components/schemas/MediaResource"
+                    }
+                },
+                "type": "object"
+            },
+            "LaboratoryResource": {
+                "title": "Laboratory Resource",
+                "description": "Laboratory resource representation",
+                "properties": {
+                    "id": {
+                        "description": "The ID of the laboratory",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "The name of the laboratory",
+                        "type": "string"
+                    },
+                    "address": {
+                        "description": "The address of the laboratory",
+                        "type": "string"
+                    },
+                    "phone": {
+                        "description": "The phone number of the laboratory",
+                        "type": "string"
+                    },
+                    "whatsapp": {
+                        "description": "The WhatsApp number of the laboratory",
+                        "type": "string"
+                    },
+                    "fillingMaterials": {
+                        "description": "List of filling materials associated with the laboratory",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FillingMaterialResource"
+                        }
                     }
                 },
                 "type": "object"
@@ -4243,6 +5534,61 @@
                 },
                 "type": "object"
             },
+            "MedicalCaseResource": {
+                "title": "Medical Case Resource",
+                "description": "Medical Case Resource",
+                "properties": {
+                    "id": {
+                        "description": "The ID of the medical case",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "The name of the medical case",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "The description of the medical case",
+                        "type": "string"
+                    },
+                    "total": {
+                        "description": "The total amount associated with the medical case",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "date": {
+                        "description": "The date of the medical case",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "createdBy": {
+                        "$ref": "#/components/schemas/UserResource"
+                    }
+                },
+                "type": "object"
+            },
+            "MedicalSessionResource": {
+                "title": "Medical Session Resource",
+                "description": "Medical Session Resource",
+                "properties": {
+                    "id": {
+                        "description": "The ID of the medical session",
+                        "type": "integer"
+                    },
+                    "date": {
+                        "description": "The date of the medical session",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "records": {
+                        "description": "List of records associated with the medical session",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "MedicalTransactionResource": {
                 "properties": {
                     "id": {
@@ -4328,8 +5674,9 @@
                 "properties": {
                     "id": {
                         "description": "Unique identifier for the patient",
-                        "type": "integer",
-                        "example": 1
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
                     },
                     "firstName": {
                         "description": "First name of the patient",
@@ -4441,78 +5788,45 @@
                 "description": "Record resource representation",
                 "properties": {
                     "id": {
-                        "description": "Unique identifier for the record",
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "description": {
-                        "description": "Description of the record",
-                        "type": "string",
-                        "example": "This is a sample record description."
+                        "description": "The unique identifier of the record",
+                        "type": "integer"
                     },
                     "type": {
-                        "description": "Type of the record",
-                        "type": "string",
-                        "example": "Medical"
+                        "description": "The type of the record",
+                        "type": "string"
                     },
-                    "dateTime": {
-                        "description": "Date and time of the record",
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2023-10-01T12:34:56Z"
+                    "description": {
+                        "description": "The description of the record",
+                        "type": "string"
                     },
-                    "notes": {
-                        "description": "Additional notes for the record",
-                        "type": "string",
-                        "example": "Patient showed improvement"
+                    "tooth": {
+                        "$ref": "#/components/schemas/ToothResource"
                     },
-                    "reservation": {
-                        "$ref": "#/components/schemas/ReservationResource"
+                    "treatment": {
+                        "$ref": "#/components/schemas/TreatmentResource"
+                    },
+                    "fillingMaterial": {
+                        "$ref": "#/components/schemas/FillingMaterialResource"
+                    },
+                    "medicalSession": {
+                        "$ref": "#/components/schemas/MedicalSessionResource"
                     },
                     "doctors": {
-                        "description": "List of doctors associated with the record",
+                        "description": "The doctors associated with the record",
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/DoctorResource"
+                            "$ref": "#/components/schemas/UserResource"
                         }
                     },
-                    "ills": {
-                        "description": "List of diagnosed illnesses associated with the record",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/IllResource"
-                        }
+                    "createdAt": {
+                        "description": "The creation date of the record",
+                        "type": "string",
+                        "format": "date"
                     },
-                    "transientIlls": {
-                        "description": "List of transient illnesses associated with the record",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/IllResource"
-                        }
-                    },
-                    "medicines": {
-                        "description": "List of prescribed medicines associated with the record",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/MedicineResource"
-                        }
-                    },
-                    "transientMedicines": {
-                        "description": "List of transient medicines associated with the record",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/MedicineResource"
-                        }
-                    },
-                    "media": {
-                        "description": "List of media files associated with the record",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/MediaResource"
-                        }
-                    },
-                    "patient": {
-                        "$ref": "#/components/schemas/PatientResource"
+                    "updatedAt": {
+                        "description": "The last update date of the record",
+                        "type": "string",
+                        "format": "date"
                     }
                 },
                 "type": "object"
@@ -4549,8 +5863,8 @@
                     "doctor": {
                         "$ref": "#/components/schemas/DoctorResource"
                     },
-                    "specification": {
-                        "$ref": "#/components/schemas/SpecificationResource"
+                    "medicalCase": {
+                        "$ref": "#/components/schemas/MedicalCaseResource"
                     },
                     "createdAt": {
                         "description": "Creation timestamp of the reservation",
@@ -4589,6 +5903,49 @@
                     },
                     "image": {
                         "$ref": "#/components/schemas/MediaResource"
+                    }
+                },
+                "type": "object"
+            },
+            "ToothResource": {
+                "title": "Tooth Resource",
+                "description": "Tooth resource representation",
+                "properties": {
+                    "id": {
+                        "description": "The ID of the tooth",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "The name of the tooth",
+                        "type": "string"
+                    },
+                    "number": {
+                        "description": "The number of the tooth",
+                        "type": "integer"
+                    },
+                    "type": {
+                        "description": "The type of the tooth",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "TreatmentResource": {
+                "title": "Treatment Resource",
+                "description": "Treatment resource representation",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the treatment",
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "name": {
+                        "description": "The name of the treatment",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "The color associated with the treatment",
+                        "type": "string"
                     }
                 },
                 "type": "object"
@@ -4710,6 +6067,38 @@
         {
             "name": "Reservation",
             "description": "Operations related to reservations"
+        },
+        {
+            "name": "Chronic Diseases",
+            "description": "Chronic Diseases"
+        },
+        {
+            "name": "Chronic Medications",
+            "description": "Chronic Medications"
+        },
+        {
+            "name": "Feedback",
+            "description": "Feedback"
+        },
+        {
+            "name": "Filling Materials",
+            "description": "Filling Materials"
+        },
+        {
+            "name": "Laboratories",
+            "description": "Laboratories"
+        },
+        {
+            "name": "Medical Cases",
+            "description": "Medical Cases"
+        },
+        {
+            "name": "Medical Sessions",
+            "description": "Medical Sessions"
+        },
+        {
+            "name": "Treatments",
+            "description": "Treatments"
         }
     ]
 }

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Clinic;
 use Illuminate\Validation\Rule;
+use App\Rules\ReservationConflictRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -59,9 +60,14 @@ class CheckReservationConflictRequest extends FormRequest
     {
         return [
             'clinicId' => ['nullable' , 'uuid' , Rule::exists(Clinic::class, 'id')],
-            'start' => 'required|date',
-            'end' => 'required|date',
-            'reservationId' => 'nullable|uuid',
+            'reservationId' => ['nullable' , 'uuid' , Rule::exists('reservations' , 'id')],
+            'start' => [
+                'required' , 'date' ,
+                'date_format:Y-m-d H:i:s',
+                'after_or_equal:'.now()->subMinute(),
+                new ReservationConflictRule($this->input('clinicId'), $this->route('reservationId'))
+            ],
+            'end' => ['required' , 'date' ,'date_format:Y-m-d H:i:s', 'after:start'],
         ];
     }
 }

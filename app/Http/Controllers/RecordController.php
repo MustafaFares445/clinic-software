@@ -3,17 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Record;
-use App\Services\MediaService;
-use App\Services\RecordService;
-use Illuminate\Http\JsonResponse;
-use App\Http\Requests\MediaRequest;
+use Illuminate\Http\Request;
 use App\Http\Resources\MediaResource;
 use App\Http\Resources\RecordResource;
-use App\Http\Requests\CreateRecordRequest;
+use App\Http\Requests\StoreRecordRequest;
 use App\Http\Requests\UpdateRecordRequest;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
-use App\Actions\CreateOrUpdateRecordAction;
 
 /**
  * @OA\Tag(
@@ -23,25 +18,15 @@ use App\Actions\CreateOrUpdateRecordAction;
  */
 final class RecordController extends Controller
 {
-    protected RecordService $recordService;
-
-    protected MediaService $mediaService;
-
-    public function __construct()
-    {
-        $this->recordService = new RecordService;
-        $this->mediaService = new MediaService;
-    }
-
     /**
      * @OA\Post(
      *     path="/api/records",
-     *     summary="Create a new medical record",
+     *     summary="Create a new record",
      *     tags={"Records"},
-     *     security={{"bearerAuth":{}}},
+     *     security={{ "bearerAuth": {} }},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/CreateRecordRequest")
+     *         @OA\JsonContent(ref="#/components/schemas/StoreRecordRequest")
      *     ),
      *     @OA\Response(
      *         response=201,
@@ -49,218 +34,76 @@ final class RecordController extends Controller
      *         @OA\JsonContent(ref="#/components/schemas/RecordResource")
      *     ),
      *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     ),
-     *     @OA\Response(
      *         response=422,
      *         description="Validation error"
      *     )
      * )
      */
-    public function store(CreateRecordRequest $request, CreateOrUpdateRecordAction $action): RecordResource
+    public function store(StoreRecordRequest $request)
     {
-        $record = $action->handle($request);
+        $record = Record::create($request->validated());
 
-        return RecordResource::make(
-            $record->load([
-                'media',
-                'reservation',
-                'ills',
-                'medicines',
-                'doctors'
-            ])
-        );
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/records/{record}",
-     *     summary="Get a specific medical record",
-     *     tags={"Records"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="record",
-     *         in="path",
-     *         required=true,
-     *         description="Record UUID",
-     *         @OA\Schema(type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440000")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Record details retrieved successfully",
-     *         @OA\JsonContent(ref="#/components/schemas/RecordResource")
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Record not found"
-     *     )
-     * )
-     */
-    public function show(Record $record): RecordResource
-    {
-        return RecordResource::make($record->load([
-            'media',
-            'reservation',
-            'ills',
-            'medicines',
-            'doctors'
-        ]));
-    }
-
-    /**
-     * @OA\Put(
-     *     path="/api/records/{record}",
-     *     summary="Update an existing medical record",
-     *     tags={"Records"},
-     *
-     *     @OA\Parameter(
-     *         name="record",
-     *         in="path",
-     *         required=true,
-     *         description="Record UUID",
-     *
-     *         @OA\Schema(type="string", format="uuid")
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         required=true,
-     *
-     *         @OA\JsonContent(ref="#/components/schemas/UpdateRecordRequest")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Record updated successfully",
-     *
-     *         @OA\JsonContent(ref="#/components/schemas/RecordResource")
-     *     ),
-     *
-     *     @OA\Response(
-     *         response=404,
-     *         description="Record not found"
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error"
-     *     )
-     * )
-     */
-    public function update(UpdateRecordRequest $request, Record $record , CreateOrUpdateRecordAction $action): RecordResource
-    {
-        $record = $action->handle($request, $record);
-
-        return RecordResource::make($record->load([
-            'media',
-            'reservation',
-            'ills',
-            'medicines',
-            'doctors'
-        ]));
-    }
-
-    /**
-     * @OA\Delete(
-     *     path="/api/records/{record}",
-     *     summary="Soft delete a medical record",
-     *     tags={"Records"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="record",
-     *         in="path",
-     *         required=true,
-     *         description="Record UUID",
-     *         @OA\Schema(type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440000")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Record deleted successfully",
-     *         @OA\JsonContent(ref="#/components/schemas/RecordResource")
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Record not found"
-     *     )
-     * )
-     */
-    public function destroy(Record $record): RecordResource
-    {
-        $record->delete();
+        $record->load(['patient', 'tooth', 'treatment', 'fillingMaterial', 'medicalSession', 'doctors.media' , 'media ']);
 
         return RecordResource::make($record);
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/records/{record}/restore",
-     *     summary="Restore a soft-deleted medical record",
+     * @OA\Get(
+     *     path="/api/records/{record}",
+     *     summary="Get a specific record",
      *     tags={"Records"},
-     *
+     *     security={{ "bearerAuth": {} }},
      *     @OA\Parameter(
      *         name="record",
      *         in="path",
+     *         description="Record ID",
      *         required=true,
-     *         description="Record UUID",
-     *
      *         @OA\Schema(type="string", format="uuid")
      *     ),
-     *
      *     @OA\Response(
      *         response=200,
-     *         description="Record restored successfully",
-     *
+     *         description="Record details",
      *         @OA\JsonContent(ref="#/components/schemas/RecordResource")
      *     ),
-     *
      *     @OA\Response(
      *         response=404,
      *         description="Record not found"
      *     )
      * )
      */
-    public function restore(Record $record): RecordResource
+    public function show(Record $record)
     {
-        $record->restore();
+        $record->load(['patient', 'tooth', 'treatment', 'fillingMaterial', 'medicalSession', 'doctors.media' , 'media']);
 
-        return RecordResource::make($record->load(['media', 'reservation', 'ills', 'medicines', 'doctors']));
+        return RecordResource::make($record);
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/records/{record}/files",
-     *     summary="Add files to a medical record",
+     * @OA\Put(
+     *     path="/api/records/{record}",
+     *     summary="Update a record",
      *     tags={"Records"},
-     *     security={{"bearerAuth":{}}},
+     *     security={{ "bearerAuth": {} }},
      *     @OA\Parameter(
      *         name="record",
      *         in="path",
+     *         description="Record ID",
      *         required=true,
-     *         description="Record UUID",
-     *         @OA\Schema(type="string", format="uuid", example="550e8400-e29b-41d4-a716-446655440000")
+     *         @OA\Schema(type="string", format="uuid")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
-     *             @OA\Schema(ref="#/components/schemas/MediaRequest")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateRecordRequest")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Media added successfully",
-     *         @OA\JsonContent(ref="#/components/schemas/MediaResource")
+     *         description="Record updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/RecordResource")
      *     ),
      *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized"
+     *         response=404,
+     *         description="Record not found"
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -268,90 +111,142 @@ final class RecordController extends Controller
      *     )
      * )
      */
-    public function addFile(Record $record, MediaRequest $request): MediaResource
+    public function update(UpdateRecordRequest $request, Record $record)
     {
-        return MediaResource::make(
-            $this->handleMediaUpload($request->file('upload') , $record , $request->input('collection'))
-        );
+        $record->update($request->validated());
+
+        $record->load(['patient', 'tooth', 'treatment', 'fillingMaterial', 'medicalSession', 'doctors.media' , 'media']);
+
+        return RecordResource::make($record);
     }
 
     /**
      * @OA\Delete(
-     *     path="/api/records/{record}/files/{file}",
-     *     summary="Delete media from a medical record",
-     *     description="Removes a specific media file associated with a medical record. Only media belonging to the specified record can be deleted.",
+     *     path="/api/records/{record}",
+     *     summary="Delete a record",
      *     tags={"Records"},
-     *     security={{"bearerAuth":{}}},
+     *     security={{ "bearerAuth": {} }},
+     *     @OA\Parameter(
+     *         name="record",
+     *         in="path",
+     *         description="Record ID",
+     *         required=true,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Record deleted successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Record not found"
+     *     )
+     * )
+     */
+    public function destroy(Record $record)
+    {
+        $record->delete();
+
+        return response()->noContent();
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/records/{record}/file",
+     *     summary="Upload new file",
+     *     tags={"Records"},
+     *     security={{ "bearerAuth": {} }},
+     *
+     *    @OA\Parameter(
+     *          name="record",
+     *          in="path",
+     *          description="Record ID",
+     *          required=true,
+     *
+     *          @OA\Schema(type="string", format="uuid")
+     *      ),
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *
+     *             @OA\Schema(
+     *                 type="object",
+     *
+     *                 @OA\Property(
+     *                     property="file",
+     *                     type="string",
+     *                      format="binary",
+     *                     description="Files to upload"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                     description="Name of the files"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=204,
+     *         description="Files uploaded successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function addFile(Record $record, Request $request): MediaResource
+    {
+        $media = $this->handleMediaUpload(request: $request, model: $record, name: $request->input('name'));
+
+        return MediaResource::make($media);
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/records/{record}/file/{media}",
+     *     summary="Delete a record file",
+     *     description="Delete a specific file associated with a record",
+     *     operationId="deleteRecordFile",
+     *     tags={"Records"},
+     *     security={{ "bearerAuth": {} }},
      *
      *     @OA\Parameter(
      *         name="record",
      *         in="path",
+     *         description="Record ID",
      *         required=true,
-     *         description="Record UUID",
-     *
-     *         @OA\Schema(
-     *             type="string",
-     *             format="uuid",
-     *             example="550e8400-e29b-41d4-a716-446655440000"
-     *         )
+     *         @OA\Schema(type="string", format="uuid")
      *     ),
      *
      *     @OA\Parameter(
      *         name="media",
      *         in="path",
+     *         description="Media ID",
      *         required=true,
-     *         description="Media ID to be deleted",
-     *
-     *         @OA\Schema(
-     *             type="integer",
-     *             format="int64",
-     *             example=1
-     *         )
+     *         @OA\Schema(type="string", format="uuid")
      *     ),
      *
      *     @OA\Response(
-     *         response=200,
-     *         description="Media deleted successfully",
-     *
-     *         @OA\JsonContent(ref="#/components/schemas/MediaResource")
+     *         response=204,
+     *         description="File deleted successfully"
      *     ),
-     *
-     *     @OA\Response(
-     *         response=403,
-     *         description="Forbidden - Media does not belong to this record",
-     *
-     *         @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="not Allowed."
-     *             )
-     *         )
-     *     ),
-     *
      *     @OA\Response(
      *         response=404,
-     *         description="Record or Media not found",
-     *
-     *         @OA\JsonContent(
-     *             type="object",
-     *
-     *             @OA\Property(
-     *                 property="message",
-     *                 type="string",
-     *                 example="Not found."
-     *             )
-     *         )
+     *         description="File not found"
      *     )
      * )
      */
-    public function deleteFile(Record $record, Media $file): MediaResource|JsonResponse
+    public function deleteFile(Record $record, Media $media)
     {
-        if(!$this->handleMediaDeletion($record , $file))
-            return response()->json(['message' => 'not Allowed.'], ResponseAlias::HTTP_FORBIDDEN);
+        $this->handleMediaDelete($record , $media);
 
-        return MediaResource::make($file);
+        return response()->noContent();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Record;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -104,6 +105,6 @@ class RecordSeeder extends Seeder
             ],
         ];
 
-        DB::table('records')->insert($records);
+       Record::query()->insert($records);
     }
 }

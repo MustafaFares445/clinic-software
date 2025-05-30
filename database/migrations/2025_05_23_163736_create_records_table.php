@@ -16,9 +16,9 @@ return new class extends Migration
             $table->longText('description')->nullable();
             $table->enum('type' , ['in' , 'out']);
 
-            $table->foreignUuid('clinic_id')->constrained('clinics')->references('id');
             $table->foreignUuid('patient_id')->constrained('patients')->references('id');
             $table->foreignUuid('tooth_id')->constrained('teeth')->references('id');
+            $table->foreignUuid('clinic_id')->constrained('clinics')->references('id');
             $table->foreignUuid('treatment_id')->constrained('treatments')->references('id');
             $table->foreignUuid('filling_material_id')->nullable()->constrained('filling_materials')->references('id');
             $table->foreignUuid('medical_session_id')->constrained('medical_sessions')->references('id');

@@ -4,10 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\Clinic;
 use App\Models\Patient;
+use App\Models\MedicalCase;
 use Illuminate\Support\Str;
 use App\Models\MedicalSession;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class MedicalSessionSeeder extends Seeder
 {
@@ -26,27 +28,18 @@ class MedicalSessionSeeder extends Seeder
 
         // Generate sessions for the last 30 days
         for ($i = 0; $i < 50; $i++) {
-            $patient = Patient::inRandomOrder()->first();
-            $clinic = Clinic::inRandomOrder()->first();
-
             $date = Carbon::now()->subDays(rand(0, 30))->setTime(
                 rand(8, 18), // Between 8 AM and 6 PM
                 rand(0, 59)
             );
 
-            $sessions[] = [
+            MedicalSession::query()->create([
                 'id' => Str::uuid(),
-                'patient_id' => $patient->id,
-                'clinic_id' => $clinic->id,
+                'medical_case_id' => DB::table('medical_cases')->inRandomOrder()->first()->id,
                 'date' => $date,
                 'created_at' => now(),
                 'updated_at' => now(),
-            ];
-        }
-
-        // Batch insert for better performance
-        foreach (array_chunk($sessions, 20) as $chunk) {
-            MedicalSession::query()->insert($chunk);
+            ]);
         }
     }
 }

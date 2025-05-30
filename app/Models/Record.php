@@ -2,47 +2,33 @@
 
 namespace App\Models;
 
-use App\Models\Ill;
 use App\Models\User;
-use App\Models\Clinic;
+use Ramsey\Uuid\Uuid;
 use App\Models\Patient;
-use App\Models\Medicine;
-use App\Enums\RecordTypes;
-use App\Models\Reservation;
-use Carbon\CarbonImmutable;
 use Spatie\MediaLibrary\HasMedia;
 use App\Models\Scopes\RecordScope;
-use App\Models\MedicalTransactions;
-use Illuminate\Support\Facades\Auth;
 use Database\Factories\RecordFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 // use Laravel\Scout\Searchable;
 
 /**
- * @property string $id
- * @property string $patient_id
- * @property string $clinic_id
- * @property string|null $reservation_id
- * @property RecordTypes $type
- * @property DateTimeInterface $dateTime
- * @property string|null $notes
- * @property CarbonImmutable $created_at
- * @property CarbonImmutable $updated_at
- * @property CarbonImmutable $deleted_at
+ * @property-read Uuid $id
+ * @property-read string $type
+ * @property-read string $description
  * @property-read Patient $patient
- * @property-read Clinic $clinic
- * @property-read Reservation $reservation
- * @property-read Collection<Ill> $ills
- * @property-read Collection<Medicine> $medicines
- * @property-read  Collection<User> $doctors
- * @property-read Collection<MedicalTransactions> $transactions
+ * @property-read Tooth $tooth
+ * @property-read Treatment $treatment
+ * @property-read Patient $patient
+ * @property-read FillingMaterial $fillingMaterial
+ * @property-read MedicalSession $medicalSession
+ * @property-read Collection<User> $doctors
  */
 final class Record extends Model implements HasMedia
 {
@@ -50,13 +36,15 @@ final class Record extends Model implements HasMedia
     use HasFactory , HasUuids , InteractsWithMedia , SoftDeletes;
 
     protected $fillable = [
-        'patient_id',
-        'clinic_id',
-        'reservation_id',
-        'type',
-        'dateTime',
-        'notes',
-        'teeth_id'
+      'description',
+      'type',
+
+      'treatment_id',
+      'tooth_id',
+      'clinic_id',
+      'filling_material_id',
+      'medical_seesion_id',
+      'patient_id'
     ];
 
     /**
@@ -90,7 +78,7 @@ final class Record extends Model implements HasMedia
 
     /**
      * Get the patient that owns the record
-     *  @return BelongsToMany<Patient>
+     * @return BelongsTo<Patient>
      */
     public function patient(): BelongsTo
     {
@@ -98,60 +86,39 @@ final class Record extends Model implements HasMedia
     }
 
     /**
-     * Get the clinic that owns the record
-     * @return BelongsToMany<Clinic>
-     */
-    public function clinic(): BelongsTo
-    {
-        return $this->belongsTo(Clinic::class);
-    }
-
-    /**
-     * Get the reservation that owns the record
-     *  @return BelongsToMany<Reservation>
-     */
-    public function reservation()
-    {
-        return $this->belongsTo(Reservation::class);
-    }
-
-    /**
-     * Get the ills associated with the record
-     * @return BelongsToMany<Ill>
-     */
-    public function ills(): BelongsToMany
-    {
-        return $this->belongsToMany(Ill::class, 'ill_record')
-            ->withPivot(['id' ,'type' , 'notes']);
-    }
-
-     /**
      * Get the tooth associated with the record
      * @return BelongsTo<Tooth>
      */
-    public function tooth() : BelongsTo
+    public function tooth(): BelongsTo
     {
         return $this->belongsTo(Tooth::class);
     }
 
     /**
-     * Get the procedure associated with the record
-     * @return BelongsToMany<Procedure>
+     * Get the treatment associated with the record
+     * @return BelongsTo<Treatment>
      */
-    public function procedures() : BelongsToMany
+    public function treatment(): BelongsTo
     {
-        return $this->belongsToMany(Procedure::class, 'procedure_record')
-            ->withPivot(['notes']);
+        return $this->belongsTo(Treatment::class);
     }
 
     /**
-     * Get the medicines associated with the record
-     * @return BelongsToMany<Medicine>
+     * Get the filling material associated with the record
+     * @return BelongsTo<FillingMaterial>
      */
-    public function medicines(): BelongsToMany
+    public function fillingMaterial(): BelongsTo
     {
-        return $this->belongsToMany(Medicine::class, 'medicine_record')
-            ->withPivot(['id', 'notes', 'type']);
+        return $this->belongsTo(FillingMaterial::class);
+    }
+
+    /**
+     * Get the medical session associated with the record
+     * @return BelongsTo<MedicalSession>
+     */
+    public function medicalSession(): BelongsTo
+    {
+        return $this->belongsTo(MedicalSession::class);
     }
 
     /**
@@ -161,14 +128,5 @@ final class Record extends Model implements HasMedia
     public function doctors(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'doctor_record', 'record_id', 'doctor_id');
-    }
-
-    /**
-     * Get the transactions associated with the record
-     * @return HasMany<MedicalTransactions>
-     */
-    public function transactions(): HasMany
-    {
-        return $this->hasMany(MedicalTransactions::class);
     }
 }

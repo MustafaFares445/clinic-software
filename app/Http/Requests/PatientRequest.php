@@ -32,6 +32,12 @@ use Illuminate\Validation\Rule;
  *         description="The phone number of the patient"
  *     ),
  *     @OA\Property(
+ *         property="whatsapp",
+ *         type="string",
+ *         nullable=true,
+ *         description="The WhatsApp number of the patient"
+ *     ),
+ *     @OA\Property(
  *         property="age",
  *         type="number",
  *         format="float",
@@ -66,6 +72,7 @@ use Illuminate\Validation\Rule;
  *         property="notes",
  *         type="string",
  *         nullable=true,
+ *         maxLength=1000,
  *         description="Additional notes about the patient"
  *     ),
  *     @OA\Property(
@@ -84,30 +91,16 @@ use Illuminate\Validation\Rule;
  *     @OA\Property(
  *         property="clinicId",
  *         type="string",
+ *         format="uuid",
  *         nullable=true,
  *         description="The ID of the clinic the patient belongs to"
  *     ),
  *     @OA\Property(
- *         property="permanentMedicines",
- *         type="array",
+ *         property="profileImage",
+ *         type="string",
+ *         format="binary",
  *         nullable=true,
- *         description="Array of permanent medicines for the patient",
- *         @OA\Items(
- *             type="object",
- *             @OA\Property(property="id", type="string", description="Medicine ID"),
- *             @OA\Property(property="notes", type="string", nullable=true, description="Notes about the medicine")
- *         )
- *     ),
- *     @OA\Property(
- *         property="permanentIlls",
- *         type="array",
- *         nullable=true,
- *         description="Array of permanent illnesses for the patient",
- *         @OA\Items(
- *             type="object",
- *             @OA\Property(property="id", type="string", description="Illness ID"),
- *             @OA\Property(property="notes", type="string", nullable=true, description="Notes about the illness")
- *         )
+ *         description="The profile image of the patient"
  *     )
  * )
  */
@@ -129,24 +122,22 @@ final class PatientRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'firstName' => ['sometimes', 'string'],
-            'lastName' => ['sometimes', 'string'],
+            'firstName' => ['sometimes', 'string' , 'min:1' , 'max:255'],
+            'lastName' => ['sometimes', 'string' , 'min:1' , 'max:255'],
             'phone' => ['sometimes', 'nullable', 'string'],
             'whatsapp' => ['sometimes', 'nullable', 'string'],
             'fatherName' => ['sometimes', 'nullable', 'string'],
             'motherName' => ['sometimes', 'nullable', 'string'],
-            'nationalNumber' => ['sometimes', 'nullable', 'string' , Rule::unique('patients' , 'nationalNumber')],
+            'nationalNumber' => [
+                'sometimes', 'nullable', 'string' ,
+                 Rule::unique('patients' , 'nationalNumber')
+                    ->where('clinic_id' , $this->input('clinicId') ?? Auth::user()->clinic_id)
+            ],
             'address' => ['sometimes', 'nullable', 'string'],
-            'notes' => ['sometimes', 'nullable', 'string'],
+            'notes' => ['sometimes', 'nullable', 'string' , 'max:1000'],
             'birth' => ['sometimes', 'nullable', 'string'],
             'gender' => ['sometimes', 'nullable', 'string', Rule::in(['female', 'male'])],
             'clinicId' => ['sometimes', 'nullable', 'string', Rule::exists('clinics', 'id')],
-            'permanentMedicines' => ['sometimes', 'nullable', 'array'],
-            'permanentMedicines.*.id' => ['exists:medicines,id'],
-            'permanentMedicines.*.notes' => ['nullable', 'string'],
-            'permanentIlls' => ['sometimes', 'nullable', 'array'],
-            'permanentIlls.*.id' => ['exists:ills,id'],
-            'permanentIlls.*.notes' => ['nullable', 'string'],
             'profileImage' => ['sometimes' , 'image' , 'mimes:png,jpg,webp']
         ];
 
