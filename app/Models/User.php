@@ -59,6 +59,7 @@ final class User extends Authenticatable implements HasMedia
         'username',
         'clinic_id',
         'is_banned',
+        'is_active'
     ];
 
     /**

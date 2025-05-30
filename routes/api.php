@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Patient routes
     Route::apiResource('/patients', PatientController::class);
+    
     Route::prefix('/patients')->group(function () {
         Route::get('/{patient}/records', [PatientController::class, 'patientRecords']);
         Route::get('/{patient}/reservations', [PatientController::class, 'patientReservations']);

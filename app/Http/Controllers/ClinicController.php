@@ -41,6 +41,7 @@ final class ClinicController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+
         return ClinicResource::make($user->clinic->load('workingDays'));
     }
 
@@ -114,6 +115,11 @@ final class ClinicController extends Controller
         $clinic->update($request->validated());
 
         return ClinicResource::make($clinic);
+    }
+
+    public function updateWorkingDays()
+    {
+        
     }
 
     /**

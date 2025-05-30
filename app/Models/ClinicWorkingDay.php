@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use App\Models\Clinic;
 use Ramsey\Uuid\Uuid;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Clinic;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * Represents a working day for a clinic
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ClinicWorkingDay extends Model
 {
     /** @use HasFactory<\Database\Factories\ClinicWorkingDayFactory> */
-    use HasFactory;
+    use HasFactory , HasUuids;
 
     protected $fillable = [
         'clinic_id',

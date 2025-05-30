@@ -2,124 +2,108 @@
 
 namespace Database\Seeders;
 
-use App\Enums\RecordIllsTypes;
-use App\Enums\RecordMedicinesTypes;
-use App\Enums\RecordTypes;
-use App\Models\Clinic;
-use App\Models\Ill;
-use App\Models\Medicine;
-use App\Models\Patient;
-use App\Models\Record;
-use App\Models\Reservation;
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
-final class RecordSeeder extends Seeder
+class RecordSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $recordsData = [
+        $records = [
+            // Dental Cases
             [
-                'type' => RecordTypes::APPOINTMENT,
-                'notes' => 'ملاحظة موجزة',
-                'ills' => true,
-                'medicines' => true,
+                'id' => Str::uuid(),
+                'description' => 'حشو عصب للضرس الأول السفلي مع استخدام حشوة مؤقتة بسبب وجود التهاب',
+                'type' => 'out',
+                'clinic_id' => DB::table('clinics')->first()->id,
+                'patient_id' => DB::table('patients')->inRandomOrder()->first()->id,
+                'tooth_id' => DB::table('teeth')->inRandomOrder()->first()->id,
+                'treatment_id' => DB::table('treatments')->inRandomOrder()->first()->id,
+                'filling_material_id' => DB::table('filling_materials')->inRandomOrder()->first()->id,
+                'medical_session_id' => DB::table('medical_sessions')->inRandomOrder()->first()->id,
+                'created_at' => Carbon::now()->subDays(5),
+                'updated_at' => Carbon::now()->subDays(5),
             ],
             [
-                'type' => RecordTypes::SURGERY,
-                'notes' => 'ملاحظة موجزة',
-                'ills' => true,
-                'medicines' => false,
+                'id' => Str::uuid(),
+                'description' => 'تركيب حشوة دائمة من السيراميك للضرس الثاني العلوي بعد انتهاء علاج العصب',
+                'type' => 'in',
+                'clinic_id' => DB::table('clinics')->first()->id,
+                'patient_id' => DB::table('patients')->inRandomOrder()->first()->id,
+                'tooth_id' => DB::table('teeth')->inRandomOrder()->first()->id,
+                'treatment_id' => DB::table('treatments')->inRandomOrder()->first()->id,
+                'filling_material_id' => DB::table('filling_materials')->inRandomOrder()->first()->id,
+                'medical_session_id' => DB::table('medical_sessions')->inRandomOrder()->first()->id,
+                'created_at' => Carbon::now()->subDays(3),
+                'updated_at' => Carbon::now()->subDays(3),
             ],
+
+            // Restorative Cases
             [
-                'type' => RecordTypes::INSPECTION,
-                'notes' => 'ملاحظة',
-                'ills' => false,
-                'medicines' => true,
+                'id' => Str::uuid(),
+                'description' => 'إزالة التسوس من الناب العلوي الأيمن وحشوه بحشوة بيضاء مركبة',
+                'type' => 'out',
+                'clinic_id' => DB::table('clinics')->first()->id,
+                'patient_id' => DB::table('patients')->inRandomOrder()->first()->id,
+                'tooth_id' => DB::table('teeth')->inRandomOrder()->first()->id,
+                'treatment_id' => DB::table('treatments')->inRandomOrder()->first()->id,
+                'filling_material_id' => DB::table('filling_materials')->inRandomOrder()->first()->id,
+                'medical_session_id' => DB::table('medical_sessions')->inRandomOrder()->first()->id,
+                'created_at' => Carbon::now()->subDays(7),
+                'updated_at' => Carbon::now()->subDays(7),
             ],
+
+            // Surgical Cases
             [
-                'type' => RecordTypes::APPOINTMENT,
-                'notes' => 'زيارة متابعة للحالة',
-                'ills' => false,
-                'medicines' => false,
+                'id' => Str::uuid(),
+                'description' => 'خلع جراحي لضرس العقل السفلي الأيسر المطمور مع وضع غرز جراحية',
+                'type' => 'out',
+                'clinic_id' => DB::table('clinics')->first()->id,
+                'patient_id' => DB::table('patients')->inRandomOrder()->first()->id,
+                'tooth_id' => DB::table('teeth')->inRandomOrder()->first()->id,
+                'treatment_id' => DB::table('treatments')->inRandomOrder()->first()->id,
+                'filling_material_id' => null,
+                'medical_session_id' => DB::table('medical_sessions')->inRandomOrder()->first()->id,
+                'created_at' => Carbon::now()->subDays(10),
+                'updated_at' => Carbon::now()->subDays(10),
             ],
+
+            // Follow-up Cases
             [
-                'type' => RecordTypes::SURGERY,
-                'notes' => 'عملية جراحية ناجحة',
-                'ills' => true,
-                'medicines' => true,
+                'id' => Str::uuid(),
+                'description' => 'فحص متابعة بعد أسبوع من خلع ضرس العقل، الجرح يلتئم بشكل جيد',
+                'type' => 'in',
+                'clinic_id' => DB::table('clinics')->first()->id,
+                'patient_id' => DB::table('patients')->inRandomOrder()->first()->id,
+                'tooth_id' => DB::table('teeth')->inRandomOrder()->first()->id,
+                'treatment_id' => DB::table('treatments')->inRandomOrder()->first()->id,
+                'filling_material_id' => null,
+                'medical_session_id' => DB::table('medical_sessions')->inRandomOrder()->first()->id,
+                'created_at' => Carbon::now()->subDays(2),
+                'updated_at' => Carbon::now()->subDays(2),
             ],
+
+            // Pediatric Cases
             [
-                'type' => RecordTypes::INSPECTION,
-                'notes' => 'فحص روتيني',
-                'ills' => true,
-                'medicines' => false,
-            ],
-            [
-                'type' => RecordTypes::APPOINTMENT,
-                'notes' => 'استشارة طبية',
-                'ills' => true,
-                'medicines' => true,
-            ],
-            [
-                'type' => RecordTypes::SURGERY,
-                'notes' => 'عملية بسيطة',
-                'ills' => false,
-                'medicines' => true,
-            ],
-            [
-                'type' => RecordTypes::INSPECTION,
-                'notes' => 'مراجعة نتائج التحاليل',
-                'ills' => false,
-                'medicines' => false,
+                'id' => Str::uuid(),
+                'description' => 'حشو فضة للضرس اللبني الثاني السفلي الأيمن عند طفل عمره 6 سنوات',
+                'type' => 'out',
+                'clinic_id' => DB::table('clinics')->first()->id,
+                'patient_id' => DB::table('patients')->inRandomOrder()->first()->id,
+                'tooth_id' => DB::table('teeth')->inRandomOrder()->first()->id,
+                'treatment_id' => DB::table('treatments')->inRandomOrder()->first()->id,
+                'filling_material_id' => DB::table('filling_materials')->inRandomOrder()->first()->id,
+                'medical_session_id' => DB::table('medical_sessions')->inRandomOrder()->first()->id,
+                'created_at' => Carbon::now()->subDays(1),
+                'updated_at' => Carbon::now()->subDays(1),
             ],
         ];
 
-        foreach ($recordsData as $data) {
-            $record = Record::query()->create([
-                'patient_id' => Patient::query()->inRandomOrder()->first()->id,
-                'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-                'reservation_id' => Reservation::query()->inRandomOrder()->first()->id,
-                'notes' => $data['notes'],
-                'type' => $data['type'],
-                'dateTime' => now(),
-            ]);
-
-            if ($data['ills']) {
-                $record->ills()->attach(Ill::query()->inRandomOrder()->first()->id, [
-                    'type' => RecordIllsTypes::DIAGNOSED,
-                ]);
-                $record->ills()->attach(Ill::query()->inRandomOrder()->first()->id, [
-                    'type' => RecordIllsTypes::TRANSIENT,
-                ]);
-            }
-
-            if ($data['medicines']) {
-                $record->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
-                    'type' => RecordMedicinesTypes::DIAGNOSED,
-                    'notes' => '200 gm من الدواء ثلاث مرات باليوم لمدة أسبوع',
-                ]);
-                $record->medicines()->attach(Medicine::query()->inRandomOrder()->first()->id, [
-                    'type' => RecordMedicinesTypes::TRANSIENT,
-                    'notes' => '400 gm من الدواء 5 مرات باليوم لمدة شهر',
-                ]);
-            }
-
-            $record->doctors()->sync(
-                User::query()->inRandomOrder()->take(rand(1, 2))->pluck('id')->toArray()
-            );
-
-            $record->transactions()->create([
-                'medicine_id' => Medicine::query()->inRandomOrder()->first()->id,
-                'clinic_id' => Clinic::query()->inRandomOrder()->first()->id,
-                'type' => 'out',
-                'quantity' => 5,
-                'description' => null,
-                'doctor_id' => User::query()->inRandomOrder()->first()->id,
-            ]);
-        }
+        DB::table('records')->insert($records);
     }
 }

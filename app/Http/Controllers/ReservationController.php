@@ -15,6 +15,8 @@ use App\Http\Resources\ReservationResource;
 use App\Http\Requests\ReservationIndexRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Http\Requests\CheckReservationConflictRequest;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 /**
  * @OA\Tag(
@@ -119,18 +121,16 @@ final class ReservationController extends Controller
      *     )
      * )
      */
-    public function checkConflict(CheckReservationConflictRequest $request)
+    public function checkConflict(CheckReservationConflictRequest $request , CheckReservationConflict $action)
     {
-        $validated = $request->validated();
-
-        $conflictExists = (new CheckReservationConflict())->handle(
-            $validated['clinicId'] ?? Auth::user()->clinic_id,
-            $validated['start'],
-            $validated['end'],
-            $validated['reservationId'] ?? null
+        $conflictExists = $action->handle(
+            $request->string('clinicId')->value() ?? Auth::user()->clinic_id,
+            $request->string('start')->value(),
+            $request->string('end')->value(),
+            $request->string('reservationId')->value() ?? null
         );
 
-        return response()->json(['conflict_exists' => $conflictExists]);
+        return response()->json(['conflictExists' => $conflictExists]);
     }
 
     /**
@@ -154,8 +154,18 @@ final class ReservationController extends Controller
      *     )
      * )
      */
-    public function store(ReservationRequest $request): ReservationResource
+    public function store(ReservationRequest $request , CheckReservationConflict $action): ReservationResource|JsonResponse
     {
+        $conflictExists = $action->handle(
+            $request->string('clinicId')->value() ?? Auth::user()->clinic_id,
+            $request->string('start')->value(),
+            $request->string('end')->value(),
+        );
+
+        if($conflictExists){
+            return response()->json(['message' => 'invalide start end data.'] , Response::HTTP_BAD_REQUEST);
+        }
+
         $reservation = Reservation::query()->create($request->validated());
 
         return ReservationResource::make($reservation->load(['patient', 'doctor', 'specification']));
@@ -220,8 +230,19 @@ final class ReservationController extends Controller
      *     )
      * )
      */
-    public function update(ReservationRequest $request, Reservation $reservation): ReservationResource
+    public function update(ReservationRequest $request, Reservation $reservation , CheckReservationConflict $action): ReservationResource|JsonResponse
     {
+        $conflictExists = $action->handle(
+            $request->string('clinicId')->value() ?? Auth::user()->clinic_id,
+            $request->string('start')->value(),
+            $request->string('end')->value(),
+            $reservation->id
+        );
+
+        if($conflictExists){
+            return response()->json(['message' => 'invalide start end data.'] , Response::HTTP_BAD_REQUEST);
+        }
+
         $reservation->update($request->validated());
 
         return ReservationResource::make($reservation->load(['patient', 'doctor', 'specification']));

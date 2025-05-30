@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('username');
             $table->dateTime('email_verified_at')->nullable();
             $table->boolean('is_banned')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->string('password');
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->rememberToken();

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('firstName');
             $table->string('lastName');
             $table->string('phone')->nullable();
+            $table->string('whatsapp')->nullable();
             $table->string('fatherName')->nullable();
             $table->string('motherName')->nullable();
             $table->string('nationalNumber')->unique();

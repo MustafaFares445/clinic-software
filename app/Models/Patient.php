@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 
-
 final class Patient extends Model implements HasMedia
 {
     /** @use HasFactory<PatientFactory> */
@@ -29,7 +28,9 @@ final class Patient extends Model implements HasMedia
     protected $fillable = [
         'firstName',
         'lastName',
+        'full_name',
         'phone',
+        'whatsapp',
         'fatherName',
         'motherName',
         'nationalNumber',

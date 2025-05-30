@@ -4,61 +4,53 @@ namespace Database\Seeders;
 
 use App\Enums\ReservationStatuses;
 use App\Enums\ReservationTypes;
-use App\Models\Clinic;
-use App\Models\Patient;
-use App\Models\Reservation;
-use App\Models\Specification;
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
-final class ReservationSeeder extends Seeder
+class ReservationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Reservation::query()->create([
-            'start' => now(),
-            'end' => now()->addHour(),
-            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->first()->id,
-            'doctor_id' => User::query()->inRandomOrder()->first()->id,
-            'type' => ReservationTypes::APPOINTMENT,
-            'status' => ReservationStatuses::CHECK,
-        ]);
+        $patients = DB::table('patients')->pluck('id')->toArray();
+        $clinics = DB::table('clinics')->pluck('id')->toArray();
+        $doctors = DB::table('users')->pluck('id')->toArray();
+        $medicalCases = DB::table('medical_cases')->pluck('id')->toArray();
 
-        Reservation::query()->create([
-            'start' => now()->addDay(),
-            'end' => now()->addDay()->addHour(),
-            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->first()->id,
-            'doctor_id' => User::query()->inRandomOrder()->first()->id,
-            'specification_id' => Specification::query()->inRandomOrder()->first()->id,
-            'type' => ReservationTypes::SURGERY,
-            'status' => ReservationStatuses::INCOME,
-        ]);
+        $reservationTypes = array_column(ReservationTypes::cases(), 'value');
+        $reservationStatuses = array_column(ReservationStatuses::cases(), 'value');
 
-        Reservation::query()->create([
-            'start' => now()->addDays(2),
-            'end' => now()->addDays(2)->addHour(),
-            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->first()->id,
-            'doctor_id' => User::query()->inRandomOrder()->first()->id,
-            'specification_id' => Specification::query()->inRandomOrder()->first()->id,
-            'type' => ReservationTypes::INSPECTION,
-            'status' => ReservationStatuses::DISMISS,
-        ]);
+        $reservations = [];
 
-        Reservation::query()->create([
-            'start' => now()->addDays(2)->addHours(2),
-            'end' => now()->addDays(2)->addHours(4),
-            'patient_id' => Patient::query()->inRandomOrder()->first()->id,
-            'clinic_id' => Clinic::query()->first()->id,
-            'doctor_id' => User::query()->inRandomOrder()->first()->id,
-            'specification_id' => Specification::query()->inRandomOrder()->first()->id,
-            'type' => ReservationTypes::APPOINTMENT,
-            'status' => ReservationStatuses::CANCELLED,
-        ]);
+        // Generate 50 random reservations
+        for ($i = 0; $i < 50; $i++) {
+            $startDate = Carbon::now()
+                ->addDays(rand(-30, 30))  // -30 to +30 days from now
+                ->addHours(rand(8, 18))   // Between 8AM and 6PM
+                ->addMinutes(rand(0, 12) * 5); // In 5-minute increments
+
+            $duration = [15, 30, 45, 60][rand(0, 3)]; // Random duration
+            $endDate = (clone $startDate)->addMinutes($duration);
+
+            $reservations[] = [
+                'id' => Str::uuid(),
+                'start' => $startDate,
+                'end' => $endDate,
+                'patient_id' => $patients[array_rand($patients)],
+                'clinic_id' => $clinics[array_rand($clinics)],
+                'doctor_id' => $doctors[array_rand($doctors)],
+                'medical_case_id' => rand(0, 1) ? $medicalCases[array_rand($medicalCases)] : null, // 50% chance of having medical case
+                'type' => $reservationTypes[array_rand($reservationTypes)],
+                'status' => $reservationStatuses[array_rand($reservationStatuses)],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        DB::table('reservations')->insert($reservations);
     }
 }

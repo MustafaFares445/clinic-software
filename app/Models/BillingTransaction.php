@@ -5,9 +5,9 @@ namespace App\Models;
 use App\Models\User;
 use Ramsey\Uuid\Uuid;
 use App\Models\Clinic;
+use App\Models\Record;
 use Carbon\CarbonImmutable;
 use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Scopes\ClinicDataScope;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 
 /**
@@ -37,6 +38,7 @@ use \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
  * @property-read User $user
  * @property-read Patient $patient
  * @property-read Reservation|null $reservation
+ * @property-read Procedure|null $procedures
  * @property-read MediaCollection|Media[] $media
  */
 final class BillingTransaction extends Model implements HasMedia
@@ -57,6 +59,7 @@ final class BillingTransaction extends Model implements HasMedia
         'user_id',
         'patient_id',
         'reservation_id',
+        'record_id',
     ];
 
     /**
@@ -79,7 +82,6 @@ final class BillingTransaction extends Model implements HasMedia
     {
         static::addGlobalScope(new ClinicDataScope());
     }
-
 
     /**
      * Get the clinic that owns the transaction.
@@ -119,5 +121,25 @@ final class BillingTransaction extends Model implements HasMedia
     public function reservation(): BelongsTo
     {
         return $this->belongsTo(Reservation::class);
+    }
+
+    /**
+     * Get the procedures associated with the transaction.
+     *
+     * @return null|BelongsTo<Procedure, self>
+     */
+    public function procedures(): BelongsToMany
+    {
+        return $this->belongsToMany(Procedure::class);
+    }
+
+     /**
+     * Get the procedures associated with the transaction.
+     *
+     * @return null|BelongsTo<Record, self>
+     */
+    public function record(): BelongsTo
+    {
+        return $this->belongsTo(Record::class);
     }
 }

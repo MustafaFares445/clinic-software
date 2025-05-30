@@ -13,18 +13,24 @@ final class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            SpecificationSeeder::class,
-            RoleSeeder::class,
-            PlanSeeder::class,
-            ClinicSeeder::class,
-            UserSeeder::class,
-            IllSeeder::class,
-            MedicineSeeder::class,
-            PatientSeeder::class,
-            ReservationSeeder::class,
-            RecordSeeder::class,
-            OfferSeeder::class,
-            BillingTransactionSeeder::class
+           TeethSeeder::class,
+           SpecificationSeeder::class,
+           PlanSeeder::class,
+           ClinicSeeder::class,
+           RoleSeeder::class,
+           UserSeeder::class,
+           PatientSeeder::class,
+           LaboratorySeeder::class,
+           TreatmentSeeder::class,
+           MedicalSessionSeeder::class,
+           FillingMaterialSeeder::class,
+           ChronicDiseasesSeeder::class,
+           ChronicMedicationSeeder::class,
+           MedicalCaseSeeder::class,
+           RecordSeeder::class,
+           DoctorRecordSeeder::class,
+           BillingSeeder::class,
+           ReservationSeeder::class
         ]);
     }
 }

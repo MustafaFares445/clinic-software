@@ -55,7 +55,8 @@ final class Record extends Model implements HasMedia
         'reservation_id',
         'type',
         'dateTime',
-        'notes'
+        'notes',
+        'teeth_id'
     ];
 
     /**
@@ -122,6 +123,25 @@ final class Record extends Model implements HasMedia
     {
         return $this->belongsToMany(Ill::class, 'ill_record')
             ->withPivot(['id' ,'type' , 'notes']);
+    }
+
+     /**
+     * Get the tooth associated with the record
+     * @return BelongsTo<Tooth>
+     */
+    public function tooth() : BelongsTo
+    {
+        return $this->belongsTo(Tooth::class);
+    }
+
+    /**
+     * Get the procedure associated with the record
+     * @return BelongsToMany<Procedure>
+     */
+    public function procedures() : BelongsToMany
+    {
+        return $this->belongsToMany(Procedure::class, 'procedure_record')
+            ->withPivot(['notes']);
     }
 
     /**

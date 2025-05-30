@@ -27,7 +27,7 @@ final class ClinicSeeder extends Seeder
         $clinic1->plans()->sync([Plan::query()->inRandomOrder()->first()->id]);
         $clinic1->specifications()->sync([Specification::query()->inRandomOrder()->first()->id]);
         $clinic1->workingDays()->createMany([
-            ['day' => 'sun', 'start' => '08:00', 'end' => '14:00'],
+            [ 'day' => 'sun', 'start' => '08:00', 'end' => '14:00'],
             ['day' => 'mon', 'start' => '08:00', 'end' => '14:00'],
             ['day' => 'tue', 'start' => '08:00', 'end' => '14:00'],
             ['day' => 'wed', 'start' => '08:00', 'end' => '14:00'],

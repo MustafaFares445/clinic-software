@@ -132,6 +132,7 @@ final class PatientRequest extends FormRequest
             'firstName' => ['sometimes', 'string'],
             'lastName' => ['sometimes', 'string'],
             'phone' => ['sometimes', 'nullable', 'string'],
+            'whatsapp' => ['sometimes', 'nullable', 'string'],
             'fatherName' => ['sometimes', 'nullable', 'string'],
             'motherName' => ['sometimes', 'nullable', 'string'],
             'nationalNumber' => ['sometimes', 'nullable', 'string' , Rule::unique('patients' , 'nationalNumber')],
@@ -152,7 +153,6 @@ final class PatientRequest extends FormRequest
         if ($this->isMethod('POST')) {
             $rules['firstName'] = ['required', 'string'];
             $rules['lastName'] = ['required', 'string'];
-            $rules['nationalNumber'] = ['required', 'string' , Rule::unique('patients' , 'nationalNumber')];
         }
 
         return $rules;

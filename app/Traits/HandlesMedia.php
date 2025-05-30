@@ -33,9 +33,6 @@ trait HandlesMedia
      */
     public function handleMediaUpdate(UploadedFile|array $media, Model $model, string $collection = 'default'): Media|array
     {
-        if(!media)
-            return [];
-
         $model->clearMediaCollection($collection);
 
         return $this->handleMediaUpload($media, $model, $collection);

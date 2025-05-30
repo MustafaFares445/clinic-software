@@ -117,12 +117,6 @@ final class MediaResource extends JsonResource
             'caption' => $this->getCustomProperty('caption') ?? $this->name,
         ];
 
-        // if ($this->whenLoaded('model') && $this->model_type == 'App\Models\Patient')
-        //     $data['patient'] = PatientResource::make($this->model);
-
-        // if ($this->whenLoaded('model') && $this->model_type == 'App\Models\Record')
-        //     $data['patient'] = PatientResource::make($this->model->patient);
-
         // Check if the 'thumb' conversion exists
         try {
             $thumbnailUrl = $this->getFullUrl('thumb');

@@ -21,12 +21,8 @@ class CheckReservationConflict
      * @param string|null $reservationId The ID of the reservation to exclude (e.g., when updating an existing reservation).
      * @return bool True if a conflicting reservation exists, false otherwise.
      */
-    public function handle(
-        ?string $clinicId,
-        string $start,
-        string $end,
-        ?string $reservationId = null
-    ): bool {
+    public function handle(?string $clinicId, string $start, string $end, ?string $reservationId = null): bool {
+
         $clinicId = $clinicId ?? Auth::user()->clinic_id;
 
         $query = Reservation::where('clinic_id', $clinicId)

@@ -114,45 +114,9 @@ final class PatientController extends Controller
      *     )
      * )
      */
-    public function index(PatientIndexRequest $request, PatientsOrder $patientsOrderAction): AnonymousResourceCollection|JsonResponse
+    public function index(PatientIndexRequest $request, PatientsOrder $patientsOrderAction)
     {
-        $patientsQuery = Patient::with('media')
-            ->select([
-                'patients.id',
-                'patients.firstName',
-                'patients.fatherName',
-                'patients.lastName',
-                'patients.phone',
-                'patients.created_at',
-                'next_reservation.start as next_reservation_date',
-                'last_reservation.start as last_reservation_date',
-                'address',
-                'created_at',
-            ])
-            ->leftJoinSub(
-                Reservation::query()
-                    ->selectRaw('patient_id, MIN(start) as start')
-                    ->where('start', '>=', now())
-                    ->groupBy('patient_id'),
-                'next_reservation',
-                'next_reservation.patient_id',
-                '=',
-                'patients.id'
-            )
-            ->leftJoinSub( // Add sub query for last reservation
-                Reservation::query()
-                    ->selectRaw('patient_id, MAX(start) as start')
-                    ->where('start', '<', now())
-                    ->groupBy('patient_id'),
-                'last_reservation',
-                'last_reservation.patient_id',
-                '=',
-                'patients.id'
-            );
-
-        $patientsOrderAction->order($patientsQuery);
-
-        return PatientResource::collection($patientsQuery->paginate($request->integer('perPage', 20)));
+        return Patient::with('reservations')->get();
     }
 
     /**

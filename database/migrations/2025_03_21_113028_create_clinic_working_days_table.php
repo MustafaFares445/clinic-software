@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('clinic_working_days', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->enum('day', ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']);
             $table->time('start');

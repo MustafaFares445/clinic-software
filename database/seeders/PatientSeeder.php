@@ -20,6 +20,7 @@ final class PatientSeeder extends Seeder
                 'firstName' => 'محمد',
                 'lastName' => 'بكري',
                 'phone' => '091111111',
+                'whatsapp' => '091111111',
                 'fatherName' => 'عبد القادر',
                 'motherName' => 'بهيجة',
                 'nationalNumber' => '123332432423',
@@ -141,13 +142,6 @@ final class PatientSeeder extends Seeder
         foreach ($patientsData as $data) {
             $data['clinic_id'] = Clinic::query()->inRandomOrder()->first()->id;
             $patient = Patient::query()->create($data);
-
-            $patient->permanentIlls()->sync([
-                Ill::query()->inRandomOrder()->first()->id => ['notes' => 'ملاحظة مرض للمريض ' . $data['firstName']]
-            ]);
-            $patient->permanentMedicines()->sync([
-                Medicine::query()->inRandomOrder()->first()->id => ['notes' => 'ملاحظة دواء للمريض ' . $data['firstName']]
-            ]);
         }
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('clinic_id')->constrained('clinics');
             $table->foreignUuid('doctor_id')->constrained('users');
-            $table->foreignUuid('specification_id')->constrained('specifications');
+            $table->foreignUuid('specification_id')->nullable()->constrained('specifications')->references('id');
             $table->timestamps();
         });
     }
