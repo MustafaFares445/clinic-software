@@ -96,4 +96,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/filling/materials' , FillingMaterialController::class);
     Route::apiResource('/medical/cases' , MedicalCaseController::class)->except(['index' , 'show']);
     Route::apiResource('/mediclal/seesions' , MedicalSessionController::class)->except(['index' , 'show']);
+    
 });

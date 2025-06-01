@@ -131,13 +131,4 @@ final class Patient extends Model implements HasMedia
     {
         return $this->hasMany(MedicalCase::class);
     }
-
-    public function age(): int
-    {
-        if (!$this->birth) {
-            return 0; // or handle the case where birth date is not set
-        }
-
-        return now()->diffInYears($this->birth);
-    }
 }
