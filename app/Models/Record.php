@@ -33,17 +33,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 final class Record extends Model implements HasMedia
 {
     /** @use HasFactory<RecordFactory> */
-    use HasFactory , HasUuids , InteractsWithMedia , SoftDeletes;
+    use HasFactory , HasUuids , InteractsWithMedia;
 
     protected $fillable = [
       'description',
       'type',
-
       'treatment_id',
       'tooth_id',
       'clinic_id',
       'filling_material_id',
-      'medical_seesion_id',
+      'medical_session_id',
       'patient_id'
     ];
 
@@ -101,6 +100,15 @@ final class Record extends Model implements HasMedia
     public function treatment(): BelongsTo
     {
         return $this->belongsTo(Treatment::class);
+    }
+
+    /**
+     * Get the clinic associated with the record
+     * @return BelongsTo<Clinic>
+     */
+    public function clinic(): BelongsTo
+    {
+        return $this->belongsTo(Clinic::class);
     }
 
     /**

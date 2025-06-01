@@ -30,6 +30,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         property="type",
  *         type="string",
  *         description="The type of the tooth"
+ *     ),
+ *     @OA\Property(
+ *         property="records",
+ *         type="array",
+ *         description="The records associated with the tooth",
+ *         @OA\Items(ref="#/components/schemas/RecordResource")
  *     )
  * )
  */
@@ -47,6 +53,7 @@ class ToothResource extends JsonResource
             'name' => $this->name,
             'number' => $this->number,
             'type' => $this->type,
+            'records' => RecordResource::collection($this->whenLoaded('records')),
         ];
     }
 }

@@ -379,7 +379,9 @@ final class PatientController extends Controller
     public function getPatientTeeth(Patient $patient)
     {
         $age = now()->diffInYears($patient->birth);
-        $teeth = Tooth::with(['records' => fn($q) => $q->where('patient_id'  , $patient->id)->with(['treatment' , 'fillingMaterial'])])
+        $teeth = Tooth::with([
+                'records' => fn($q) => $q->where('patient_id'  , $patient->id)->with(['treatment' , 'fillingMaterial'])
+            ])
             ->where('type' , $age <= 10 && $age != 0 ? 'child' : 'adult')
             ->orderBy('number')
             ->get();

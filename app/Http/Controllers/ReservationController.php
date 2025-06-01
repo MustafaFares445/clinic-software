@@ -77,7 +77,7 @@ final class ReservationController extends Controller
         $reservationQuery = Reservation::query()
             ->with(['patient' => function ($query) {
                 $query->with('media')->select(['id', 'firstName', 'lastName']);
-            }])
+            }]) 
             ->with(['doctor' => function ($query) {
                 $query->with('media')->select(['id', 'firstName' , 'lastName']);
             }])

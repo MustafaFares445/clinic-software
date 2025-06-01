@@ -5547,6 +5547,13 @@
                     "type": {
                         "description": "The type of the tooth",
                         "type": "string"
+                    },
+                    "records": {
+                        "description": "The records associated with the tooth",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RecordResource"
+                        }
                     }
                 },
                 "type": "object"
