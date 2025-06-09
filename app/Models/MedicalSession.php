@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MedicalSession extends Model
 {
-    use HasFactory , HasUuids , SoftDeletes;
+    use HasFactory , HasUuids;
 
     protected $fillable = [
         'medical_case_id',
