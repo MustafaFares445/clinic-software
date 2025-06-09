@@ -75,10 +75,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Overview routes
     Route::prefix('overview')->group(function () {
         Route::get('/patients/gender/count', [OverviewController::class, 'patientsGenderCount']);
-        Route::get('/ills/count', [OverviewController::class, 'illsCount']);
-        Route::get('/records/count', [OverviewController::class, 'recordsCount']);
+        Route::get('/medical/cases/count', [OverviewController::class, 'medicalCasesCount']);
         Route::get('/general-statistics', [OverviewController::class, 'generalStatistics']);
-        Route::get('/top-ills', [OverviewController::class, 'topIlls']);
         Route::get('/patients/count', [OverviewController::class, 'patientsCount']);
         Route::get('/billing-statistics', [OverviewController::class, 'getStatistics']);
         Route::get('/age-statistics', [OverviewController::class, 'getAgeStatistics']);
@@ -96,5 +94,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/filling/materials' , FillingMaterialController::class);
     Route::apiResource('/medical/cases' , MedicalCaseController::class)->except(['index' , 'show']);
     Route::apiResource('/mediclal/seesions' , MedicalSessionController::class)->except(['index' , 'show']);
-    
+
 });

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RecordTypes;
+use App\Enums\ReservationTypes;
 use App\Http\Resources\IllResource;
 use App\Models\BillingTransaction;
 use App\Models\Ill;
+use App\Models\MedicalCase;
 use App\Models\Patient;
 use App\Models\Record;
 use App\Models\Reservation;
@@ -54,12 +56,12 @@ final class OverviewController extends Controller
 
         $malesCount = Patient::query()
             ->where('gender', 'male')
-            ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
+            ->whereHas('medicalCases', fn($query) => $query->whereYear('date', $year))
             ->count();
 
         $femalesCount = Patient::query()
             ->where('gender', 'female')
-            ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
+            ->whereHas('medicalCases', fn($query) => $query->whereYear('date', $year))
             ->count();
 
         return response()->json([
@@ -68,57 +70,17 @@ final class OverviewController extends Controller
         ]);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/overview/ills/count",
-     *     summary="Get illness statistics",
-     *     tags={"Overview"},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="data", type="array",
-     *
-     *                 @OA\Items(
-     *
-     *                     @OA\Property(property="id", type="string", format="uuid"),
-     *                     @OA\Property(property="name", type="string"),
-     *                     @OA\Property(property="records_count", type="integer")
-     *                 )
-     *             ),
-     *             @OA\Property(property="totalCount", type="integer")
-     *         )
-     *     ),
-     *     security={{ "bearerAuth": {} }}
-     * )
-     */
-    public function illsCount(): JsonResponse
-    {
-        $ills = Ill::query()
-            ->select('id', 'name')
-            ->whereRelation('records', 'clinic_id', Auth::user()->clinic_id)
-            ->withCount('records')
-            ->get();
-
-        return response()->json([
-            'data' => $ills,
-            'totalCount' => $ills->sum('records_count'),
-        ]);
-    }
 
     /**
      * @OA\Get(
-     *     path="/api/overview/records/count",
-     *     summary="Get records count within date range",
+     *     path="/api/overview/medical/cases/count",
+     *     summary="Get medical cases count within date range",
      *     tags={"Overview"},
      *
      *     @OA\Parameter(
      *         name="startDate",
      *         in="query",
-     *         description="Start date for records count (Y-m-d)",
+     *         description="Start date for medical cases count (Y-m-d)",
      *         required=false,
      *
      *         @OA\Schema(type="string", format="date")
@@ -127,7 +89,7 @@ final class OverviewController extends Controller
      *     @OA\Parameter(
      *         name="endDate",
      *         in="query",
-     *         description="End date for records count (Y-m-d)",
+     *         description="End date for medical cases count (Y-m-d)",
      *         required=false,
      *
      *         @OA\Schema(type="string", format="date")
@@ -145,11 +107,11 @@ final class OverviewController extends Controller
      *     security={{ "bearerAuth": {} }}
      * )
      */
-    public function recordsCount(Request $request): JsonResponse
+    public function medicalCasesCount(Request $request): JsonResponse
     {
-        $count = Record::query()
-            ->whereDate('dateTime', '>=', $request->input('startDate') ?? Carbon::now()->firstOfMonth())
-            ->whereDate('dateTime', '<=', $request->input('endDate') ?? Carbon::now()->lastOfMonth())
+        $count = MedicalCase::query()
+            ->whereDate('date', '>=', $request->input('startDate') ?? Carbon::now()->firstOfMonth())
+            ->whereDate('date', '<=', $request->input('endDate') ?? Carbon::now()->lastOfMonth())
             ->count();
 
         return response()->json([
@@ -180,53 +142,14 @@ final class OverviewController extends Controller
      */
     public function generalStatistics(): JsonResponse
     {
-        $recordQuery = Record::query();
+        $reservationQuery = Reservation::query();
 
         return response()->json([
             'reservationsCount' => Reservation::query()->count(),
-            'surgeryCount' => $recordQuery->clone()->where('type', RecordTypes::SURGERY)->count(),
-            'appointmentCount' => $recordQuery->clone()->where('type', RecordTypes::APPOINTMENT)->count(),
-            'inspectionCount' => $recordQuery->clone()->where('type', RecordTypes::INSPECTION)->count(),
+            'surgeryCount' => $reservationQuery->clone()->where('type', ReservationTypes::SURGERY->value)->count(),
+            'appointmentCount' => $reservationQuery->clone()->where('type', ReservationTypes::APPOINTMENT->value)->count(),
+            'inspectionCount' => $reservationQuery->clone()->where('type', ReservationTypes::INSPECTION->value)->count(),
         ]);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/overview/top-ills",
-     *     summary="Get top 5 illnesses",
-     *     tags={"Overview"},
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success",
-     *
-     *         @OA\JsonContent(
-     *
-     *             @OA\Property(property="data", type="array",
-     *
-     *                 @OA\Items(
-     *
-     *                     @OA\Property(property="id", type="string", format="uuid"),
-     *                     @OA\Property(property="name", type="string"),
-     *                     @OA\Property(property="records_count", type="integer")
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     security={{ "bearerAuth": {} }}
-     * )
-     */
-    public function topIlls(): AnonymousResourceCollection
-    {
-        $ills = Ill::query()
-            ->whereRelation('records', 'clinic_id', Auth::user()->clinic_id)
-            ->select('id', 'name')
-            ->withCount('records')
-            ->orderBy('records_count', 'desc')
-            ->limit(5)
-            ->get();
-
-        return IllResource::collection($ills);
     }
 
     /**
@@ -296,9 +219,8 @@ final class OverviewController extends Controller
         $query = BillingTransaction::query();
 
         return response()->json([
-            'totalTransactions' => (float) $query->where('type' , 'paid')->sum('amount'),
+            'totalTransactions' => (float) $query->sum('amount'),
             'totalInMonth' => (float) $query
-                ->where('type' , 'paid')
                 ->whereMonth('created_at' , Carbon::now()->month)
                 ->sum('amount'),
         ]);
@@ -402,7 +324,6 @@ final class OverviewController extends Controller
 
         $monthlyTotals = BillingTransaction::query()
             ->whereYear('created_at', $year)
-            ->where('type', 'paid')
             ->get(['id' , 'amount' , 'created_at'])
             ->groupBy(fn($transaction) => $transaction->created_at->month)
             ->map(fn($transactions) => $transactions->sum('amount'));

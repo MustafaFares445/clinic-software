@@ -1669,67 +1669,18 @@
                 ]
             }
         },
-        "/api/overview/ills/count": {
+        "/api/overview/medical/cases/count": {
             "get": {
                 "tags": [
                     "Overview"
                 ],
-                "summary": "Get illness statistics",
-                "operationId": "54a424ba334f189491df4cccfad78cc6",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "string",
-                                                        "format": "uuid"
-                                                    },
-                                                    "name": {
-                                                        "type": "string"
-                                                    },
-                                                    "records_count": {
-                                                        "type": "integer"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        },
-                                        "totalCount": {
-                                            "type": "integer"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/overview/records/count": {
-            "get": {
-                "tags": [
-                    "Overview"
-                ],
-                "summary": "Get records count within date range",
-                "operationId": "baf31a3535526a6b9d0ad4103bea6536",
+                "summary": "Get medical cases count within date range",
+                "operationId": "36dda4f8e1fbbcce1f088e123848c9e4",
                 "parameters": [
                     {
                         "name": "startDate",
                         "in": "query",
-                        "description": "Start date for records count (Y-m-d)",
+                        "description": "Start date for medical cases count (Y-m-d)",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -1739,7 +1690,7 @@
                     {
                         "name": "endDate",
                         "in": "query",
-                        "description": "End date for records count (Y-m-d)",
+                        "description": "End date for medical cases count (Y-m-d)",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -1801,52 +1752,6 @@
                                         "inspectionCount": {
                                             "type": "integer",
                                             "example": 20
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/overview/top-ills": {
-            "get": {
-                "tags": [
-                    "Overview"
-                ],
-                "summary": "Get top 5 illnesses",
-                "operationId": "849dbe089e1efd0dc34b9e9ff152c492",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "string",
-                                                        "format": "uuid"
-                                                    },
-                                                    "name": {
-                                                        "type": "string"
-                                                    },
-                                                    "records_count": {
-                                                        "type": "integer"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
                                         }
                                     },
                                     "type": "object"
