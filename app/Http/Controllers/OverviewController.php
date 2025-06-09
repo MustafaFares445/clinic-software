@@ -260,12 +260,12 @@ final class OverviewController extends Controller
 
         return response()->json([
             'adults' => Patient::query()
-                ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
+                ->whereHas('medicalCases', fn($query) => $query->whereYear('date', $year))
                 ->whereRaw('TIMESTAMPDIFF(YEAR, birth, ?) >= 18', [$date])
                 ->count(),
 
             'children' => Patient::query()
-                ->whereHas('records', fn($query) => $query->whereYear('dateTime', $year))
+                ->whereHas('medicalCases', fn($query) => $query->whereYear('date', $year))
                 ->whereRaw('TIMESTAMPDIFF(YEAR, birth, ?) < 18', [$date])
                 ->count(),
         ]);
