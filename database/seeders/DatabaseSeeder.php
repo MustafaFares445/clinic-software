@@ -28,6 +28,7 @@ final class DatabaseSeeder extends Seeder
            ChronicDiseasesSeeder::class,
            ChronicMedicationSeeder::class,
            RecordSeeder::class,
+           MedicalSessionSeeder::class,
            DoctorRecordSeeder::class,
            BillingSeeder::class,
            ReservationSeeder::class
