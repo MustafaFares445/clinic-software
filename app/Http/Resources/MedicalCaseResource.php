@@ -61,7 +61,7 @@ class MedicalCaseResource extends JsonResource
             'total'=>$this->when($this->total, $this->total),
             'date'=>$this->when($this->date, $this->date),
             'createdBy'=> UserResource::make($this->whenLoaded('createdBy')),
-            'medicalSessions' => MedicalSessionResource::collection($this->whenLoaded('medicalSessions')),
+            'medicalSessions' => MedicalSessionResource::collection($this->medicalSessions->load('records')),
         ];
     }
 }

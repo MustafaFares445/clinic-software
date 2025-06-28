@@ -325,17 +325,7 @@ final class PatientController extends Controller
     {
         $medicalCases = $patient->medicalCases()
         ->when($request->has('toothId') , fn($q) => $q->whereRelation('medicalSessions.records' , 'tooth_id' , $request->get('toothId')))
-        ->with([
-            'medicalSessions.records' => function ($query) {
-                $query->with([
-                    'tooth',
-                    'treatment',
-                    'fillingMaterial.laboratory',
-                    'doctors.media',
-                    'media'
-                ]);
-            }
-        ])->paginate(request()->get('perPage', 5));
+        ->paginate(request()->get('perPage', 5));
 
         return MedicalCaseResource::collection($medicalCases);
     }

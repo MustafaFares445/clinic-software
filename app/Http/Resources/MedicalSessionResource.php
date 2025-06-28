@@ -41,7 +41,7 @@ class MedicalSessionResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'date' => $this->date->toDateString(),
+            'date' => $this->date,
             'records' => RecordResource::collection($this->whenLoaded('records'))
         ];
     }

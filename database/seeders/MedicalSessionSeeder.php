@@ -27,7 +27,7 @@ class MedicalSessionSeeder extends Seeder
         $sessions = [];
 
         // Generate sessions for the last 30 days
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $date = Carbon::now()->subDays(rand(0, 30))->setTime(
                 rand(8, 18), // Between 8 AM and 6 PM
                 rand(0, 59)

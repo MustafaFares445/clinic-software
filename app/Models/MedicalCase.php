@@ -43,9 +43,9 @@ class MedicalCase extends Model
         /** @var User|null $user */
         $user = Auth::user();
 
-        if (Auth::check() && !$user->hasRole('super Admin')) {
-            self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
-        }
+        // if (Auth::check() && !$user->hasRole('super Admin')) {
+        //     self::query()->whereRelation('clinic', 'id', request()->input('clinicId') ?? Auth::user()->clinic_id);
+        // }
     }
 
      /**
